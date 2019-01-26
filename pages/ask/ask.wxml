@@ -1,0 +1,11 @@
+
+<view class="container">
+    <view class="title">提问</view>
+    <input placeholder="请输入问题标题" auto-focus bindinput="onInput"/>
+    <checkbox-group class="checkbox-group" bindchange="checkboxChange">
+        <label class="type" wx:for="{{types}}">
+            <checkbox value="{{item.value}}"/>{{item.name}}
+        </label>
+    </checkbox-group>
+    <button type="primary" class='nextStepBtn' bindtap="onNextStep">下一步</button>
+</view>
