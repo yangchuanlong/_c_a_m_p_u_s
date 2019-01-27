@@ -4,7 +4,8 @@
     "pages/logs/logs",
     "pages/test/test",
     "pages/ask/ask",
-    "pages/questionEdit/questionEdit"
+    "pages/questionEdit/questionEdit",
+    "pages/editor/editor"
   ],
   "window":{
     "backgroundTextStyle":"light",

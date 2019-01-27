@@ -14,6 +14,12 @@ Page({
       url: '../logs/logs'
     })
   },
+  gotoAsk() {
+    console.log("gotoAsk")
+    wx.navigateTo({
+      url: '../ask/ask',
+    })
+  },
   onReady() {
     wx.cloud.init();
     const db = wx.cloud.database({

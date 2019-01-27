@@ -29,6 +29,10 @@ Page({
             })
             return;
         }
+        const data = this.data;
+        wx.navigateTo({
+          url: '../questionEdit/questionEdit' + `?title=${data.title}&types=${data.chosenType.join(",")}`,
+        })
         console.log(this.data.title, this.data.chosenType)
     },
     checkboxChange(evt) {

@@ -1,6 +1,5 @@
 
 <view class="container">
-    <view class="title">提问</view>
     <input placeholder="请输入问题标题" auto-focus bindinput="onInput"/>
     <checkbox-group class="checkbox-group" bindchange="checkboxChange">
         <label class="type" wx:for="{{types}}">

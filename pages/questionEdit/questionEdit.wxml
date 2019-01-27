@@ -1,8 +1,18 @@
 <view class="container">
-    <view class="title">提问</view>
-    <view class="plusIcon">+</view>
-    <view class="iconWrapper">
-        <image src="./tupian.png"></image>
-        <image src="./wenzi.png"></image>
+    <view class='tmp'>
+      <view class="plusIcon">+</view>
+      <view class="iconWrapper">
+          <view bindtap='onAddTxt'>文字</view>  <!--使用icon-->
+          <view>图片</view>
+      </view>
     </view>
+    <textarea placeholder='问题描述' bindinput='onInput'>
+    </textarea>
+    <button 
+      class='confirmBtn'
+      bindtap="submit"
+      type="primary"
+      loading="{{loading}}"
+      disabled='{{disabled}}'
+    >提问</button>
 </view>

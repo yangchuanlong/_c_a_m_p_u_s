@@ -38,7 +38,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 2,
+			"current": 3,
 			"list": [
 				{
 					"id": -1,
@@ -58,6 +58,13 @@
 					"id": -1,
 					"name": "questionEdit",
 					"pathName": "pages/questionEdit/questionEdit",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "editor",
+					"pathName": "pages/editor/editor",
 					"scene": null
 				}
 			]

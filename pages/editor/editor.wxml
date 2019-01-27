@@ -1,0 +1,9 @@
+<view class='container'>
+  <textarea
+   auto-focus
+    show-confirm-bar
+    bindconfirm="onConfirm"
+    bindinput='onInput'
+  >
+  </textarea>  
+</view>

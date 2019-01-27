@@ -12,7 +12,23 @@
 }
 .iconWrapper{
     display:flex;
+    border: 1px solid #eee;
+    padding: 8rpx 20rpx;
+    border-radius: 50rpx;
+    margin-top:6rpx;
 }
-.iconWrapper image{
-    width:50rpx;
+.iconWrapper view:not(:first-child){
+    margin-left: 24rpx;
+}
+.tmp{
+  display:none;
+}
+textarea{
+  width: 100%;
+}
+.confirmBtn{
+  width: 94%;
+  box-sizing: border-box;
+  margin-top: 48rpx;
+  line-height: 2.2;
 }

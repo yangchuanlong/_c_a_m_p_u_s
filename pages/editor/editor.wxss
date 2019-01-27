@@ -1,0 +1,11 @@
+page{
+  background: #f5f5f5;
+}
+.container{
+  padding: 0;
+}
+textarea{
+  background: white;
+  margin-top:2rpx;
+  width:100%;
+}
