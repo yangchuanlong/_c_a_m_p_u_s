@@ -1,0 +1,8 @@
+<view class="container">
+    <view class="title">提问</view>
+    <view class="plusIcon">+</view>
+    <view class="iconWrapper">
+        <image src="./tupian.png"></image>
+        <image src="./wenzi.png"></image>
+    </view>
+</view>
