@@ -32,12 +32,21 @@ Page({
     })
   },
   getQuestions: function() {
+    const _t = this;
     wx.cloud.init();
-    const db = wx.cloud.database({
-      env: 'campus'
-    });
-    db.collection("questions").get().then(function(res) {
-        console.log(res)
+    wx.cloud.callFunction({
+      name: 'questions'
+    }).then(resp => {
+      const data = resp.result.data;
+      data.forEach(item => {
+          const createdTime = item.createdTime || new Date().toISOString();
+          const date = new Date(createdTime);
+          item.formatedTime = `${date.getFullYear()}.${date.getMonth()}.${date.getDate()}`;
+          item.shortContent = item.content.substr(0, 40)
+      });
+      _t.setData({
+        questions: data
+      });
     })
   },
   onLoad: function () {

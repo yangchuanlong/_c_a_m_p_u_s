@@ -15,6 +15,7 @@ exports.main = async (event, context) => {
       title: event.title,
       content: event.content,
       types: event.types,
+      createdTime: new Date().toISOString(),
 
       openid: wxContext.OPENID, //todo? put it in a userInfo object
       avatar: event.avatar,

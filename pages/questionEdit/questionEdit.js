@@ -7,7 +7,7 @@ Page({
     loading: false,
     disabled: false
   },
-  onAddTxt(){
+  onAddTxt(){clolou
     globalData.inputedTxt = null;
     wx.navigateTo({
       url: '/pages/editor/editor',
@@ -42,7 +42,9 @@ Page({
         nickName: globalData.userInfo.nickName
       },
       success(res) {
-       
+        wx.redirectTo({
+         url: '/pages/mine/mine',
+       })
       },
       fail(e) {
         wx.showToast({

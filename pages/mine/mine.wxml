@@ -1,0 +1,12 @@
+<view class="container">
+    <view class="tabs">
+        <view class="active">我的问题</view>
+        <view>我的回答</view>
+        <view>我的收藏</view>
+    </view>
+    <view class="tabPane">
+        <block wx:for="{{myQuestions}}">
+            <view>{{item.title}}</view>
+        </block>
+    </view>
+</view>

@@ -1,15 +1,36 @@
 <!--index.wxml-->
 <view class="container">
- <view class='tabs'>
-  <text class="active">全部</text>
-  <text>热搜</text>
- </view>
- <view class="icons">
-  <image src="../images/icon.jpg" class="logo"></image>
-  <image src="../images/edit.png" class="editIcon" bindtap='gotoAsk'></image>
-  <image src="../images/userIcon.png" class="userIcon"></image>
-  <image src="../images/message.png" class="message"></image>
- </view>
- <view></view>
- <view></view>
+    <view class='tabs'>
+        <text class="active">全部</text>
+        <text>热搜</text>
+    </view>
+
+    <view id="all" class="section">
+        <view wx:for="{{questions}}" class="item">
+            <view class="author">
+                <image src="{{item.avatar}}" class="avatar" wx:if="{{item.avatar}}" ></image>                 
+                <image wx:else src="../images/userIcon.png" class="avatar" style="background:gray"></image>
+                <text class="nickName">{{item.nickName}}</text>
+                <text class="date">{{item.formatedTime}}</text>
+            </view>
+            <view class="title">{{item.title}}</view>
+            <view class="shortContent">{{item.shortContent}}</view>
+            <view class='acions'>
+              <view>赞(12)</view>
+              <view>|</view>
+              <view>回答(867)</view>
+            </view>
+        </view>
+    </view>
+
+    <view id="热搜" class="section">
+
+    </view>
+
+    <view class="icons">
+        <image src="../images/icon.jpg" class="logo"></image>
+        <image src="../images/edit.png" class="editIcon" bindtap='gotoAsk'></image>
+        <image src="../images/userIcon.png" class="userIcon"></image>
+        <image src="../images/message.png" class="message"></image>
+    </view>
 </view>
