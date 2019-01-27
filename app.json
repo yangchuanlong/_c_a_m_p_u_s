@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/logs/logs",
     "pages/test/test",
-    "pages/ask/ask"
+    "pages/ask/ask",
+    "pages/questionEdit/questionEdit"
   ],
   "window":{
     "backgroundTextStyle":"light",
