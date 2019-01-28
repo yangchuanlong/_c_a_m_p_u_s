@@ -6,7 +6,8 @@
     "pages/ask/ask",
     "pages/questionEdit/questionEdit",
     "pages/editor/editor",
-    "pages/mine/mine"
+    "pages/mine/mine",
+    "pages/message/message"
   ],
   "window":{
     "backgroundTextStyle":"light",

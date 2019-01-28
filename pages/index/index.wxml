@@ -30,7 +30,7 @@
     <view class="icons">
         <image src="../images/icon.jpg" class="logo"></image>
         <image src="../images/edit.png" class="editIcon" bindtap='gotoAsk'></image>
-        <image src="../images/userIcon.png" class="userIcon"></image>
+        <image src="../images/userIcon.png" class="userIcon" bindtap='gotoMine'></image>
         <image src="../images/message.png" class="message"></image>
     </view>
 </view>

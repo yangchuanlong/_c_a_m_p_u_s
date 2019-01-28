@@ -1,0 +1,28 @@
+
+.container{
+  padding: 0;
+}
+.item{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  padding-left:12rpx;
+  border-bottom: 4rpx solid #ddd;
+  padding-bottom: 4rpx;
+}
+.item image{
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;  
+}
+.item .content{
+  flex: 1;
+  display:flex;
+  flex-direction: column;
+  font-size: 20rpx;
+  margin-left: 12rpx;
+}
+.item .name{
+  font-weight: bold;
+}

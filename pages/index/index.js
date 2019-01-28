@@ -20,6 +20,11 @@ Page({
       url: '../ask/ask',
     })
   },
+  gotoMine() {
+    wx.navigateTo({
+      url: '../mine/mine',
+    })
+  },
   onReady() {
     wx.cloud.init();
     const db = wx.cloud.database({
