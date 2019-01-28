@@ -6,7 +6,7 @@
     </view>
 
     <view id="all" class="section">
-        <view wx:for="{{questions}}" class="item">
+        <view wx:for="{{questions}}" class="item" wx:key="{{item._id}}">
             <view class="author">
                 <image src="{{item.avatar}}" class="avatar" wx:if="{{item.avatar}}" ></image>                 
                 <image wx:else src="../images/userIcon.png" class="avatar" style="background:gray"></image>
@@ -31,6 +31,6 @@
         <image src="../images/icon.jpg" class="logo"></image>
         <image src="../images/edit.png" class="editIcon" bindtap='gotoAsk'></image>
         <image src="../images/userIcon.png" class="userIcon" bindtap='gotoMine'></image>
-        <image src="../images/message.png" class="message"></image>
+        <image src="../images/message.png" class="message" bindtap='gotoMsg'></image>
     </view>
 </view>

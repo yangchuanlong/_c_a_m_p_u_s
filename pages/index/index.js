@@ -6,7 +6,8 @@ Page({
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    questions: []
+    questions: [],
+    lastestQuestionTime: null
   },
   //事件处理函数
   bindViewTap: function() {
@@ -23,6 +24,11 @@ Page({
   gotoMine() {
     wx.navigateTo({
       url: '../mine/mine',
+    })
+  },
+  gotoMsg() {
+    wx.navigateTo({
+      url: '../message/message',
     })
   },
   onReady() {
@@ -46,11 +52,12 @@ Page({
       data.forEach(item => {
           const createdTime = item.createdTime || new Date().toISOString();
           const date = new Date(createdTime);
-          item.formatedTime = `${date.getFullYear()}.${date.getMonth()}.${date.getDate()}`;
+        item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
           item.shortContent = item.content.substr(0, 40)
       });
       _t.setData({
-        questions: data
+        questions: data,
+        lastestQuestionTime: data.length ? data[0].createdTime : new Date().toISOString()
       });
     })
   },
@@ -90,5 +97,24 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
-  }
+  },
+  onPullDownRefresh: function () {
+    const _t = this;
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: "campus"
+    });
+    const _ = db.command;
+    const questionCollection = db.collection("questions");
+    questionCollection.where({
+      createdTime: _.gt(_t.data.lastestQuestionTime)
+    }).orderBy('createdTime', 'desc').get().then(function(resp){
+      if (resp.data.length) {
+        _t.setData({
+          questions: resp.data.concat(_t.data.questions),
+          lastestQuestionTime: resp.data[0].createdTime
+        });
+      }
+    })
+  },
 })
