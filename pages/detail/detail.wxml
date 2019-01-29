@@ -1,0 +1,17 @@
+<view class='container'>
+  <view class='title'>{{detail.title}}</view>
+  <view class='author'>
+    <image src='{{detail.avatar}}' class='avatar'></image>
+    <view class='nickName'>{{detail.nickName}}</view>
+    <view style="flex:1;"></view>
+    <text>{{detail.createdTime}}</text>
+    <text>阅读量：866</text>
+  </view>
+  <view class='content'>{{detail.content}}</view>
+  <view class='comments'>
+    <view class='subTitle'>评论区</view>
+    <view>
+     bla bla
+    </view>
+  </view>
+</view>

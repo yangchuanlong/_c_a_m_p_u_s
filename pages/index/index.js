@@ -15,6 +15,12 @@ Page({
       url: '../logs/logs'
     })
   },
+  gotoDetail(evt) {
+    const questionId = evt.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: '/pages/detail/detail?id=' + questionId,
+    })
+  },
   gotoAsk() {
     console.log("gotoAsk")
     wx.navigateTo({
