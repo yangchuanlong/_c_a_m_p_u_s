@@ -1,5 +1,12 @@
 <!--index.wxml-->
 <view class="container">
+    <view class='searchWrapper'>
+      <input confirm-type='search' 
+      bindinput='inputSearch'
+      bindconfirm='startSearch'
+      placeholder='请输入搜素内容'
+      ></input>
+    </view>
     <view class='tabs'>
         <text class="active">全部</text>
         <text>热搜</text>

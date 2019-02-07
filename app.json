@@ -8,7 +8,8 @@
     "pages/editor/editor",
     "pages/mine/mine",
     "pages/message/message",
-    "pages/detail/detail"
+    "pages/detail/detail",
+    "pages/search/search"
   ],
   "window":{
     "backgroundTextStyle":"light",

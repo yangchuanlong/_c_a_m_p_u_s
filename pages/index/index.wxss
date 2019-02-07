@@ -1,6 +1,14 @@
 .container {
     padding:0;
 }
+.searchWrapper{
+  width:100%;
+}
+.searchWrapper input{
+  border: 1px solid #7e7e7e;
+  width: calc(100% - 36rpx);
+  margin: 0 auto 12rpx auto;
+}
 .tabs{
     display:flex;
     padding: 24rpx;

@@ -7,7 +7,8 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     questions: [],
-    lastestQuestionTime: null
+    lastestQuestionTime: null,
+    searchTxt: ''
   },
   //事件处理函数
   bindViewTap: function() {
@@ -35,6 +36,21 @@ Page({
   gotoMsg() {
     wx.navigateTo({
       url: '../message/message',
+    })
+  },
+  inputSearch(evt){
+    this.setData({
+      searchTxt: evt.detail.value
+    });
+  },
+  startSearch(){
+    let searchTxt = this.data.searchTxt;
+    searchTxt = searchTxt.replace(/^\s|\s$/g, '');
+    if(!searchTxt) {
+      return;
+    }
+    wx.navigateTo({
+        url: '../search/search?searchTxt=' + this.data.searchTxt
     })
   },
   onReady() {
