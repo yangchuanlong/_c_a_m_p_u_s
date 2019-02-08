@@ -8,7 +8,9 @@ Page({
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     questions: [],
     lastestQuestionTime: null,
-    searchTxt: ''
+    oldestQuestionTime: null,
+    searchTxt: '',
+    showLoading: false
   },
   //事件处理函数
   bindViewTap: function() {
@@ -54,34 +56,29 @@ Page({
     })
   },
   onReady() {
-    wx.cloud.init();
-    const db = wx.cloud.database({
-      env: 'campus'
-    });
-    db.collection("questions").get({
-      success(res){
-        console.log(res)
-      }
-    })
+
   },
   getQuestions: function() {
-    const _t = this;
-    wx.cloud.init();
-    wx.cloud.callFunction({
-      name: 'questions'
-    }).then(resp => {
-      const data = resp.result.data;
-      data.forEach(item => {
-          const createdTime = item.createdTime || new Date().toISOString();
-          const date = new Date(createdTime);
-        item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
-          item.shortContent = item.content.substr(0, 40)
+      wx.cloud.init();
+      const db = wx.cloud.database({
+          env: "campus"
       });
-      _t.setData({
-        questions: data,
-        lastestQuestionTime: data.length ? data[0].createdTime : new Date().toISOString()
-      });
-    })
+      const _ = db.command, _t = this;
+      const questionCollection = db.collection("questions");
+    questionCollection.orderBy('createdTime', 'desc').limit(10).get().then(function(resp){
+          const data = resp.data;
+          data.forEach(item => {
+              const createdTime = item.createdTime || new Date().toISOString();
+              const date = new Date(createdTime);
+              item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+              item.shortContent = item.content.substr(0, 40)
+          });
+          _t.setData({
+              questions: data,
+              lastestQuestionTime: data.length ? data[0].createdTime : new Date().toISOString(),
+              oldestQuestionTime: data.length ? data[data.length - 1].createdTime : new Date(0, 0, 0).toISOString()
+          });
+      })
   },
   onLoad: function () {
     this.getQuestions();
@@ -129,14 +126,55 @@ Page({
     const _ = db.command;
     const questionCollection = db.collection("questions");
     questionCollection.where({
-      createdTime: _.gt(_t.data.lastestQuestionTime)
+      createdTime: _.gt(_t.data.lastestQuestionTime instanceof Date ? _t.data.lastestQuestionTime.toISOString() : _t.data.lastestQuestionTime)
     }).orderBy('createdTime', 'desc').get().then(function(resp){
-      if (resp.data.length) {
+      const data = resp.data;
+      if (data.length) {
+        data.forEach(item => {
+          const createdTime = item.createdTime || new Date().toISOString();
+          const date = new Date(createdTime);
+          item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+          item.shortContent = item.content.substr(0, 40)
+        });
         _t.setData({
-          questions: resp.data.concat(_t.data.questions),
-          lastestQuestionTime: resp.data[0].createdTime
+          questions: data.concat(_t.data.questions),
+          lastestQuestionTime: data[0].createdTime,
         });
       }
+      wx.stopPullDownRefresh();
     })
   },
+  onReachBottom(){
+    const _t = this;
+    this.setData({
+      showLoading: true
+    });    
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: "campus"
+    });
+    const _ = db.command;
+    const questionCollection = db.collection("questions");
+    questionCollection.where({
+      createdTime: _.lt(_t.data.oldestQuestionTime instanceof Date ? _t.data.oldestQuestionTime.toISOString() : _t.data.oldestQuestionTime)
+    }).orderBy('createdTime', 'desc').limit(10).get().then(function (resp) {
+      const data = resp.data;
+      if (data.length) {
+        data.forEach(item => {
+          const createdTime = item.createdTime || new Date().toISOString();
+          const date = new Date(createdTime);
+          item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+          item.shortContent = item.content.substr(0, 40)
+        });
+        _t.setData({
+          questions: _t.data.questions.concat(data),
+          oldestQuestionTime: data[data.length - 1].createdTime,
+        });
+      }   
+      _t.setData({
+        showLoading: false
+      });     
+      console.log(resp)
+    })
+  }
 })

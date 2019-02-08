@@ -40,4 +40,7 @@
         <image src="../images/userIcon.png" class="userIcon" bindtap='gotoMine'></image>
         <image src="../images/message.png" class="message" bindtap='gotoMsg'></image>
     </view>
+    <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
+      <image src='../images/loading.gif'></image>
+    </view>
 </view>
