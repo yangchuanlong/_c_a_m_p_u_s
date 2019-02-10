@@ -1,4 +1,5 @@
-<view class="container">
+<button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 授权获取头像昵称 </button>
+<view wx:else class="container">
     <view class='tmp'>
       <view class="plusIcon">+</view>
       <view class="iconWrapper">
