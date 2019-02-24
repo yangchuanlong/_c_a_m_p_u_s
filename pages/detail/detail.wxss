@@ -1,9 +1,10 @@
-page>view{
-  width: 100%;
-  text-align:left;
+page{
+  height: 100%;
 }
 .container{
   padding: 0;
+  text-align:left;
+  height: auto;
 }
 .title{
   width: 100%;
@@ -46,4 +47,25 @@ page>view{
   width: 100%;
   background: #E8E9ED;
   box-shadow: 0 1px 3px #ccc;
+}
+
+.commentInputWrapper{
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  border: 4rpx solid #dcdcdc;
+  box-shadow: 0 0 4rpx #dcdcdc;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 12rpx;
+  display: flex;
+}
+.commentInputWrapper input{  
+  border:2rpx solid #d3d3d3;
+  border-radius: 12rpx;
+  flex: 1;
+  margin-right: 12rpx;
+  height: 58rpx;
+  background: #fff;
+  padding: 0 6rpx;
 }
