@@ -5,7 +5,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    detail: {}
+    detail: {},
+    inputedComment: '',
+    sendBtnDisabled: true
   },
 
   /**
@@ -31,6 +33,19 @@ Page({
     })
   },
 
+  onInput(evt) {
+    const inputedComment = evt.detail.value.replace(/^\s+|\s+$/g, "");
+    if (inputedComment.length) {
+      this.setData({
+        inputedComment,
+        sendBtnDisabled: false
+      })
+    }
+  },
+
+  onSend() {
+    console.log('send button is clicked')
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
