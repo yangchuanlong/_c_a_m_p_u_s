@@ -14,4 +14,9 @@
      bla bla
     </view>
   </view>
+
+  <view class='commentInputWrapper'>
+    <input cursor-spacing="6" placeholder='说点什么...' bindinput='onInput'/>
+    <button size='mini' disabled="{{sendBtnDisabled}}" bindtap='onSend'>发送</button>
+  </view>
 </view>
