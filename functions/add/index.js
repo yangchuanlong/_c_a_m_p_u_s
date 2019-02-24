@@ -1,4 +1,5 @@
 // 云函数入口文件
+//demo cloud use
 const cloud = require('wx-server-sdk')
 
 cloud.init()

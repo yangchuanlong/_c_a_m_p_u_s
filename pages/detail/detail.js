@@ -1,4 +1,4 @@
-
+const app = getApp(), globalData = app.globalData;
 Page({
 
   /**
@@ -7,7 +7,8 @@ Page({
   data: {
     detail: {},
     inputedComment: '',
-    sendBtnDisabled: true
+    sendBtnDisabled: true,
+    sendBtnLoading: false
   },
 
   /**
@@ -15,6 +16,7 @@ Page({
    */
   onLoad: function (options) {
     console.log(options.id);
+    this.data.questionId = options.id;
     const _t = this;
     wx.cloud.init();
     const db = wx.cloud.database({
@@ -44,7 +46,33 @@ Page({
   },
 
   onSend() {
-    console.log('send button is clicked')
+    console.log('send button is clicked:' ,this.data.questionId);
+    const _t = this;
+    wx.cloud.init();
+    this.setData({
+      sendBtnLoading: true
+    });
+    wx.cloud.callFunction({
+        name: 'reply',
+        data: {
+          content: this.data.inputedComment,
+          questionId: this.data.questionId,
+          user: {
+            avatar: globalData.userInfo.avatarUrl,
+            nickName: globalData.userInfo.nickName
+          }
+        }
+    }).then(function () {
+        _t.setData({
+            inputedComment: "",
+            sendBtnDisabled: true,
+            sendBtnLoading: false
+        })
+    }, function (err) {
+        _t.setData({
+            sendBtnLoading: false
+        })
+    })
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
