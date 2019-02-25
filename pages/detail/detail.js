@@ -8,7 +8,8 @@ Page({
     detail: {},
     inputedComment: '',
     sendBtnDisabled: true,
-    sendBtnLoading: false
+    sendBtnLoading: false,
+    replies: []
   },
 
   /**
@@ -32,14 +33,33 @@ Page({
       _t.setData({
         detail
       })
+    });
+
+    
+    const replyCollection = db.collection("replies");
+    replyCollection.where({
+      questionId: options.id
+    }).get().then(res => {
+      let replies = res.data.map(reply => {
+        const date = new Date(reply.createdTime);
+        return {
+          content: reply.content,
+          createdTime: `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`,
+          user: reply.user
+        }
+      });
+      _t.setData({
+        replies
+      })
     })
   },
 
   onInput(evt) {
-    const inputedComment = evt.detail.value.replace(/^\s+|\s+$/g, "");
-    if (inputedComment.length) {
+    const inputedComment = evt.detail.value;
+    const trimmedComment = inputedComment.replace(/^\s+|\s+$/g, "");
+    if (trimmedComment.length) {
       this.setData({
-        inputedComment,
+        trimmedComment,
         sendBtnDisabled: false
       })
     }
@@ -55,7 +75,7 @@ Page({
     wx.cloud.callFunction({
         name: 'reply',
         data: {
-          content: this.data.inputedComment,
+          content: this.data.trimmedComment,
           questionId: this.data.questionId,
           user: {
             avatar: globalData.userInfo.avatarUrl,

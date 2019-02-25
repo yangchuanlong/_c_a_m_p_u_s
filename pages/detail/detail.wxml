@@ -10,8 +10,16 @@
   <view class='content'>{{detail.content}}</view>
   <view class='comments'>
     <view class='subTitle'>评论区</view>
-    <view>
-     bla bla
+    <view class='comment-list'>
+      <view wx:for="{{replies}}" class='replyItem' wx:key="{{item._id}}" data-reply-id="{{item._id}}" >
+        <view class='replier'>
+          <image src="{{item.user.avatar}}"></image>
+          <text class='nickName'>{{item.user.nickName}}:</text>
+          <text style='flex:1'></text>
+          <text>{{item.createdTime}}</text>          
+        </view>
+        <view class='replyContent'>{{item.content}}</view>
+      </view>
     </view>
   </view>
 
