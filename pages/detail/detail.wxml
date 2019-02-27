@@ -11,7 +11,7 @@
   <view class='comments'>
     <view class='subTitle'>评论区</view>
     <view class='comment-list'>
-      <view wx:for="{{replies}}" class='replyItem' wx:key="{{item._id}}" data-reply-id="{{item._id}}" >
+      <view wx:for="{{replies}}" class='replyItem' wx:key="{{item._id}}" data-reply-id="{{item._id}}" bindtap='onMainReplyClick'>
         <view class='replier'>
           <image src="{{item.user.avatar}}"></image>
           <text class='nickName'>{{item.user.nickName}}:</text>
@@ -19,6 +19,21 @@
           <text>{{item.createdTime}}</text>          
         </view>
         <view class='replyContent'>{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class='mask' style="display:{{dlgVisible ? '': 'none'}}">
+    <view class='chosenContent'>
+      <view class='closeBtn' bindtap='onCloseDlg'>x</view>
+      <view class='replyItem'>
+        <view class='replier'>
+            <image src="{{chosenReply.user.avatar}}"></image>
+            <text class='nickName'>{{chosenReply.user.nickName}}:</text>
+            <text style='flex:1'></text>
+            <text>{{chosenReply.createdTime}}</text>          
+          </view>
+          <view class='replyContent'>{{chosenReply.content}}</view>
       </view>
     </view>
   </view>

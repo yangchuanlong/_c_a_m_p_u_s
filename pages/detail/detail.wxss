@@ -90,3 +90,30 @@
   margin-top: 32rpx;
   padding-top: 16rpx;
 }
+
+.mask{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background:gray;
+}
+.mask .chosenContent{
+  position: absolute;
+  bottom: 90rpx;
+  top: 100rpx;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  background: white;
+  padding: 12rpx;
+}
+.closeBtn{
+  position: absolute;
+  right: 16rpx;
+  top: -20rpx;
+  padding: 20rpx;
+  font-size: 36rpx;
+}

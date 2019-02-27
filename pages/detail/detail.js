@@ -9,7 +9,10 @@ Page({
     inputedComment: '',
     sendBtnDisabled: true,
     sendBtnLoading: false,
-    replies: []
+    dlgVisible: false,
+    replies: [],
+    replyMap: {},
+    chosenReply: null
   },
 
   /**
@@ -34,22 +37,26 @@ Page({
         detail
       })
     });
-
     
     const replyCollection = db.collection("replies");
     replyCollection.where({
       questionId: options.id
     }).get().then(res => {
+      const replyMap = {};
       let replies = res.data.map(reply => {
-        const date = new Date(reply.createdTime);
-        return {
+        const date = new Date(reply.createdTime);     
+        const item = {
           content: reply.content,
           createdTime: `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`,
-          user: reply.user
-        }
-      });
+          user: reply.user,
+          _id: reply._id
+        };
+        replyMap[reply._id] = item;
+        return item;
+      });      
       _t.setData({
-        replies
+        replies,
+        replyMap
       })
     })
   },
@@ -92,6 +99,19 @@ Page({
         _t.setData({
             sendBtnLoading: false
         })
+    })
+  },
+
+  onCloseDlg() {
+    this.setData({
+      dlgVisible: false
+    })
+  },
+  onMainReplyClick(evt) {
+    const mainReplyId = evt.currentTarget.dataset.replyId;
+    this.setData({
+      dlgVisible: true,
+      chosenReply: this.data.replyMap[mainReplyId]
     })
   },
   /**
