@@ -11,7 +11,7 @@
   <view class='comments'>
     <view class='subTitle'>评论区</view>
     <view class='comment-list'>
-      <view wx:for="{{replies}}" class='replyItem' wx:key="{{item._id}}" data-reply-id="{{item._id}}" bindtap='onMainReplyClick'>
+      <view wx:for="{{mainReplies}}" class='replyItem' wx:key="{{item._id}}" data-reply-id="{{item._id}}" bindtap='onMainReplyClick'>
         <view class='replier'>
           <image src="{{item.user.avatar}}"></image>
           <text class='nickName'>{{item.user.nickName}}:</text>
@@ -19,11 +19,26 @@
           <text>{{item.createdTime}}</text>          
         </view>
         <view class='replyContent'>{{item.content}}</view>
+        <view class="actions"> <text>赞(10)</text> | <text>回复({{item.subordinates.length}})</text> </view>
+        <view class='subReplies' wx:if="{{replyMap[item._id].subordinates.length}}">
+          <view class='replyItem subReplyItem'>
+            <view class='replier'>
+              <image src="{{replyMap[item._id].subordinates[0].user.avatar}}"></image>
+              <text class='nickName'>{{replyMap[item._id].subordinates[0].user.nickName}}:</text>
+              <text style='flex:1'></text>
+              <text>{{replyMap[item._id].subordinates[0].createdTime}}</text>
+            </view>
+            <view class='replyContent'>{{replyMap[item._id].subordinates[0].content}}</view>
+          </view>
+          <view wx:if="{{replyMap[item._id].subordinates.length > 1}}" class='moreReplies'>
+            <text>查看全部回复</text> <text style="transform: rotate(90deg);font-size: 36rpx;"> > </text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
 
-  <view class='mask' style="display:{{dlgVisible ? '': 'none'}}">
+  <view class='mask' wx:if="{{chosenReply}}">
     <view class='chosenContent'>
       <view class='closeBtn' bindtap='onCloseDlg'>x</view>
       <view class='replyItem'>
@@ -32,14 +47,35 @@
             <text class='nickName'>{{chosenReply.user.nickName}}:</text>
             <text style='flex:1'></text>
             <text>{{chosenReply.createdTime}}</text>          
+        </view>
+        <view class='replyContent'>{{chosenReply.content}}</view>
+        <view class="actions"> <text>赞(10)</text> | <text>回复({{chosenReply.subordinates.length}})</text> </view>
+        <view class='subReplies' wx:if="{{chosenReply.subordinates.length}}">
+          <view class='replyItem subReplyItem' wx:for="{{chosenReply.subordinates}}" wx:for-item="subItem" wx:key="{{subItem._id}}">
+            <view class='replier'>
+              <image src="{{subItem.user.avatar}}"></image>
+              <text class='nickName'>{{subItem.user.nickName}}:</text>
+              <text style='flex:1'></text>
+              <text>{{subItem.createdTime}}</text>
+            </view>
+            <view class='replyContent'>{{subItem.content}}</view>
+            <view class="actions"> <text>赞(10)</text> | <text>回复(12)</text> </view>
           </view>
-          <view class='replyContent'>{{chosenReply.content}}</view>
+        </view>
       </view>
     </view>
   </view>
 
   <view class='commentInputWrapper'>
-    <input cursor-spacing="6" placeholder='说点什么...' bindinput='onInput' value="{{inputedComment}}"/>
+    <textarea 
+      cursor-spacing="12"
+      placeholder='{{placeholder}}' 
+      bindinput='onInput' 
+      value="{{inputedComment}}" 
+      auto-height
+      fixed
+      show-confirm-bar="{{false}}"
+    />
     <button size='mini' disabled="{{sendBtnDisabled}}" bindtap='onSend' loading="{{sendBtnLoading}}">发送</button>
   </view>
 </view>

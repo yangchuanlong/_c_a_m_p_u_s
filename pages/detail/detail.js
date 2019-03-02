@@ -9,10 +9,10 @@ Page({
     inputedComment: '',
     sendBtnDisabled: true,
     sendBtnLoading: false,
-    dlgVisible: false,
-    replies: [],
+    mainReplies: [],
     replyMap: {},
-    chosenReply: null
+    chosenReply: null,
+    placeholder: "说点什么..."
   },
 
   /**
@@ -42,31 +42,40 @@ Page({
     replyCollection.where({
       questionId: options.id
     }).get().then(res => {
-      const replyMap = {};
-      let replies = res.data.map(reply => {
+      const replyMap = {}, mainReplies = [], subReplies = [];
+      res.data.map(reply => {
         const date = new Date(reply.createdTime);     
         const item = {
           content: reply.content,
           createdTime: `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`,
           user: reply.user,
-          _id: reply._id
+          _id: reply._id,
+          subordinateTo: reply.subordinateTo
         };
         replyMap[reply._id] = item;
-        return item;
-      });      
+        if (!item.subordinateTo) {
+          item.subordinates = [];//子评论
+          mainReplies.push(item)
+        } else {
+          subReplies.push(item);
+        }
+      });
+      subReplies.forEach(subReply => {
+        replyMap[subReply.subordinateTo].subordinates.push(subReply);
+      });
       _t.setData({
-        replies,
+        mainReplies,
         replyMap
       })
     })
   },
 
   onInput(evt) {
-    const inputedComment = evt.detail.value;
-    const trimmedComment = inputedComment.replace(/^\s+|\s+$/g, "");
-    if (trimmedComment.length) {
+    const inputedReply = evt.detail.value;
+    const trimmedReply = inputedReply.replace(/^\s+|\s+$/g, "");
+    if (trimmedReply.length) {
       this.setData({
-        trimmedComment,
+        trimmedReply,
         sendBtnDisabled: false
       })
     }
@@ -79,22 +88,44 @@ Page({
     this.setData({
       sendBtnLoading: true
     });
+   
+    const data = {
+      content: this.data.trimmedReply,
+      questionId: this.data.questionId,
+      subordinateTo: this.data.chosenReply && this.data.chosenReply._id,
+      user: {
+        avatar: globalData.userInfo.avatarUrl,
+        nickName: globalData.userInfo.nickName
+      }
+    };
     wx.cloud.callFunction({
-        name: 'reply',
-        data: {
-          content: this.data.trimmedComment,
-          questionId: this.data.questionId,
-          user: {
-            avatar: globalData.userInfo.avatarUrl,
-            nickName: globalData.userInfo.nickName
-          }
-        }
-    }).then(function () {
+      name: 'reply',
+      data
+    }).then(function (resp) {
+        const _id = resp.result;
         _t.setData({
-            inputedComment: "",
-            sendBtnDisabled: true,
-            sendBtnLoading: false
-        })
+          inputedComment: "",
+          sendBtnDisabled: true,
+          sendBtnLoading: false
+        });
+        data._id = _id; //添加到评论区
+        _t.data.replyMap[_id] = data;
+        if(!_t.data.chosenReply) {//主回复
+          data.subordinates = [];
+          const mainReplies = _t.data.mainReplies;          
+          mainReplies.push(data);
+          _t.setData({
+            mainReplies,
+          })
+        } else { //子回复
+          data.subordinateTo = _t.data.chosenReply._id;          
+          _t.data.chosenReply.subordinates.push(data);
+          _t.data.replyMap[data.subordinateTo].subordinates.push(data);
+          _t.setData({
+            chosenReply: _t.data.chosenReply,
+            replyMap: _t.data.replyMap
+          })
+        }
     }, function (err) {
         _t.setData({
             sendBtnLoading: false
@@ -104,14 +135,16 @@ Page({
 
   onCloseDlg() {
     this.setData({
-      dlgVisible: false
+      chosenReply: null,
+      placeholder: '说点什么...'
     })
   },
   onMainReplyClick(evt) {
     const mainReplyId = evt.currentTarget.dataset.replyId;
+    const mainReply = this.data.replyMap[mainReplyId];
     this.setData({
-      dlgVisible: true,
-      chosenReply: this.data.replyMap[mainReplyId]
+      chosenReply: mainReply,
+      placeholder: `回复${mainReply.user.nickName}:`
     })
   },
   /**

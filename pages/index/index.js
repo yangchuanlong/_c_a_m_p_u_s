@@ -10,7 +10,9 @@ Page({
     lastestQuestionTime: null,
     oldestQuestionTime: null,
     searchTxt: '',
-    showLoading: false
+    showLoading: false,
+    tabIndex: 0,
+    haveMoreData: true
   },
   //事件处理函数
   bindViewTap: function() {
@@ -65,7 +67,7 @@ Page({
       });
       const _ = db.command, _t = this;
       const questionCollection = db.collection("questions");
-    questionCollection.orderBy('createdTime', 'desc').limit(10).get().then(function(resp){
+      questionCollection.orderBy('createdTime', 'desc').limit(10).get().then(function(resp){
           const data = resp.data;
           data.forEach(item => {
               const createdTime = item.createdTime || new Date().toISOString();
@@ -117,6 +119,12 @@ Page({
       hasUserInfo: true
     })
   },
+  onTabClick(evt){    
+    const tabIndex = evt.target.dataset.tabIndex;
+    this.setData({
+      tabIndex
+    });
+  },
   onPullDownRefresh: function () {
     const _t = this;
     wx.cloud.init();
@@ -146,6 +154,9 @@ Page({
   },
   onReachBottom(){
     const _t = this;
+    if(!_t.data.haveMoreData) {
+      return;
+    }
     this.setData({
       showLoading: true
     });    
@@ -170,7 +181,11 @@ Page({
           questions: _t.data.questions.concat(data),
           oldestQuestionTime: data[data.length - 1].createdTime,
         });
-      }   
+      } else {
+        _t.setData({
+          haveMoreData: false
+        })
+      }  
       _t.setData({
         showLoading: false
       });     

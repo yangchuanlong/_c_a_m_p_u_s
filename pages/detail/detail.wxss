@@ -60,14 +60,14 @@
   padding: 12rpx;
   display: flex;
 }
-.commentInputWrapper input{  
+.commentInputWrapper textarea{  
   border:2rpx solid #d3d3d3;
   border-radius: 12rpx;
   flex: 1;
   margin-right: 12rpx;
-  height: 58rpx;
   background: #fff;
-  padding: 0 6rpx;
+  padding: 6rpx;
+  min-height: 58rpx;
 }
 
 .replier{
@@ -86,9 +86,15 @@
   padding-left: 50rpx;
 }
 .replyItem{
-  border-top: 2rpx solid #f3dede;
-  margin-top: 32rpx;
+  border-top: 2rpx solid #dadada;
+  margin-top: 16rpx;
   padding-top: 16rpx;
+}
+
+.replyItem .actions{
+  font-size: 28rpx;
+  text-align: right;
+  color: #cccaca;
 }
 
 .mask{
@@ -103,17 +109,35 @@
 .mask .chosenContent{
   position: absolute;
   bottom: 90rpx;
-  top: 100rpx;
   width: 100%;
   box-sizing: border-box;
   overflow-y: scroll;
   background: white;
-  padding: 12rpx;
+  padding: 40rpx 12rpx 12rpx 12rpx;
+  min-height: 50vh;
+  max-height: 90vh;
 }
 .closeBtn{
   position: absolute;
   right: 16rpx;
-  top: -20rpx;
+  top: -26rpx;
   padding: 20rpx;
-  font-size: 36rpx;
+  font-size: 40rpx;
+}
+
+.subReplies{
+  padding-left: 50rpx;
+}
+.subReplyItem{
+  background: #EBE9E9;
+  padding:12rpx;
+}
+.moreReplies{
+  color:#298DF8;
+  font-size:28rpx;
+  text-align:center;
+}
+.moreReplies text{
+  display:inline-block;
+  vertical-align: top;
 }
