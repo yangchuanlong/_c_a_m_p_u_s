@@ -23,7 +23,7 @@
             <view class="title">{{item.title}}</view>
             <view class="shortContent">{{item.shortContent}}</view>
             <view class='acions'>
-              <view>赞(12)</view>
+              <view id='js-thumbup'>赞(12)</view>
               <view>|</view>
               <view>回答(867)</view>
             </view>

@@ -12,7 +12,8 @@ Page({
     searchTxt: '',
     showLoading: false,
     tabIndex: 0,
-    haveMoreData: true
+    haveMoreData: true,
+    myThumbups: {}
   },
   //事件处理函数
   bindViewTap: function() {
@@ -21,6 +22,10 @@ Page({
     })
   },
   gotoDetail(evt) {
+    console.log(evt.target.id)
+    if(evt.target.classList) {
+
+    }
     const questionId = evt.currentTarget.dataset.id;
     wx.navigateTo({
       url: '/pages/detail/detail?id=' + questionId,
@@ -82,8 +87,24 @@ Page({
           });
       })
   },
+  getMyThumbups: function() {
+    const _t = this;
+    wx.cloud.callFunction({
+      name: 'myThumbups',
+      success: function (resp) {
+        const myThumbups = {};
+        resp.result.data.forEach(item => {
+          myThumbups[item.questionOrReplyId] = true;
+        });
+        _t.setData({
+          myThumbups 
+        });
+      }
+    })
+  },
   onLoad: function () {
     this.getQuestions();
+    this.getMyThumbups();
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
