@@ -102,6 +102,11 @@
   color: #D0D1D1;
   padding-bottom: 12rpx;
 }
+.acions image{
+  width: 40rpx;
+  height: 40rpx;
+  display: inline-block;
+}
 .acions view{
   margin-left: 16rpx;
 }

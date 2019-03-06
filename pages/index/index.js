@@ -22,11 +22,17 @@ Page({
     })
   },
   gotoDetail(evt) {
-    console.log(evt.target.id)
-    if(evt.target.classList) {
-
-    }
     const questionId = evt.currentTarget.dataset.id;
+    const myThumbups = this.data.myThumbups;
+    if (evt.target.id === 'js-thumbup') {
+      myThumbups[questionId] = true;
+      this.setData({myThumbups});
+      return;
+    } else if (evt.target.id === 'js-thumbup-cancel') {
+      delete myThumbups[questionId];
+      this.setData({ myThumbups });
+      return;
+    }    
     wx.navigateTo({
       url: '/pages/detail/detail?id=' + questionId,
     })

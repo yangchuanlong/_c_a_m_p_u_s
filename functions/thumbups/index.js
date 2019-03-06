@@ -9,8 +9,14 @@ const db = cloud.database({
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
+  if(event.type === 'get') {
+    return db.collection("thumbups").get();
+  } else if(event.type === 'add'){//添加对一个提问或回答的点赞
+    
+  } else if(event.type === 'cancel') {//取消对一个提问或回答的点赞
 
-  return db.collection("myThumbups").get();
+  }
+  
   // return {
   //   event,
   //   openid: wxContext.OPENID,
