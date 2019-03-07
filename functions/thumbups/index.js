@@ -12,9 +12,17 @@ exports.main = async (event, context) => {
   if(event.type === 'get') {
     return db.collection("thumbups").get();
   } else if(event.type === 'add'){//添加对一个提问或回答的点赞
-    
+    return db.collection('thumbups').add({
+      data: {
+        questionOrReplyId: event.questionOrReplyId,
+        openid: wxContext.OPENID
+      }
+    });
   } else if(event.type === 'cancel') {//取消对一个提问或回答的点赞
-
+    return db.collection('thumbups').where({
+      questionOrReplyId: event.questionOrReplyId,
+      openid: wxContext.OPENID
+    }).remove()
   }
   
   // return {

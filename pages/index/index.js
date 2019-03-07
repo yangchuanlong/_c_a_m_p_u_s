@@ -22,15 +22,30 @@ Page({
     })
   },
   gotoDetail(evt) {
+    const _t = this;
     const questionId = evt.currentTarget.dataset.id;
     const myThumbups = this.data.myThumbups;
     if (evt.target.id === 'js-thumbup') {
       myThumbups[questionId] = true;
       this.setData({myThumbups});
+      wx.cloud.callFunction({
+         name: 'thumbups',
+         data: {
+           type: 'add',
+           questionOrReplyId: questionId
+         }
+      });
       return;
     } else if (evt.target.id === 'js-thumbup-cancel') {
       delete myThumbups[questionId];
       this.setData({ myThumbups });
+      wx.cloud.callFunction({
+        name: 'thumbups',
+        data: {
+          type: 'cancel',
+          questionOrReplyId: questionId
+        }
+      });
       return;
     }    
     wx.navigateTo({
@@ -96,7 +111,10 @@ Page({
   getMyThumbups: function() {
     const _t = this;
     wx.cloud.callFunction({
-      name: 'myThumbups',
+      name: 'thumbups',
+      data: {
+        type: 'get'
+      },
       success: function (resp) {
         const myThumbups = {};
         resp.result.data.forEach(item => {
