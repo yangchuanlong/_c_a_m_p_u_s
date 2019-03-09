@@ -95,19 +95,19 @@
     font-size: 28rpx;
     margin-top: 12rpx;
 }
-.acions{
+.actions{
   display:flex;
   font-size: 26rpx;
   margin-top: 12rpx;
   color: #D0D1D1;
   padding-bottom: 12rpx;
 }
-.acions image{
+.actions image{
   width: 40rpx;
   height: 40rpx;
   display: inline-block;
 }
-.acions view{
+.actions view{
   margin-left: 16rpx;
 }
 .loading{

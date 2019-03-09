@@ -4,7 +4,7 @@
       <input confirm-type='search' 
       bindinput='inputSearch'
       bindconfirm='startSearch'
-      placeholder='请输入搜素内容'
+      placeholder='请输入搜索内容'
       ></input>
     </view>
     <view class='tabs' bindtap='onTabClick'>
@@ -22,14 +22,14 @@
             </view>
             <view class="title">{{item.title}}</view>
             <view class="shortContent">{{item.shortContent}}</view>
-            <view class='acions'>
+            <view class='actions'>
               <view>
                 <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel'></image>
-                <image wx:else src="../images/not-thumbup.png" id='js-thumbup'></image>               
+                <image wx:else src="../images/not-thumbup.png" id='js-thumbup'></image>
               </view>
-              <view> 赞(12)</view>
+              <view> 赞({{item.thumbupCount}})</view>
               <view>|</view>
-              <view>回答(867)</view>
+              <view>回答({{item.replyCount}})</view>
             </view>
         </view>
     </view>

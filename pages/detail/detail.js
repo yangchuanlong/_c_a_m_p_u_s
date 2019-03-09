@@ -12,7 +12,8 @@ Page({
     mainReplies: [],
     replyMap: {},
     chosenReply: null,
-    placeholder: "说点什么..."
+    placeholder: "说点什么...",
+    myThumbups: {},//对回复的点赞
   },
 
   /**
@@ -42,8 +43,8 @@ Page({
     replyCollection.where({
       questionId: options.id
     }).get().then(res => {
-      const replyMap = {}, mainReplies = [], subReplies = [];
-      res.data.map(reply => {
+      const replyMap = {}, mainReplies = [], subReplies = [], ids = [];
+      res.data.forEach(reply => {
         const date = new Date(reply.createdTime);     
         const item = {
           content: reply.content,
@@ -59,6 +60,7 @@ Page({
         } else {
           subReplies.push(item);
         }
+        ids.push(reply._id);
       });
       subReplies.forEach(subReply => {
         replyMap[subReply.subordinateTo].subordinates.push(subReply);
@@ -66,10 +68,33 @@ Page({
       _t.setData({
         mainReplies,
         replyMap
-      })
+      });
+      _t.getMyThumbupsForReplies(ids);
+    });
+  },
+  getMyThumbupsForReplies: function(ids) {//获取'我'对回复的点赞
+    wx.cloud.callFunction({
+      name: 'thumbups',
+      data: {
+        ids,
+        type: 'reply'
+      },
+      success: function (res) {
+        console.log(res)
+      }
+    });
+  },
+  thumbup: function() {
+    wx.cloud.callFunction({
+      name: 'thumbups',
+      data: {
+
+      }
     })
   },
+  cancelThumbup: function() {
 
+  },
   onInput(evt) {
     const inputedReply = evt.detail.value;
     const trimmedReply = inputedReply.replace(/^\s+|\s+$/g, "");

@@ -92,11 +92,16 @@
 }
 
 .replyItem .actions{
+  display: flex;
   font-size: 28rpx;
-  text-align: right;
   color: #cccaca;
+  align-items: center;
+  justify-content: flex-end;
 }
-
+.replyItem .actions image{
+  width: 40rpx;
+  height: 40rpx;
+}
 .mask{
   position: fixed;
   top: 0;

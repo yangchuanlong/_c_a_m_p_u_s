@@ -25,29 +25,32 @@ Page({
     const _t = this;
     const questionId = evt.currentTarget.dataset.id;
     const myThumbups = this.data.myThumbups;
+    let action = '';
     if (evt.target.id === 'js-thumbup') {
-      myThumbups[questionId] = true;
-      this.setData({myThumbups});
-      wx.cloud.callFunction({
-         name: 'thumbups',
-         data: {
-           type: 'add',
-           questionOrReplyId: questionId
-         }
+      action = 'add';
+    } else if(evt.target.id === 'js-thumbup-cancel') {
+      action = 'cancel';
+    }
+    if(action) {
+      const questions = _t.data.questions;
+      questions.some(question => {
+        if(question._id == questionId) {
+          question.thumbupCount += (action == 'add' ? 1 : -1);
+          return true;
+        }
       });
-      return;
-    } else if (evt.target.id === 'js-thumbup-cancel') {
-      delete myThumbups[questionId];
-      this.setData({ myThumbups });
+      action == 'add' ? (myThumbups[questionId] = true) : (delete myThumbups[questionId]);
+      this.setData({myThumbups, questions});
       wx.cloud.callFunction({
         name: 'thumbups',
         data: {
-          type: 'cancel',
-          questionOrReplyId: questionId
+          action,
+          questionOrReplyId: questionId,
+          type: 'question'
         }
       });
       return;
-    }    
+    }
     wx.navigateTo({
       url: '/pages/detail/detail?id=' + questionId,
     })
@@ -86,6 +89,57 @@ Page({
   onReady() {
 
   },
+  getThumbupsOfQuestions(questionIds) {
+    const _t = this;
+    wx.cloud.callFunction({
+      name: 'getThumbups',
+      data: {
+        ids: questionIds,
+        type: 'question'
+      },
+      success: function ({result}) {
+        if(!result) {
+          return;
+        }
+        const questions = _t.data.questions;
+        questions.forEach(question => {
+          if(question._id in result) {
+            question.thumbupCount = result[question._id];
+          } else if(isNaN(question.thumbupCount)){
+            question.thumbupCount = 0;
+          }
+        });
+        _t.setData({
+          questions
+        });
+      }
+    })
+  },
+  getRepliesOfQuestions(questionIds){ //获取回复数
+    const _t = this;
+    wx.cloud.callFunction({
+      name: 'getRepliesOfQuestions',
+      data: {
+        questionIds
+      },
+      success: function ({result}) { //result {[questionId]: Number, ...}
+        if(!result) {
+          return;
+        }
+        const questions = _t.data.questions;
+        questions.forEach(question => {
+          if(question._id in result) {
+            question.replyCount = result[question._id];
+          } else if(isNaN(question.replyCount)){
+            question.replyCount = 0;
+          }
+        });
+        _t.setData({
+          questions
+        });
+      }
+    });
+  },
   getQuestions: function() {
       wx.cloud.init();
       const db = wx.cloud.database({
@@ -94,18 +148,21 @@ Page({
       const _ = db.command, _t = this;
       const questionCollection = db.collection("questions");
       questionCollection.orderBy('createdTime', 'desc').limit(10).get().then(function(resp){
-          const data = resp.data;
+          const data = resp.data, ids = [];
           data.forEach(item => {
               const createdTime = item.createdTime || new Date().toISOString();
               const date = new Date(createdTime);
               item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
-              item.shortContent = item.content.substr(0, 40)
+              item.shortContent = item.content.substr(0, 40);
+              ids.push(item._id);
           });
           _t.setData({
               questions: data,
               lastestQuestionTime: data.length ? data[0].createdTime : new Date().toISOString(),
               oldestQuestionTime: data.length ? data[data.length - 1].createdTime : new Date(0, 0, 0).toISOString()
           });
+          _t.getThumbupsOfQuestions(ids);
+          _t.getRepliesOfQuestions(ids);
       })
   },
   getMyThumbups: function() {
@@ -113,7 +170,8 @@ Page({
     wx.cloud.callFunction({
       name: 'thumbups',
       data: {
-        type: 'get'
+        action: 'get',
+        type: 'question'
       },
       success: function (resp) {
         const myThumbups = {};
@@ -123,6 +181,7 @@ Page({
         _t.setData({
           myThumbups 
         });
+        app.globalData.myQuestionThumbups = myThumbups;
       }
     })
   },
@@ -181,18 +240,21 @@ Page({
     questionCollection.where({
       createdTime: _.gt(_t.data.lastestQuestionTime instanceof Date ? _t.data.lastestQuestionTime.toISOString() : _t.data.lastestQuestionTime)
     }).orderBy('createdTime', 'desc').get().then(function(resp){
-      const data = resp.data;
+      const data = resp.data, ids = [];
       if (data.length) {
         data.forEach(item => {
           const createdTime = item.createdTime || new Date().toISOString();
           const date = new Date(createdTime);
           item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
-          item.shortContent = item.content.substr(0, 40)
+          item.shortContent = item.content.substr(0, 40);
+          ids.push(item._id);
         });
         _t.setData({
           questions: data.concat(_t.data.questions),
           lastestQuestionTime: data[0].createdTime,
         });
+        _t.getThumbupsOfQuestions(ids);
+        _t.getRepliesOfQuestions(ids);
       }
       wx.stopPullDownRefresh();
     })
@@ -214,18 +276,21 @@ Page({
     questionCollection.where({
       createdTime: _.lt(_t.data.oldestQuestionTime instanceof Date ? _t.data.oldestQuestionTime.toISOString() : _t.data.oldestQuestionTime)
     }).orderBy('createdTime', 'desc').limit(10).get().then(function (resp) {
-      const data = resp.data;
+      const data = resp.data, ids = [];
       if (data.length) {
         data.forEach(item => {
           const createdTime = item.createdTime || new Date().toISOString();
           const date = new Date(createdTime);
           item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
-          item.shortContent = item.content.substr(0, 40)
+          item.shortContent = item.content.substr(0, 40);
+          ids.push(item._id);
         });
         _t.setData({
           questions: _t.data.questions.concat(data),
           oldestQuestionTime: data[data.length - 1].createdTime,
         });
+        _t.getThumbupsOfQuestions(ids);
+        _t.getRepliesOfQuestions(ids);
       } else {
         _t.setData({
           haveMoreData: false

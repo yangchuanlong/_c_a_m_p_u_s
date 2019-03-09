@@ -19,7 +19,11 @@
           <text>{{item.createdTime}}</text>          
         </view>
         <view class='replyContent'>{{item.content}}</view>
-        <view class="actions"> <text>赞(10)</text> | <text>回复({{item.subordinates.length}})</text> </view>
+        <view class="actions">
+          <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel' bindtap="cancelThumbup"></image>
+          <image wx:else src="../images/not-thumbup.png" id='js-thumbup' bindtap="thumbup"></image>
+          <text>赞(10)</text> | <text>回复({{item.subordinates.length}})</text>
+        </view>
         <view class='subReplies' wx:if="{{replyMap[item._id].subordinates.length}}">
           <view class='replyItem subReplyItem'>
             <view class='replier'>
