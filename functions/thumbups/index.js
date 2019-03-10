@@ -8,10 +8,11 @@ const db = cloud.database({
 });
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const wxContext = cloud.getWXContext()
+  const wxContext = cloud.getWXContext();
   if(event.action === 'get') {
-    return db.collection("thumbups").where({
-      type: event.type
+    return db.collection("thumbups").where({//获取我的点赞
+      type: event.type,
+      openid: wxContext.OPENID,
     }).get();
   } else if(event.action === 'add'){//添加对一个提问或回答的点赞
     return db.collection('thumbups').add({

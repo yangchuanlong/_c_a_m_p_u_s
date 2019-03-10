@@ -70,30 +70,97 @@ Page({
         replyMap
       });
       _t.getMyThumbupsForReplies(ids);
+      _t.getThumbupOfReplies(ids);
     });
   },
   getMyThumbupsForReplies: function(ids) {//获取'我'对回复的点赞
+    if(!ids.length) {
+      return;
+    }
+    const _t = this;
     wx.cloud.callFunction({
       name: 'thumbups',
       data: {
+        action: 'get',
         ids,
         type: 'reply'
       },
-      success: function (res) {
-        console.log(res)
+      success: function (resp) {
+        const myThumbups = {};
+          resp.result.data.forEach(item => {
+              myThumbups[item.questionOrReplyId] = true;
+          });
+          _t.setData({
+              myThumbups
+          });
       }
     });
   },
-  thumbup: function() {
-    wx.cloud.callFunction({
-      name: 'thumbups',
-      data: {
-
-      }
-    })
+  getThumbupOfReplies(ids){
+      const _t = this;
+      wx.cloud.callFunction({
+          name: 'getThumbups',
+          data: {
+              ids,
+              type: 'reply'
+          },
+          success: function ({result}) {
+              if(!result) {
+                  return;
+              }
+              const replyMap = _t.data.replyMap;
+              for(let _id in replyMap) {
+                  if(_id in result) {
+                      replyMap[_id].thumbupCount = result[_id];
+                  } else if(isNaN(replyMap[_id].thumbupCount)){
+                      replyMap[_id].thumbupCount = 0;
+                  }
+              }
+              _t.setData({
+                  replyMap
+              });
+          }
+      })
   },
-  cancelThumbup: function() {
-
+  thumbup: function(evt) {
+      const id = evt.currentTarget.dataset.id;
+      wx.cloud.callFunction({
+          name: 'thumbups',
+          data: {
+              action: 'add',
+              questionOrReplyId: id,
+              type: 'reply'
+          }
+      });
+      const myThumbups = this.data.myThumbups;
+      const replyMap = this.data.replyMap;
+      myThumbups[id] = true;
+      replyMap[id].thumbupCount += 1;
+      this.setData({
+          myThumbups,
+          replyMap
+      });
+  },
+  cancelThumbup: function(evt) {
+      const id = evt.currentTarget.dataset.id;
+      wx.cloud.callFunction({
+          name: 'thumbups',
+          data: {
+              action: 'cancel',
+              questionOrReplyId: id,
+              type: 'reply'
+          }
+      });
+      const myThumbups = this.data.myThumbups;
+      const replyMap = this.data.replyMap;
+      delete myThumbups[id];
+      if(replyMap[id].thumbupCount > 0) {
+          replyMap[id].thumbupCount -= 1;
+      }
+      this.setData({
+          myThumbups,
+          replyMap
+      });
   },
   onInput(evt) {
     const inputedReply = evt.detail.value;
@@ -134,6 +201,7 @@ Page({
           sendBtnLoading: false
         });
         data._id = _id; //添加到评论区
+        data.thumbupCount = 0;
         _t.data.replyMap[_id] = data;
         if(!_t.data.chosenReply) {//主回复
           data.subordinates = [];
@@ -165,7 +233,10 @@ Page({
     })
   },
   onMainReplyClick(evt) {
-    const mainReplyId = evt.currentTarget.dataset.replyId;
+  const mainReplyId = evt.currentTarget.dataset.replyId;
+    if(evt.target.id == 'js-thumbup' || evt.target.id == 'js-thumbup-cancel') {
+      return;
+    }
     const mainReply = this.data.replyMap[mainReplyId];
     this.setData({
       chosenReply: mainReply,

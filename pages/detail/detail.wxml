@@ -20,9 +20,9 @@
         </view>
         <view class='replyContent'>{{item.content}}</view>
         <view class="actions">
-          <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel' bindtap="cancelThumbup"></image>
-          <image wx:else src="../images/not-thumbup.png" id='js-thumbup' bindtap="thumbup"></image>
-          <text>赞(10)</text> | <text>回复({{item.subordinates.length}})</text>
+          <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel'  data-id="{{item._id}}" bindtap="cancelThumbup"></image>
+          <image wx:else src="../images/not-thumbup.png" id='js-thumbup' data-id="{{item._id}}" bindtap="thumbup"></image>
+          <text>赞({{replyMap[item._id].thumbupCount}})</text> | <text>回复({{item.subordinates.length}})</text>
         </view>
         <view class='subReplies' wx:if="{{replyMap[item._id].subordinates.length}}">
           <view class='replyItem subReplyItem'>
@@ -33,6 +33,11 @@
               <text>{{replyMap[item._id].subordinates[0].createdTime}}</text>
             </view>
             <view class='replyContent'>{{replyMap[item._id].subordinates[0].content}}</view>
+            <view class="actions">
+              <image wx:if="{{myThumbups[replyMap[item._id].subordinates[0]._id]}}" src="../images/thumbup.png"   data-id="{{replyMap[item._id].subordinates[0]._id}}" bindtap="cancelThumbup"></image>
+              <image wx:else src="../images/not-thumbup.png"  data-id="{{replyMap[item._id].subordinates[0]._id}}" bindtap="thumbup"></image>
+              <text>赞({{replyMap[replyMap[item._id].subordinates[0]._id].thumbupCount}})</text>
+            </view>
           </view>
           <view wx:if="{{replyMap[item._id].subordinates.length > 1}}" class='moreReplies'>
             <text>查看全部回复</text> <text style="transform: rotate(90deg);font-size: 36rpx;"> > </text>
@@ -53,7 +58,11 @@
             <text>{{chosenReply.createdTime}}</text>          
         </view>
         <view class='replyContent'>{{chosenReply.content}}</view>
-        <view class="actions"> <text>赞(10)</text> | <text>回复({{chosenReply.subordinates.length}})</text> </view>
+        <view class="actions">
+          <image wx:if="{{myThumbups[chosenReply._id]}}" src="../images/thumbup.png" data-id="{{chosenReply._id}}" id='js-thumbup-cancel' bindtap="cancelThumbup"></image>
+          <image wx:else src="../images/not-thumbup.png" id='js-thumbup' data-id="{{chosenReply._id}}" bindtap="thumbup"></image>
+          <text>赞({{replyMap[chosenReply._id].thumbupCount}})</text> | <text>回复({{chosenReply.subordinates.length}})</text>
+        </view>
         <view class='subReplies' wx:if="{{chosenReply.subordinates.length}}">
           <view class='replyItem subReplyItem' wx:for="{{chosenReply.subordinates}}" wx:for-item="subItem" wx:key="{{subItem._id}}">
             <view class='replier'>
@@ -63,7 +72,10 @@
               <text>{{subItem.createdTime}}</text>
             </view>
             <view class='replyContent'>{{subItem.content}}</view>
-            <view class="actions"> <text>赞(10)</text> | <text>回复(12)</text> </view>
+            <view class="actions">
+              <image wx:if="{{myThumbups[subItem._id]}}" src="../images/thumbup.png"  data-id="{{subItem._id}}" bindtap="cancelThumbup"></image>
+              <image wx:else src="../images/not-thumbup.png" data-id="{{subItem._id}}" bindtap="thumbup"></image>
+              <text>赞({{replyMap[subItem._id].thumbupCount}})</text> </view>
           </view>
         </view>
       </view>
