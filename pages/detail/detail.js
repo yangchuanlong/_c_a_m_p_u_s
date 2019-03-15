@@ -16,6 +16,16 @@ Page({
     myThumbups: {},//对回复的点赞
   },
 
+  scan(id){//把问题的浏览数加1
+    wx.cloud.init();
+    wx.cloud.callFunction({
+      name: 'scan',
+      data:{
+        action: 'add',
+        questionId: id,        
+      }
+    });
+  },
   /**
    * 生命周期函数--监听页面加载
    */
@@ -38,6 +48,7 @@ Page({
         detail
       })
     });
+    _t.scan(options.id);
     
     const replyCollection = db.collection("replies");
     replyCollection.where({
