@@ -13,16 +13,35 @@ Page({
     replyMap: {},
     chosenReply: null,
     placeholder: "说点什么...",
-    myThumbups: {},//对回复的点赞
+    myThumbups: {},//对回复的点赞,
+    scanCount: 0, //浏览量
   },
 
   scan(id){//把问题的浏览数加1
+    const _t = this;
     wx.cloud.init();
     wx.cloud.callFunction({
       name: 'scan',
       data:{
         action: 'add',
         questionId: id,        
+      },
+      success() {
+        _t.getScanNum(id);
+      }
+    });
+  },
+  getScanNum(questionId){//获取浏览数
+    const _t = this;
+    wx.cloud.init();
+    wx.cloud.callFunction({
+      name: 'getScan',
+      data: {
+        ids: [questionId]
+      },
+      success: function ({result}) {
+        const scanCount = result[questionId];
+        _t.setData({ scanCount });
       }
     });
   },
@@ -49,7 +68,7 @@ Page({
       })
     });
     _t.scan(options.id);
-    
+
     const replyCollection = db.collection("replies");
     replyCollection.where({
       questionId: options.id

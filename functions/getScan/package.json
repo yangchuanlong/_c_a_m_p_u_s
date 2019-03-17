@@ -1,0 +1,14 @@
+{
+  "name": "getScan",
+  "version": "1.0.0",
+  "description": "获取问题的浏览数",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}
