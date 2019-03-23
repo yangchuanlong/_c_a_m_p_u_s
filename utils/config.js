@@ -1,6 +1,6 @@
 
 const appConfig = {
-  env: 'prod-a294b8',
+  env: 'campus',
   version: '0.1.0'
 };
 
