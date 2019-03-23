@@ -1,3 +1,4 @@
+import config from '../../utils/config.js';
 Page({
 
   /**
@@ -21,7 +22,7 @@ Page({
       const _t = this;
       wx.cloud.init();
       const db = wx.cloud.database({
-          env: 'campus'
+          env: config.env
       });
       const dbCollection = db.collection("questions");
       dbCollection.where({

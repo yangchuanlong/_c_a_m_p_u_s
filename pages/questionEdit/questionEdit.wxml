@@ -1,15 +1,17 @@
 <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 授权获取头像昵称 </button>
 <view wx:else class="container">
-    <view class='tmp'>
-      <view class="plusIcon">+</view>
-      <view class="iconWrapper">
-          <view bindtap='onAddTxt'>文字</view>  <!--使用icon-->
-          <view>图片</view>
-      </view>
-    </view>
     <textarea placeholder='问题描述' bindinput='onInput'>
     </textarea>
-    <button 
+    <view class="imageWrapper">
+        <view wx:for="{{tempFilePaths}}" class="imageItemWrapper">
+            <image src="{{item}}"></image>
+            <text class="deleteIcon" data-index="{{index}}" bindtap="deleteChosenImg">x</text>
+        </view>
+        <view class="addImgBtn" bindtap="onChooseImg">
+            +
+        </view>
+    </view>
+    <button
       class='confirmBtn'
       bindtap="submit"
       type="primary"

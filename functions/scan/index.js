@@ -3,13 +3,13 @@ const cloud = require('wx-server-sdk')
 
 cloud.init();
 
-const db = cloud.database({
-  env: "campus"
-});
-const scanCollection = db.collection("scan");
 
 // 云函数入口函数
 exports.main = async (event, context) => {
+  const db = cloud.database({
+    env: event.env
+  });
+  const scanCollection = db.collection("scan");
   const wxContext = cloud.getWXContext()
   if(event.action == 'get') {//获取我浏览过的问题
 

@@ -2,12 +2,12 @@
 const cloud = require('wx-server-sdk')
 
 cloud.init()
-const db = cloud.database({
-  env: "campus"
-});
-const _ = db.command;
 // 云函数入口函数
 exports.main = async (event, context) => {
+  const db = cloud.database({
+    env: event.env
+  });
+  const _ = db.command;
   const wxContext = cloud.getWXContext()
   return db.collection('scan').where({
     questionId: _.in(event.ids)

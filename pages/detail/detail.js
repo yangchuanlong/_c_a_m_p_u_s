@@ -1,3 +1,4 @@
+import config from '../../utils/config.js';
 const app = getApp(), globalData = app.globalData;
 Page({
 
@@ -23,6 +24,7 @@ Page({
     wx.cloud.callFunction({
       name: 'scan',
       data:{
+        env:config.env,
         action: 'add',
         questionId: id,        
       },
@@ -37,6 +39,7 @@ Page({
     wx.cloud.callFunction({
       name: 'getScan',
       data: {
+        env:config.env,
         ids: [questionId]
       },
       success: function ({result}) {
@@ -54,7 +57,7 @@ Page({
     const _t = this;
     wx.cloud.init();
     const db = wx.cloud.database({
-      env: 'campus'
+      env: config.env
     });
     const dbCollection = db.collection("questions");
     dbCollection.where({
@@ -111,6 +114,7 @@ Page({
     wx.cloud.callFunction({
       name: 'thumbups',
       data: {
+        env:config.env,
         action: 'get',
         ids,
         type: 'reply'
@@ -131,6 +135,7 @@ Page({
       wx.cloud.callFunction({
           name: 'getThumbups',
           data: {
+              env:config.env,
               ids,
               type: 'reply'
           },
@@ -157,6 +162,7 @@ Page({
       wx.cloud.callFunction({
           name: 'thumbups',
           data: {
+              env:config.env,
               action: 'add',
               questionOrReplyId: id,
               type: 'reply'
@@ -176,6 +182,7 @@ Page({
       wx.cloud.callFunction({
           name: 'thumbups',
           data: {
+              env:config.env,
               action: 'cancel',
               questionOrReplyId: id,
               type: 'reply'
@@ -212,6 +219,7 @@ Page({
     });
    
     const data = {
+      env:config.env,
       content: this.data.trimmedReply,
       questionId: this.data.questionId,
       subordinateTo: this.data.chosenReply && this.data.chosenReply._id,

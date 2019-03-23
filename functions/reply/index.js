@@ -3,12 +3,13 @@ const cloud = require('wx-server-sdk')
 
 cloud.init()
 
-const db = cloud.database({
-    env: "campus"
-});
+
 // 云函数入口函数
 exports.main = async (event, context) => {
     const wxContext = cloud.getWXContext()
+    const db = cloud.database({
+        env: event.env
+    });
     const result = await db.collection("replies").add({
         data: {
             content: event.content,

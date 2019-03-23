@@ -3,18 +3,20 @@ const cloud = require('wx-server-sdk')
 
 cloud.init();
 
-const db = cloud.database({
-  env: "campus"
-});
-const questionCollection = db.collection("questions");
+
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const wxContext = cloud.getWXContext()
+  const db = cloud.database({
+    env: event.env
+  });
+  const questionCollection = db.collection("questions");
+  const wxContext = cloud.getWXContext();
   await db.collection("questions").add({
     data: {
       title: event.title,
       content: event.content,
       types: event.types,
+      images: event.images || [],
       createdTime: new Date().toISOString(),
 
       openid: wxContext.OPENID, //todo? put it in a userInfo object

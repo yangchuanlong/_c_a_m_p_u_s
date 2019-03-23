@@ -1,4 +1,4 @@
-
+import config from '../../utils/config.js';
 Page({
     data: {
         myQuestions: [],
@@ -15,6 +15,9 @@ Page({
       wx.cloud.init();
       wx.cloud.callFunction({
         name: 'myQuestions',
+        data: {
+          env:config.env
+        },
         success: function(resp) {
           _t.setData({
               myQuestions: resp.result.data
@@ -24,6 +27,9 @@ Page({
 
       wx.cloud.callFunction({
         name: 'myReplies',
+        data: {
+          env: config.env
+        },
         success: function(resp) {
           _t.setData({
             myReplies: resp.result.data

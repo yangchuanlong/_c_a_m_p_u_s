@@ -1,6 +1,7 @@
 //index.js
 //获取应用实例
-const app = getApp()
+import config from '../../utils/config.js';
+const app = getApp();
 Page({
   data: {
     userInfo: {},
@@ -11,9 +12,12 @@ Page({
     oldestQuestionTime: null,
     searchTxt: '',
     showLoading: false,
-    tabIndex: 0,
+    activeTab: 0,
     haveMoreData: true,
-    myThumbups: {}
+    myThumbups: {},
+    touchStartX: 0,
+    touchStartY: 0,
+    tabs: ['全部', '热搜']
   },
   //事件处理函数
   bindViewTap: function() {
@@ -44,6 +48,7 @@ Page({
       wx.cloud.callFunction({
         name: 'thumbups',
         data: {
+          env:config.env,
           action,
           questionOrReplyId: questionId,
           type: 'question'
@@ -94,6 +99,7 @@ Page({
     wx.cloud.callFunction({
       name: 'getThumbups',
       data: {
+        env:config.env,
         ids: questionIds,
         type: 'question'
       },
@@ -120,6 +126,7 @@ Page({
     wx.cloud.callFunction({
       name: 'getRepliesOfQuestions',
       data: {
+        env:config.env,
         questionIds
       },
       success: function ({result}) { //result {[questionId]: Number, ...}
@@ -143,7 +150,7 @@ Page({
   getQuestions: function() {
       wx.cloud.init();
       const db = wx.cloud.database({
-          env: "campus"
+          env: config.env
       });
       const _ = db.command, _t = this;
       const questionCollection = db.collection("questions");
@@ -154,6 +161,7 @@ Page({
               const date = new Date(createdTime);
               item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
               item.shortContent = item.content.substr(0, 40);
+              item.images = item.images || [];
               ids.push(item._id);
           });
           _t.setData({
@@ -170,6 +178,7 @@ Page({
     wx.cloud.callFunction({
       name: 'thumbups',
       data: {
+        env:config.env,
         action: 'get',
         type: 'question'
       },
@@ -224,16 +233,16 @@ Page({
     })
   },
   onTabClick(evt){    
-    const tabIndex = evt.target.dataset.tabIndex;
+    const activeTab = evt.target.dataset.tabIndex;
     this.setData({
-      tabIndex
+      activeTab
     });
   },
   onPullDownRefresh: function () {
     const _t = this;
     wx.cloud.init();
     const db = wx.cloud.database({
-      env: "campus"
+      env: config.env
     });
     const _ = db.command;
     const questionCollection = db.collection("questions");
@@ -247,6 +256,7 @@ Page({
           const date = new Date(createdTime);
           item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
           item.shortContent = item.content.substr(0, 40);
+          item.images = item.images || [];
           ids.push(item._id);
         });
         _t.setData({
@@ -269,7 +279,7 @@ Page({
     });    
     wx.cloud.init();
     const db = wx.cloud.database({
-      env: "campus"
+      env: config.env
     });
     const _ = db.command;
     const questionCollection = db.collection("questions");
@@ -283,6 +293,7 @@ Page({
           const date = new Date(createdTime);
           item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
           item.shortContent = item.content.substr(0, 40);
+          item.images = item.images || [];
           ids.push(item._id);
         });
         _t.setData({
@@ -301,5 +312,31 @@ Page({
       });     
       console.log(resp)
     })
+  },
+
+  onTouchStart(evt) {
+    const touch = evt.touches[0];
+    this.setData({
+      touchStartX: touch.clientX,
+      touchStartY: touch.clientY
+    });
+  },
+  onTouchEnd (evt){
+    const {touchStartX, touchStartY, activeTab, tabs} = this.data;
+    const touch = evt.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartX);
+    const deltaY = Math.abs(touch.clientY - touchStartY);
+    if(deltaX > 2 * deltaY) {
+      if(touch.clientX > touchStartX) {
+        this.setData({
+          activeTab: activeTab == 0 ? tabs.length - 1 : activeTab - 1
+        })
+      } else {
+        console.log("左滑")
+        this.setData({
+          activeTab: (activeTab + 1) % tabs.length
+        })
+      }
+    }
   }
-})
+});

@@ -32,6 +32,13 @@
   margin-top: 24rpx;
   min-height: 600rpx;
 }
+.imagesWrapper{
+  margin-top: 12rpx;
+}
+.imagesWrapper image{
+  width: 100%;
+  margin-bottom: 8rpx;
+}
 .title, .author, .content{
   padding-left: 12rpx;
   padding-right: 12rpx;
@@ -64,12 +71,20 @@
   border:2rpx solid #d3d3d3;
   border-radius: 12rpx;
   flex: 1;
-  margin-right: 12rpx;
   background: #fff;
   padding: 6rpx;
   min-height: 58rpx;
 }
-
+.commentInputWrapper button{
+  margin-left: 12rpx;
+  display: flex;
+  align-items: center;
+}
+.shareIcon{
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+}
 .replier{
   display:flex;
   color: #ddd;

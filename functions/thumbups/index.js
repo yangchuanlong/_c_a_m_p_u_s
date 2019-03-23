@@ -3,12 +3,12 @@ const cloud = require('wx-server-sdk')
 
 cloud.init()
 
-const db = cloud.database({
-  env: "campus"
-});
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
+  const db = cloud.database({
+    env: event.env
+  });
   if(event.action === 'get') {
     return db.collection("thumbups").where({//获取我的点赞
       type: event.type,

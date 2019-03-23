@@ -1,3 +1,4 @@
+import config from '../../utils/config.js';
 const app = getApp(), globalData = app.globalData;
 Page({
   data: {
@@ -9,12 +10,7 @@ Page({
     disabled: false,
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-  },
-  onAddTxt(){
-    globalData.inputedTxt = null;
-    wx.navigateTo({
-      url: '/pages/editor/editor',
-    })
+    tempFilePaths: []
   },
   onInput(evt) {
     this.setData({
@@ -37,29 +33,69 @@ Page({
     });
    
     wx.cloud.init();
-    wx.cloud.callFunction({
-      name: 'askQuestion',
-      data: {
-        ...this.data,
-        avatar: globalData.userInfo.avatarUrl,
-        nickName: globalData.userInfo.nickName
-      },
+    const uploadImgArr= _t.data.tempFilePaths.map(tmpFilePath => {
+      const fileParts = tmpFilePath.split('.'); //图片扩展名
+      const fileName = Date.now() + '-' + (Math.random() * 10000 | 0) + fileParts[fileParts.length - 1];
+      return  wx.cloud.uploadFile({
+        cloudPath: fileName,
+        filePath: tmpFilePath,
+      })
+    });
+    Promise.all(uploadImgArr).then(result => {
+      const images = [];
+      result.forEach(item => images.push(item.fileID));
+      wx.cloud.callFunction({
+        name: 'askQuestion',
+        data: {
+          env: config.env,
+          ...this.data,
+          images,
+          avatar: globalData.userInfo.avatarUrl,
+          nickName: globalData.userInfo.nickName
+        },
+        success(res) {
+          wx.redirectTo({
+            url: '/pages/mine/mine',
+          })
+        },
+        fail(e) {
+          wx.showToast({title: '服务器开小差', icon: "none"});
+          _t.setData({loading: false, disabled: false});
+        }
+      })
+    }).catch(error => {
+      wx.showToast({title: '服务器开小差', icon: "none"});
+      _t.setData({loading: false, disabled: false});
+    });
+  },
+  onChooseImg() {
+    const _t = this;
+    if(_t.data.loading){
+      return;
+    }
+    wx.chooseImage({
+      count: 9,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera'],
       success(res) {
-        wx.redirectTo({
-         url: '/pages/mine/mine',
-       })
-      },
-      fail(e) {
-        wx.showToast({
-          title: '服务器开小差',
-          icon: "none"
-        });
+        // tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePaths = _t.data.tempFilePaths.concat(res.tempFilePaths);
         _t.setData({
-          loading: false,
-          disabled: false
-        })
+          tempFilePaths
+        });
       }
     })
+  },
+  deleteChosenImg(evt) {
+    if(this.data.loading){
+      return;
+    }
+    const index = evt.target.dataset.index;
+    const tempFilePaths =  this.data.tempFilePaths;
+    tempFilePaths.splice(index, 1);
+    this.setData({
+      tempFilePaths
+    });
   },
   onShow() {
     

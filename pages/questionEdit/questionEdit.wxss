@@ -1,30 +1,46 @@
 .container{
     padding: 0rpx;
 }
-.plusIcon{
-    width: 40rpx;
-    height:40rpx;
-    border-radius: 50%;
-    background: gray;
-    color:white;
-    text-align:center;
-    line-height:40rpx;
-}
-.iconWrapper{
-    display:flex;
-    border: 1px solid #eee;
-    padding: 8rpx 20rpx;
-    border-radius: 50rpx;
-    margin-top:6rpx;
-}
-.iconWrapper view:not(:first-child){
-    margin-left: 24rpx;
-}
-.tmp{
-  display:none;
-}
 textarea{
   width: 100%;
+  padding: 8rpx;
+  box-sizing: border-box;
+}
+.imageWrapper{
+    width: 100%;
+    padding: 8rpx;
+    box-sizing: border-box;
+}
+.imageWrapper .imageItemWrapper, .imageWrapper .addImgBtn{
+    width: 100rpx;
+    height: 100rpx;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 6rpx;
+}
+.imageItemWrapper{
+    height:inherit;
+    margin-right: 18rpx;
+    position: relative;
+}
+.deleteIcon{
+    position: absolute;
+    top:-40rpx;
+    right:-12rpx;
+    color:#ccc;
+    padding: 6rpx;
+}
+
+.imageWrapper image{
+    width: 100%;
+    height: 100%;
+}
+
+.addImgBtn{
+    background: #ddd;
+    color:rgba(0, 0, 0, .8);
+    line-height: 100rpx;
+    text-align:center;
 }
 .confirmBtn{
   width: 94%;
