@@ -24,17 +24,51 @@ Page({
       const db = wx.cloud.database({
           env: config.env
       });
+      const _ = db.command;
       const dbCollection = db.collection("questions");
-      dbCollection.where({
-          content: new RegExp(options.searchTxt, 'i')
-      }).get().then(res => {
-        console.log(res)
+      dbCollection.where(
+        _.or([
+          {
+            content: new RegExp(options.searchTxt, 'i')
+          },
+          {
+              title: new RegExp(options.searchTxt, 'i')
+          }
+        ])
+      ).
+      orderBy('searchCount', 'desc').
+      get().then(({data}) => {
+        console.log(data)
         _t.setData({
-          results: res.data
-        })
+          results: data
+        });
+        _t.addSearchCount(data);
       });
   },
 
+  addSearchCount(data) {
+    wx.cloud.init();
+    const _t = this;   
+    const addOneIds = [], setOneIds = [];
+    data.forEach(item => {
+      if(/\d+/.test(item.searchCount)) {
+        addOneIds.push(item._id);
+      } else {
+        setOneIds.push(item._id);
+      }
+    });   
+    wx.cloud.callFunction({
+      name: 'addSearchCount',
+      data: {
+        addOneIds,
+        setOneIds,
+        env: config.env
+      },
+      success(result) {
+          console.log(result)
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
