@@ -1,20 +1,25 @@
-<view class="container">
+<view class="container"
+      bindtouchstart="onTouchStart"
+      bindtouchend="onTouchEnd"
+>
     <view class="tabs" bindtap='onTabClick'>
-        <view class="{{tabIndex == 0 ? 'active' : ''}}" data-tab-index="0">我的问题</view>
-        <view class="{{tabIndex == 1 ? 'active' : ''}}"  data-tab-index="1">我的回答</view>
-        <view class="{{tabIndex == 2 ? 'active' : ''}}"  data-tab-index="2">我的收藏</view>
+        <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-active-tab="{{index}}">
+            {{item}}
+        </view>
     </view>
-    <view class="tabPane" style="display: {{tabIndex == 0 ? '' : 'none'}}">
-        <block wx:for="{{myQuestions}}">
-            <navigator url="/pages/detail/detail?id={{item._id}}">{{item.title}}</navigator>
-        </block>
+    <view class="tabPaneContainer">
+        <view class="tabPane" style="display: {{activeTab == 0 ? '' : 'none'}}">
+            <block wx:for="{{myQuestions}}">
+                <navigator url="/pages/detail/detail?id={{item._id}}">{{item.title}}</navigator>
+            </block>
+        </view>
+        <view class="tabPane" style="display: {{activeTab == 1 ? '' : 'none'}}">
+            <block wx:for="{{myReplies}}">
+                <view>{{item.content}}</view>
+            </block>
+        </view>
+        <view class="tabPane" style="display: {{activeTab == 2 ? '' : 'none'}}">
+            我的收藏栏目...
+        </view>
     </view>
-    <view class="tabPane" style="display: {{tabIndex == 1 ? '' : 'none'}}">
-      <block wx:for="{{myReplies}}">
-        <view>{{item.content}}</view>
-      </block>
-    </view>
-    <view class="tabPane" style="display: {{tabIndex == 2 ? '' : 'none'}}">
-      我的收藏栏目...
-    </view> 
 </view>

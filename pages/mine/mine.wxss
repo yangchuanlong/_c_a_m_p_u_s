@@ -1,14 +1,22 @@
 .container{
     padding: 0rpx;
+    position: relative;
+    height: 100vh;
 }
 .tabs{
     display: flex;
     flex-wrap: nowrap;
     width:100%;
     justify-content: space-around;
+    position: fixed;
+    top: 0;
+    background: #fff;
 }
 .tabs .active{
     border-bottom: 4rpx solid teal;
+}
+.tabPaneContainer{
+    margin-top: 50rpx;
 }
 .tabPane{
     text-align:left;
