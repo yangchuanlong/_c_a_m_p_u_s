@@ -38,7 +38,19 @@
            </view>
        </view>
        <view id="hotSearch" class="section" style="display: {{activeTab == 1 ? '' : 'none'}}">
-           <view style='padding:12rpx'>热搜栏目, 开发中...</view>
+           <view wx:for="{{hotSearches}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
+               <view class="author">
+                   <image src="{{item.avatar}}" class="avatar" wx:if="{{item.avatar}}" ></image>
+                   <image wx:else src="../images/userIcon.png" class="avatar" style="background:gray"></image>
+                   <text class="nickName">{{item.nickName}}</text>
+                   <text class="date">{{item.formatedTime}}</text>
+               </view>
+               <view class="title">{{item.title}}</view>
+               <view class="shortContent">{{item.shortContent}}</view>
+               <view class="imagesWrapper" wx:if="{{item.images.length}}">
+                   <image wx:for="{{item.images}}" wx:for-item="imgItem" wx:key="{{imgItem}}" src="{{imgItem}}"></image>
+               </view>
+           </view>
        </view>
    </view>
 

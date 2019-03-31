@@ -1,6 +1,8 @@
 //index.js
 //获取应用实例
 import config from '../../utils/config.js';
+const util = require('../../utils/util.js');
+console.log('util:', util)
 const app = getApp();
 Page({
   data: {
@@ -13,11 +15,12 @@ Page({
     searchTxt: '',
     showLoading: false,
     activeTab: 0,
-    haveMoreData: true,
+    haveMoreQuestion: true,
     myThumbups: {},
     touchStartX: 0,
     touchStartY: 0,
-    tabs: ['全部', '热搜']
+    tabs: ['全部', '热搜'],
+    hotSearches: []
   },
   //事件处理函数
   bindViewTap: function() {
@@ -157,9 +160,7 @@ Page({
       questionCollection.orderBy('createdTime', 'desc').limit(10).get().then(function(resp){
           const data = resp.data, ids = [];
           data.forEach(item => {
-              const createdTime = item.createdTime || new Date().toISOString();
-              const date = new Date(createdTime);
-              item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+              item.formatedTime = util.releaseTimeFormat(item.createdTime);
               item.shortContent = item.content.substr(0, 40);
               item.images = item.images || [];
               ids.push(item._id);
@@ -194,9 +195,34 @@ Page({
       }
     })
   },
+  getHotSearches: function() {
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const _ = db.command, _t = this;
+    const questionCollection = db.collection("questions");
+    questionCollection.where({
+      searchCount: _.neq(null)
+    })
+    .orderBy('searchCount', 'desc')
+    .orderBy('createdTime', 'desc')
+    .limit(10).get().then(function(resp){
+      const data = resp.data;
+      data.forEach(item => {
+        item.formatedTime = util.releaseTimeFormat(item.createdTime);
+        item.shortContent = item.content.substr(0, 40);
+        item.images = item.images || [];
+      });
+      _t.setData({
+        hotSearches: data,
+      });
+    })
+  },
   onLoad: function () {
     this.getQuestions();
     this.getMyThumbups();
+    this.getHotSearches();
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -238,7 +264,7 @@ Page({
       activeTab
     });
   },
-  onPullDownRefresh: function () {
+  getLatestQuestions() {
     const _t = this;
     wx.cloud.init();
     const db = wx.cloud.database({
@@ -252,9 +278,7 @@ Page({
       const data = resp.data, ids = [];
       if (data.length) {
         data.forEach(item => {
-          const createdTime = item.createdTime || new Date().toISOString();
-          const date = new Date(createdTime);
-          item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+          item.formatedTime = util.releaseTimeFormat(item.createdTime);
           item.shortContent = item.content.substr(0, 40);
           item.images = item.images || [];
           ids.push(item._id);
@@ -269,14 +293,18 @@ Page({
       wx.stopPullDownRefresh();
     })
   },
-  onReachBottom(){
+  onPullDownRefresh: function () {
+    const {activeTab} = this.data;
+    activeTab == 0 && this.getLatestQuestions();
+  },
+  getMoreQuestions() {
     const _t = this;
-    if(!_t.data.haveMoreData) {
+    if(!_t.data.haveMoreQuestion) {
       return;
     }
     this.setData({
       showLoading: true
-    });    
+    });
     wx.cloud.init();
     const db = wx.cloud.database({
       env: config.env
@@ -289,9 +317,7 @@ Page({
       const data = resp.data, ids = [];
       if (data.length) {
         data.forEach(item => {
-          const createdTime = item.createdTime || new Date().toISOString();
-          const date = new Date(createdTime);
-          item.formatedTime = `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+          item.formatedTime =  util.releaseTimeFormat(item.createdTime);
           item.shortContent = item.content.substr(0, 40);
           item.images = item.images || [];
           ids.push(item._id);
@@ -304,14 +330,17 @@ Page({
         _t.getRepliesOfQuestions(ids);
       } else {
         _t.setData({
-          haveMoreData: false
+          haveMoreQuestion: false
         })
-      }  
+      }
       _t.setData({
         showLoading: false
-      });     
-      console.log(resp)
+      });
     })
+  },
+  onReachBottom(){
+    const {activeTab} = this.data;
+    activeTab == 0 && this.getMoreQuestions();
   },
 
   onTouchStart(evt) {
