@@ -2,7 +2,6 @@
 //获取应用实例
 import config from '../../utils/config.js';
 const util = require('../../utils/util.js');
-console.log('util:', util)
 const app = getApp();
 Page({
   data: {
@@ -20,7 +19,9 @@ Page({
     touchStartX: 0,
     touchStartY: 0,
     tabs: ['全部', '热搜'],
-    hotSearches: []
+    hotSearches: [],
+    finishChecking: false,//完成check用户是否注册
+    showOverlay: true
   },
   //事件处理函数
   bindViewTap: function() {
@@ -189,7 +190,7 @@ Page({
           myThumbups[item.questionOrReplyId] = true;
         });
         _t.setData({
-          myThumbups 
+          myThumbups
         });
         app.globalData.myQuestionThumbups = myThumbups;
       }
@@ -220,9 +221,7 @@ Page({
     })
   },
   onLoad: function () {
-    this.getQuestions();
-    this.getMyThumbups();
-    this.getHotSearches();
+    const _t = this;
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -249,6 +248,50 @@ Page({
         }
       })
     }
+    this.checkRegister().then(function (user) {
+      if(user === false) {
+        wx.redirectTo({
+          url: "/pages/register/register"
+        })
+      } else if(user && user.collegeId){
+        _t.setData({
+          finishChecking: true,
+          showOverlay: false
+        });
+        //send request to fetch columns by collegeId
+
+      } else {
+        //todo? error
+      }
+      // this.getQuestions();
+      // this.getMyThumbups();
+      // this.getHotSearches();
+    });
+
+  },
+  checkRegister: function() {
+    wx.cloud.init();
+    if(app.globalData.curUserCollegeId) {//从注册页面跳转过来的
+      return new Promise(resolve => {
+        resolve({
+          collegeId: app.globalData.curUserCollegeId
+        });
+      });
+    }
+    return wx.cloud.callFunction({
+      name: 'checkRegister',
+      data: {
+        env: config.env
+      },
+    }).then(function (resp) {
+      if(Array.isArray(resp.result) && resp.result.length) {
+        return resp.result[0];
+      } else {
+        return false;
+      }
+    }).catch(function (e) {
+      return "error";
+    })
   },
   getUserInfo: function(e) {
     console.log(e)
@@ -258,7 +301,7 @@ Page({
       hasUserInfo: true
     })
   },
-  onTabClick(evt){    
+  onTabClick(evt){
     const activeTab = evt.target.dataset.tabIndex;
     this.setData({
       activeTab

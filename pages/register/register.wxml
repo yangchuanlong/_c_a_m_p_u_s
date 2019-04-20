@@ -1,0 +1,51 @@
+<view class="container">
+    <view class="main" bindtap="togglePopup" wx:if="{{curStep === 1}}">
+        <view class="title">请选择院校</view>
+
+        <view class="selectList">
+            <view class="select">
+                <view class="selectedCollege" bindtap="toggleCollegeList" data-popup-switch="college">
+                    {{selectedCollege ? selectedCollege.collegeName : "--请选择学校--"}}
+                </view>
+                <view class="popup" style="visibility:{{ showCollegeList ? '': 'hidden' }}">
+                    <view  class="college" wx:for="{{colleges}}" data-value="{{item.collegeId}}" bindtap="chooseCollege">
+                        {{item.collegeName}}
+                    </view>
+                </view>
+            </view>
+
+            <view class="select">
+                <view class="selectedGrade" data-popup-switch="grade">
+                    {{selectedGrade ? selectedGrade.label : "--你的年级--"}}
+                </view>
+                <view class="popup" style="visibility:{{ showGradeList ? '': 'hidden' }}">
+                    <view wx:for="{{grades}}" data-value="{{item.value}}" class="grade" bindtap="chooseGrade">
+                        {{item.label}}
+                    </view>
+                </view>
+            </view>
+
+            <view class="select" wx:for="{{verifyQuestions}}" wx:for-item="question" wx:for-index="questionIdx">
+                <view class="selectedOption" data-question-idx="{{questionIdx}}" bindtap="toggleVerifyQuestionList" data-popup-switch="verfiyQuestion">
+                    {{question.selectedOption ? question.selectedOption.label : '--' + question.title + '--'}}
+                </view>
+                <view class="popup" style="visibility: {{showToggleMap[questionIdx] ? '' : 'hidden'}}">
+                    <view wx:for="{{question.options}}" wx:for-item="option" class="option" data-value="{{option.value}}"
+                          data-question-idx="{{questionIdx}}" bindtap="chooseVerifyQuestionAnswer"
+                    >
+                        {{option.label}}
+                    </view>
+                </view>
+            </view>
+
+        </view>
+
+        <button size="mini" type="primary" class="submitBtn" bindtap="onSubmit">提交</button>
+    </view>
+    <view class="main" wx:elif="{{curStep === 2}}">
+        <view style="margin-top: 40rpx;">输入昵称(确定后不可修改)</view>
+        <input bindinput="onNicknameInput" placeholder="请输入昵称" value="{{nickName}}" class="nickNameInput"/>
+        <view class="hr"></view>
+        <button size="mini" type="primary" class="registerBtn" bindtap="onRegister" disabled="{{disabled}}" loading="{{loading}}">提交</button>
+    </view>
+</view>

@@ -79,7 +79,7 @@ page{
 }
 .item{
     background: #E8E9ED;
-    padding: 0rpx 12rpx;    
+    padding: 0rpx 12rpx;
 }
 .item:not(:first-child) {
   margin-top:6rpx;
@@ -143,4 +143,21 @@ page{
   height: 100rpx;
   margin: 0 auto;
   display:block;
+}
+
+.overlay{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: .3;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.overlay image{
+    width: 50rpx;
+    height: 50rpx;
 }

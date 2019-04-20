@@ -1,11 +1,11 @@
 <!--index.wxml-->
-<view class="container" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd">
+<view class="container" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd" style="visibility: {{finishChecking ? '' : 'hidden'}}">
     <view class='searchWrapper'>
-      <input confirm-type='search' 
+      <input confirm-type='search'
       bindinput='inputSearch'
       bindconfirm='startSearch'
       placeholder='请输入搜索内容'
-      ></input>
+      />
     </view>
     <view class='tabs' bindtap='onTabClick'>
         <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-tab-index='{{index}}'>
@@ -62,5 +62,8 @@
     </view>
     <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
       <image src='../images/loading.gif'></image>
+    </view>
+    <view class="overlay" style="display: {{showOverlay ? '' : 'none'}}">
+        <image src='../images/loading.gif'></image>
     </view>
 </view>
