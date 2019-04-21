@@ -15,7 +15,7 @@ exports.main = async (event, context) => {
     data: {
       title: event.title,
       content: event.content,
-      types: event.types,
+      columns: event.columns,
       images: event.images || [],
       createdTime: new Date().toISOString(),
 

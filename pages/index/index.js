@@ -2,7 +2,7 @@
 //获取应用实例
 import config from '../../utils/config.js';
 const util = require('../../utils/util.js');
-const app = getApp();
+const app = getApp(), globalData = app.globalData;
 const defaultColumns = [{
   en_name: 'all',
   name: '全部'
@@ -301,6 +301,7 @@ Page({
       },
     }).then(function (resp) {
       if(Array.isArray(resp.result) && resp.result.length) {
+        globalData.curUserCollegeId = resp.result[0].collegeId;
         return resp.result[0];
       } else {
         return false;
@@ -324,6 +325,7 @@ Page({
       if(resp.data.length) {
         columns = resp.data[0].columns.filter(column => !! column).sort((col1, col2) => col1.order - col2.order);
       }
+      globalData.columns = columns;
       const tabs = defaultColumns.concat(columns), tabIndex2ColId = {};
       tabs.forEach((col, index) => {
         tabIndex2ColId[index] = col.en_name;

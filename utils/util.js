@@ -16,9 +16,9 @@ const formatNumber = n => {
 
 
 const timeFormattor = function(time){
-  time = time || new Date().toISOString();
+  time = time || new Date();
   const date = new Date(time);
-  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`
+  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).substr(-2)}`
 };
 module.exports = {
   formatTime: formatTime,

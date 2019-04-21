@@ -4,7 +4,7 @@ Page({
   data: {
     userInfo: {},
     title: "",
-    types: [],
+    columns: [],
     content: "",
     loading: false,
     disabled: false,
@@ -103,7 +103,7 @@ Page({
   onLoad(query) {
     this.setData({
       title: query.title,
-      types: query.types.split(",")
+      columns: query.columns.split(",")
     });
     if (app.globalData.userInfo) {
       this.setData({
