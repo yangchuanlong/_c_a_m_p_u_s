@@ -152,8 +152,7 @@ page{
     bottom: 0;
     left: 0;
     right: 0;
-    opacity: .3;
-    background: black;
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -161,4 +160,31 @@ page{
 .overlay image{
     width: 50rpx;
     height: 50rpx;
+}
+.dlg-wrapper{
+    background: white;
+    border-radius: 8rpx;
+    width: 80vw;
+    padding: 24rpx;
+    text-align: center;
+}
+.dlg-title{
+    text-align:left;
+}
+.dlg-wrapper .columns{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 24rpx;
+}
+.dlg-wrapper .columns .column{
+    width: 33.33%;
+}
+.dlg-wrapper .columns text{
+    display:inline-block;
+    padding: 6rpx 24rpx;
+    border:1rpx solid gray;
+    margin-top: 8rpx;
+}
+.dlg-wrapper .column.chosen text{
+    border-color: teal;
 }

@@ -41,7 +41,11 @@ Page({
     colLatestAndOldestTime: {},
     colHasMoreData: {},
     thumbupCount: {},
-    replyCount: {}
+    replyCount: {},
+    collegeColumns: [],
+    chosenInterestedCols: {},
+    setInterestedLoading: false,
+    showInterestedSettingDlg: false
   },
   //事件处理函数
   bindViewTap: function() {
@@ -157,7 +161,18 @@ Page({
       }
     });
   },
+  getHotSpot() {
+
+  },
   getQuestions: function(column) {
+    if(column === 'hotspot') {
+      this.getHotSpot();
+      return;
+    } else if(column === 'interested'){
+      column = globalData.curUserInterestedColumns;
+      return;
+    }
+    console.log('getQuestions:', column)
     const _t  = this;
     wx.cloud.init();
     wx.cloud.callFunction({
@@ -169,6 +184,7 @@ Page({
           ['createdTime', 'desc']
         ],
         limit: 20,
+        equals: column !== 'all' ? {columns: column} : null
         //fields: []
       }
     }).then(function (resp) {
@@ -275,7 +291,7 @@ Page({
           finishChecking: true,
           showOverlay: false
         });
-        _t.getColumnsOfCollege(user.collegeId); //send request to fetch columns by collegeId
+        _t.getColumnsOfCollege(user.collegeId, !!user.interestedColumns); //send request to fetch columns by collegeId
         _t.getQuestions('all');//获取"全部"栏目的问题
       } else {
         //todo? error
@@ -302,6 +318,7 @@ Page({
     }).then(function (resp) {
       if(Array.isArray(resp.result) && resp.result.length) {
         globalData.curUserCollegeId = resp.result[0].collegeId;
+        globalData.curUserInterestedColumns = resp.result[0].interestedColumns;
         return resp.result[0];
       } else {
         return false;
@@ -310,7 +327,7 @@ Page({
       return "error";
     })
   },
-  getColumnsOfCollege(collegeId) {
+  getColumnsOfCollege(collegeId, interestedSetted) {
     wx.cloud.init();
     const _t = this;
     const db = wx.cloud.database({
@@ -330,7 +347,7 @@ Page({
       tabs.forEach((col, index) => {
         tabIndex2ColId[index] = col.en_name;
       });
-      _t.setData({ tabs, tabIndex2ColId });
+      _t.setData({ tabs, tabIndex2ColId, collegeColumns: columns, showInterestedSettingDlg: !interestedSetted});
     })
   },
   getUserInfo: function(e) {
@@ -341,15 +358,23 @@ Page({
     })
   },
   onTabClick(evt){
+    const _t = this, {colQuestions, tabIndex2ColId} = _t.data;
     const activeTab = evt.target.dataset.tabIndex;
     this.setData({
       activeTab
     });
+    const tabId = tabIndex2ColId[activeTab];
+    if(!colQuestions[tabId]) {
+        _t.getQuestions(tabId)
+    }
   },
   getLatestQuestions() {
     const _t = this;
     const {activeTab, tabIndex2ColId, colLatestAndOldestTime} = _t.data;
     const activeTabId = tabIndex2ColId[activeTab];
+    if(activeTabId === 'hopspot') {
+      return;
+    }
     const latestTime = colLatestAndOldestTime[activeTabId] && colLatestAndOldestTime[activeTabId].latest;
     wx.cloud.init();
     wx.cloud.callFunction({
@@ -361,7 +386,8 @@ Page({
         ],
         orderBy: [
           ['createdTime', 'desc']
-        ]
+        ],
+        equals: activeTabId !== 'all' ? {columns: activeTabId} : null
       }
     }).then(function (resp) {
       const result = resp.result;
@@ -448,7 +474,8 @@ Page({
     });
   },
   onTouchEnd (evt){
-    const {touchStartX, touchStartY, activeTab, tabs} = this.data;
+    const _t = this;
+    const {touchStartX, touchStartY, activeTab, tabs, tabIndex2ColId, colQuestions} = this.data;
     const touch = evt.changedTouches[0];
     const deltaX = Math.abs(touch.clientX - touchStartX);
     const deltaY = Math.abs(touch.clientY - touchStartY);
@@ -467,6 +494,55 @@ Page({
         activeTab: nextActiveTab,
         toColumn: this.data.tabIndex2ColId[nextActiveTab]
       });
+      const tabId = tabIndex2ColId[nextActiveTab];
+      if(!colQuestions[tabId]) {
+        _t.getQuestions(tabId)
+      }
     }
+  },
+  onChooseCol(evt) {
+    const chosenCol = evt.currentTarget.dataset.col;
+    const chosenInterestedCols = {...this.data.chosenInterestedCols};
+    if(chosenInterestedCols[chosenCol]){
+      delete chosenInterestedCols[chosenCol]
+    } else {
+      chosenInterestedCols[chosenCol] = true;
+    }
+    this.setData({
+        chosenInterestedCols
+    })
+  },
+  setInterestedCols() {
+    const _t = this, chosenInterestedCols = this.data.chosenInterestedCols;
+    if(!Object.keys(chosenInterestedCols).length) {
+      wx.showToast({
+          title: '请至少选择一个关注的话题',
+          icon: 'none'
+      });
+      return;
+    }
+    wx.cloud.init();
+    _t.setData({
+      setInterestedLoading: true
+    });
+    const interestedColumns = Object.keys(chosenInterestedCols);
+    wx.cloud.callFunction({
+        name: 'setInterestedColumns',
+        data: {
+          env: config.env,
+          interestedColumns
+        }
+    }).then(() => {
+        _t.setData({
+            setInterestedLoading: false,
+            showInterestedSettingDlg: false
+        });
+        globalData.curUserInterestedColumns = interestedColumns;
+    }).catch(e => {
+        wx.showToast({
+            title: '设置失败',
+            icon: 'none'
+        });
+    })
   }
 });
