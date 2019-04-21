@@ -15,12 +15,12 @@ const formatNumber = n => {
 }
 
 
-const releaseTimeFormat = function(time){
+const timeFormattor = function(time){
   time = time || new Date().toISOString();
   const date = new Date(time);
   return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.getHours()}:${date.getMinutes()}`
 };
 module.exports = {
   formatTime: formatTime,
-  releaseTimeFormat: releaseTimeFormat
+  timeFormattor: timeFormattor
 }

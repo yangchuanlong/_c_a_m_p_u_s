@@ -25,6 +25,7 @@ page{
     position: fixed;
     top: 60rpx;
     border-bottom: 1px solid #ddd;
+    white-space: nowrap;
 }
 .tabs view{
     padding: 8rpx 32rpx;

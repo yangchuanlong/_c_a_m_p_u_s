@@ -1,5 +1,5 @@
 <!--index.wxml-->
-<view class="container" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd" style="visibility: {{finishChecking ? '' : 'hidden'}}">
+<view class="container"  style="visibility: {{finishChecking ? '' : 'hidden'}}">
     <view class='searchWrapper'>
       <input confirm-type='search'
       bindinput='inputSearch'
@@ -7,36 +7,12 @@
       placeholder='请输入搜索内容'
       />
     </view>
-    <view class='tabs' bindtap='onTabClick'>
-        <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-tab-index='{{index}}'>
-            {{item}}
+    <scroll-view class='tabs' bindtap='onTabClick' scroll-into-view="{{toColumn}}" scroll-x>
+        <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-tab-index='{{index}}' id="{{item.en_name}}" wx:key="tabTitle-{{item.en_name}}">
+            {{item.name}}
         </view>
-    </view>
-   <view class="sectionWrapper">
-       <view id="all" class="section" style="display: {{activeTab == 0 ? '' : 'none'}}">
-           <view wx:for="{{questions}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
-               <view class="author">
-                   <image src="{{item.avatar}}" class="avatar" wx:if="{{item.avatar}}" ></image>
-                   <image wx:else src="../images/userIcon.png" class="avatar" style="background:gray"></image>
-                   <text class="nickName">{{item.nickName}}</text>
-                   <text class="date">{{item.formatedTime}}</text>
-               </view>
-               <view class="title">{{item.title}}</view>
-               <view class="shortContent">{{item.shortContent}}</view>
-               <view class="imagesWrapper" wx:if="{{item.images.length}}">
-                   <image wx:for="{{item.images}}" wx:for-item="imgItem" wx:key="{{imgItem}}" src="{{imgItem}}"></image>
-               </view>
-               <view class='actions'>
-                   <view>
-                       <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel'></image>
-                       <image wx:else src="../images/not-thumbup.png" id='js-thumbup'></image>
-                   </view>
-                   <view> 赞({{item.thumbupCount}})</view>
-                   <view>|</view>
-                   <view>回答({{item.replyCount}})</view>
-               </view>
-           </view>
-       </view>
+    </scroll-view>
+   <view class="sectionWrapper" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd">
        <view id="hotSearch" class="section" style="display: {{activeTab == 1 ? '' : 'none'}}">
            <view wx:for="{{hotSearches}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
                <view class="author">
@@ -49,6 +25,31 @@
                <view class="shortContent">{{item.shortContent}}</view>
                <view class="imagesWrapper" wx:if="{{item.images.length}}">
                    <image wx:for="{{item.images}}" wx:for-item="imgItem" wx:key="{{imgItem}}" src="{{imgItem}}"></image>
+               </view>
+           </view>
+       </view>
+
+       <view class="section" wx:for="{{tabs}}" style="display: {{activeTab == index ? '' : 'none'}}" id="{{item.en_name}}" wx:key="tabContent-{{index}}">
+           <view wx:for="{{colQuestions[item.en_name] || []}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
+               <view class="author">
+                   <image src="{{item.avatar}}" class="avatar" wx:if="{{item.avatar}}" ></image>
+                   <image wx:else src="../images/userIcon.png" class="avatar" style="background:gray"></image>
+                   <text class="nickName">{{item.nickName}}</text>
+                   <text class="date">{{item.formattedTime}}</text>
+               </view>
+               <view class="title">{{item.title}}</view>
+               <view class="shortContent">{{item.content}}</view>
+               <view class="imagesWrapper" wx:if="{{item.images.length}}">
+                   <image wx:for="{{item.images}}" wx:for-item="imgItem" wx:key="{{imgItem}}" src="{{imgItem}}"></image>
+               </view>
+               <view class='actions'>
+                   <view>
+                       <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel'></image>
+                       <image wx:else src="../images/not-thumbup.png" id='js-thumbup'></image>
+                   </view>
+                   <view> 赞({{thumbupCount[item._id] || 0}})</view>
+                   <view>|</view>
+                   <view>回答({{replyCount[item._id] || 0}})</view>
                </view>
            </view>
        </view>

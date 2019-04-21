@@ -116,6 +116,12 @@ Page({
           showToggleMap
         });
         break;
+      default:
+        this.setData({
+          showCollegeList: false,
+          showGradeList: false,
+          showToggleMap: {}
+        })
     }
   },
 
@@ -125,7 +131,6 @@ Page({
       if(college.collegeId === selectedCollegeId) {
         _t.setData({
           selectedCollege: college,
-          showCollegeList: false
         });
         _t.getGradeAndVerifyQuestion(selectedCollegeId);
         return true;
@@ -139,7 +144,6 @@ Page({
       if(grade.value === selectedGrade) {
         _t.setData({
           selectedGrade: grade,
-          showGradeList: false
         });
         return true;
       }

@@ -3,6 +3,16 @@
 import config from '../../utils/config.js';
 const util = require('../../utils/util.js');
 const app = getApp();
+const defaultColumns = [{
+  en_name: 'all',
+  name: '全部'
+},{
+  en_name: 'interested',
+  name: "关注"
+}, {
+  en_name: 'hotspot',
+  name: '热点'
+}];
 Page({
   data: {
     userInfo: {},
@@ -18,10 +28,20 @@ Page({
     myThumbups: {},
     touchStartX: 0,
     touchStartY: 0,
-    tabs: ['全部', '热搜'],
+    tabs: defaultColumns,
     hotSearches: [],
     finishChecking: false,//完成check用户是否注册
-    showOverlay: true
+    showOverlay: true,
+    toColumn: 'all',
+    tabIndex2ColId: {},
+    colQuestions: {
+      //all: [], 问题数组
+      //interested: []
+    },
+    colLatestAndOldestTime: {},
+    colHasMoreData: {},
+    thumbupCount: {},
+    replyCount: {}
   },
   //事件处理函数
   bindViewTap: function() {
@@ -96,9 +116,13 @@ Page({
     })
   },
   onReady() {
-
+    const tabIndex2ColId = {};
+    defaultColumns.forEach((col, index) => {
+      tabIndex2ColId[index] = col.en_name;
+    });
+    this.setData({tabIndex2ColId})
   },
-  getThumbupsOfQuestions(questionIds) {
+  getThumbupNum(questionIds) {
     const _t = this;
     wx.cloud.callFunction({
       name: 'getThumbups',
@@ -111,24 +135,15 @@ Page({
         if(!result) {
           return;
         }
-        const questions = _t.data.questions;
-        questions.forEach(question => {
-          if(question._id in result) {
-            question.thumbupCount = result[question._id];
-          } else if(isNaN(question.thumbupCount)){
-            question.thumbupCount = 0;
-          }
-        });
-        _t.setData({
-          questions
-        });
+        const thumbupCount = {..._t.data.thumbupCount, ...result};
+        _t.setData({ thumbupCount });
       }
     })
   },
-  getRepliesOfQuestions(questionIds){ //获取回复数
+  getReplyNum(questionIds){ //获取回复数
     const _t = this;
     wx.cloud.callFunction({
-      name: 'getRepliesOfQuestions',
+      name: 'getReplyNum',
       data: {
         env:config.env,
         questionIds
@@ -137,43 +152,45 @@ Page({
         if(!result) {
           return;
         }
-        const questions = _t.data.questions;
-        questions.forEach(question => {
-          if(question._id in result) {
-            question.replyCount = result[question._id];
-          } else if(isNaN(question.replyCount)){
-            question.replyCount = 0;
-          }
-        });
-        _t.setData({
-          questions
-        });
+        const replyCount = Object.assign({}, _t.data.replyCount, result);
+        _t.setData({ replyCount });
       }
     });
   },
-  getQuestions: function() {
-      wx.cloud.init();
-      const db = wx.cloud.database({
-          env: config.env
-      });
-      const _ = db.command, _t = this;
-      const questionCollection = db.collection("questions");
-      questionCollection.orderBy('createdTime', 'desc').limit(10).get().then(function(resp){
-          const data = resp.data, ids = [];
-          data.forEach(item => {
-              item.formatedTime = util.releaseTimeFormat(item.createdTime);
-              item.shortContent = item.content.substr(0, 40);
-              item.images = item.images || [];
-              ids.push(item._id);
-          });
-          _t.setData({
-              questions: data,
-              lastestQuestionTime: data.length ? data[0].createdTime : new Date().toISOString(),
-              oldestQuestionTime: data.length ? data[data.length - 1].createdTime : new Date(0, 0, 0).toISOString()
-          });
-          _t.getThumbupsOfQuestions(ids);
-          _t.getRepliesOfQuestions(ids);
-      })
+  getQuestions: function(column) {
+    const _t  = this;
+    wx.cloud.init();
+    wx.cloud.callFunction({
+      name: 'getQuestions',
+      data: {
+        env: config.env,
+        //commands: [ ['createdTime', 'lt', `value`]  ],
+        orderBy: [
+          ['createdTime', 'desc']
+        ],
+        limit: 20,
+        //fields: []
+      }
+    }).then(function (resp) {
+      const result = resp.result;
+      if(result.length) {
+        const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
+        result.forEach(item => {
+          item.formattedTime = util.timeFormattor(item.createdTime);
+          ids.push(item._id);
+        });
+        colQuestions[column] = result;
+        colLatestAndOldestTime[column] = {
+          latest: result[0].createdTime,
+          oldest: result[result.length - 1].createdTime
+        };
+        _t.setData({colQuestions, colLatestAndOldestTime});
+        _t.getThumbupNum(ids);
+        _t.getReplyNum(ids);
+      }
+    }).catch(e => {
+      console.log(e)
+    })
   },
   getMyThumbups: function() {
     const _t = this;
@@ -211,7 +228,7 @@ Page({
     .limit(10).get().then(function(resp){
       const data = resp.data;
       data.forEach(item => {
-        item.formatedTime = util.releaseTimeFormat(item.createdTime);
+        item.formatedTime = util.timeFormattor(item.createdTime);
         item.shortContent = item.content.substr(0, 40);
         item.images = item.images || [];
       });
@@ -258,12 +275,11 @@ Page({
           finishChecking: true,
           showOverlay: false
         });
-        //send request to fetch columns by collegeId
-
+        _t.getColumnsOfCollege(user.collegeId); //send request to fetch columns by collegeId
+        _t.getQuestions('all');//获取"全部"栏目的问题
       } else {
         //todo? error
       }
-      // this.getQuestions();
       // this.getMyThumbups();
       // this.getHotSearches();
     });
@@ -293,8 +309,29 @@ Page({
       return "error";
     })
   },
+  getColumnsOfCollege(collegeId) {
+    wx.cloud.init();
+    const _t = this;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    db.collection("college").where({
+      collegeId
+    }).field({
+      columns: true
+    }).get().then(function (resp) {
+      let columns = [];
+      if(resp.data.length) {
+        columns = resp.data[0].columns.filter(column => !! column).sort((col1, col2) => col1.order - col2.order);
+      }
+      const tabs = defaultColumns.concat(columns), tabIndex2ColId = {};
+      tabs.forEach((col, index) => {
+        tabIndex2ColId[index] = col.en_name;
+      });
+      _t.setData({ tabs, tabIndex2ColId });
+    })
+  },
   getUserInfo: function(e) {
-    console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({
       userInfo: e.detail.userInfo,
@@ -309,75 +346,90 @@ Page({
   },
   getLatestQuestions() {
     const _t = this;
+    const {activeTab, tabIndex2ColId, colLatestAndOldestTime} = _t.data;
+    const activeTabId = tabIndex2ColId[activeTab];
+    const latestTime = colLatestAndOldestTime[activeTabId] && colLatestAndOldestTime[activeTabId].latest;
     wx.cloud.init();
-    const db = wx.cloud.database({
-      env: config.env
-    });
-    const _ = db.command;
-    const questionCollection = db.collection("questions");
-    questionCollection.where({
-      createdTime: _.gt(_t.data.lastestQuestionTime instanceof Date ? _t.data.lastestQuestionTime.toISOString() : _t.data.lastestQuestionTime)
-    }).orderBy('createdTime', 'desc').get().then(function(resp){
-      const data = resp.data, ids = [];
-      if (data.length) {
-        data.forEach(item => {
-          item.formatedTime = util.releaseTimeFormat(item.createdTime);
-          item.shortContent = item.content.substr(0, 40);
-          item.images = item.images || [];
-          ids.push(item._id);
-        });
-        _t.setData({
-          questions: data.concat(_t.data.questions),
-          lastestQuestionTime: data[0].createdTime,
-        });
-        _t.getThumbupsOfQuestions(ids);
-        _t.getRepliesOfQuestions(ids);
+    wx.cloud.callFunction({
+      name: 'getQuestions',
+      data: {
+        env: config.env,
+        commands: [
+          ['createdTime', 'gt', latestTime || new Date().toISOString()]
+        ],
+        orderBy: [
+          ['createdTime', 'desc']
+        ]
       }
+    }).then(function (resp) {
+      const result = resp.result;
+      if(result.length) {
+        const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
+        result.forEach(item => {
+            item.formattedTime = util.timeFormattor(item.createdTime);
+            ids.push(item._id);
+        });
+        colQuestions[activeTabId] = result.concat(colQuestions[activeTabId] || []);
+        colLatestAndOldestTime[activeTabId] = Object.assign({}, colLatestAndOldestTime[activeTabId], {latest: result[0].createdTime})
+        _t.setData({colQuestions, colLatestAndOldestTime});
+        _t.getThumbupNum(ids);
+        _t.getReplyNum(ids);
+      }
+      wx.stopPullDownRefresh();
+    }).catch(e => {
       wx.stopPullDownRefresh();
     })
   },
   onPullDownRefresh: function () {
-    const {activeTab} = this.data;
-    activeTab == 0 && this.getLatestQuestions();
+    this.getLatestQuestions();
   },
   getMoreQuestions() {
     const _t = this;
-    if(!_t.data.haveMoreQuestion) {
+    const {activeTab, tabIndex2ColId, colHasMoreData, colLatestAndOldestTime} = _t.data;
+    const activeTabId = tabIndex2ColId[activeTab];
+    if(colHasMoreData[activeTabId] && colHasMoreData[activeTabId].hasMoreData === false) {
       return;
     }
     this.setData({
       showLoading: true
     });
+    const oldestTime = colLatestAndOldestTime[activeTabId] && colLatestAndOldestTime[activeTabId].oldest;
     wx.cloud.init();
-    const db = wx.cloud.database({
-      env: config.env
-    });
-    const _ = db.command;
-    const questionCollection = db.collection("questions");
-    questionCollection.where({
-      createdTime: _.lt(_t.data.oldestQuestionTime instanceof Date ? _t.data.oldestQuestionTime.toISOString() : _t.data.oldestQuestionTime)
-    }).orderBy('createdTime', 'desc').limit(10).get().then(function (resp) {
-      const data = resp.data, ids = [];
-      if (data.length) {
-        data.forEach(item => {
-          item.formatedTime =  util.releaseTimeFormat(item.createdTime);
-          item.shortContent = item.content.substr(0, 40);
-          item.images = item.images || [];
-          ids.push(item._id);
+    wx.cloud.callFunction({
+      name: "getQuestions",
+      data: {
+        env: config.env,
+        commands: [
+            ['createdTime', 'lt', oldestTime || new Date().toISOString()]
+        ],
+        orderBy: [
+            ['createdTime', 'desc']
+        ],
+        limit: 10
+      }
+    }).then(resp => {
+      const result = resp.result;
+      if(result.length) {
+        const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
+        result.forEach(item => {
+            item.formattedTime = util.timeFormattor(item.createdTime);
+            ids.push(item._id);
         });
-        _t.setData({
-          questions: _t.data.questions.concat(data),
-          oldestQuestionTime: data[data.length - 1].createdTime,
-        });
-        _t.getThumbupsOfQuestions(ids);
-        _t.getRepliesOfQuestions(ids);
+        colQuestions[activeTabId] = (colQuestions[activeTabId] || []).concat(result);
+        colLatestAndOldestTime[activeTabId] = {...colLatestAndOldestTime[activeTabId], oldest: result[result.length - 1].createdTime };
+        _t.setData({colQuestions, colLatestAndOldestTime});
+        _t.getThumbupNum(ids);
+        _t.getReplyNum(ids);
       } else {
-        _t.setData({
-          haveMoreQuestion: false
-        })
+        colHasMoreData[activeTabId] = {hasMoreData: false};
+        _t.setData({ colHasMoreData });
       }
       _t.setData({
-        showLoading: false
+          showLoading: false
+      });
+    }).catch(e => {
+      _t.setData({
+          showLoading: false
       });
     })
   },
@@ -398,17 +450,21 @@ Page({
     const touch = evt.changedTouches[0];
     const deltaX = Math.abs(touch.clientX - touchStartX);
     const deltaY = Math.abs(touch.clientY - touchStartY);
+    let nextActiveTab;
     if(deltaX > 2 * deltaY) {
       if(touch.clientX > touchStartX) {
-        this.setData({
-          activeTab: activeTab == 0 ? tabs.length - 1 : activeTab - 1
-        })
+        nextActiveTab = activeTab == 0 ? tabs.length - 1 : activeTab - 1
       } else {
         console.log("左滑")
-        this.setData({
-          activeTab: (activeTab + 1) % tabs.length
-        })
+        nextActiveTab = (activeTab + 1) % tabs.length;
       }
+    }
+    if(!isNaN(nextActiveTab)) {
+      console.log(nextActiveTab, '-->', this.data.tabIndex2ColId[nextActiveTab])
+      this.setData({
+        activeTab: nextActiveTab,
+        toColumn: this.data.tabIndex2ColId[nextActiveTab]
+      });
     }
   }
 });
