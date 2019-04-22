@@ -50,7 +50,18 @@ exports.main = async (event, context) => {
         break;
       case "equals":
         if(event.equals) {
-          Object.assign(conditions, event.equals);
+          if(Array.isArray(event.equals.columns)) {
+            const orArr = event.equals.columns.map(col => {
+                return {
+                    columns: col
+                };
+            });
+            delete event.equals.columns;
+            Object.assign(conditions, event.equals);
+            conditions = _.and(conditions, _.or(orArr));
+          } else {
+            Object.assign(conditions, event.equals);
+          }
         }
         break;
     }

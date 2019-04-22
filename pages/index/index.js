@@ -165,12 +165,13 @@ Page({
 
   },
   getQuestions: function(column) {
+    let columns = column;
     if(column === 'hotspot') {
       this.getHotSpot();
       return;
-    } else if(column === 'interested'){
-      column = globalData.curUserInterestedColumns;
-      return;
+    }
+    if(column === 'interested'){
+      columns = globalData.curUserInterestedColumns;
     }
     console.log('getQuestions:', column)
     const _t  = this;
@@ -184,7 +185,7 @@ Page({
           ['createdTime', 'desc']
         ],
         limit: 20,
-        equals: column !== 'all' ? {columns: column} : null
+        equals: column !== 'all' ? {columns} : null
         //fields: []
       }
     }).then(function (resp) {
