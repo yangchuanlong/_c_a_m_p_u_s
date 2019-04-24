@@ -1,8 +1,9 @@
 <view class='container'>
     <view class='title'>{{detail.title}}</view>
     <view class='author'>
-        <image src='{{detail.avatar}}' class='avatar'></image>
-        <view class='nickName'>{{detail.nickName}}</view>
+        <image src='{{detail.avatar}}' class='avatar' wx:if="{{!detail.anonymous}}"></image>
+        <image wx:else src="../images/anonymousUserImg.png"   class='avatar'></image>
+        <view class='nickName'>{{detail.anonymous ? "匿名" : detail.nickName}}</view>
         <view style="flex:1;"></view>
         <text>{{detail.createdTime}}</text>
         <text>阅读量：{{scanCount}}</text>

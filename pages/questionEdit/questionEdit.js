@@ -9,6 +9,7 @@ Page({
     loading: false,
     disabled: false,
     hasUserInfo: false,
+    anonymous: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     tempFilePaths: []
   },
@@ -18,7 +19,7 @@ Page({
     });
   },
   submit() {
-    const _t = this;
+    const _t = this, data = this.data;
     if(!this.data.content) {
       wx.showToast({
         title: '请输入问题内容',
@@ -31,7 +32,7 @@ Page({
       loading: true,
       disabled: true
     });
-   
+
     wx.cloud.init();
     const uploadImgArr= _t.data.tempFilePaths.map(tmpFilePath => {
       const fileParts = tmpFilePath.split('.'); //图片扩展名
@@ -48,7 +49,10 @@ Page({
         name: 'askQuestion',
         data: {
           env: config.env,
-          ...this.data,
+          title: data.title,
+          content: data.content,
+          columns: data.columns,
+          anonymous: data.anonymous,
           images,
           avatar: globalData.userInfo.avatarUrl,
           nickName: globalData.userInfo.nickName
@@ -66,6 +70,11 @@ Page({
     }).catch(error => {
       wx.showToast({title: '服务器开小差', icon: "none"});
       _t.setData({loading: false, disabled: false});
+    });
+  },
+  onToggle(evt) {
+    this.setData({
+      anonymous: !!evt.detail.value.length
     });
   },
   onChooseImg() {
@@ -98,7 +107,7 @@ Page({
     });
   },
   onShow() {
-    
+
   },
   onLoad(query) {
     this.setData({

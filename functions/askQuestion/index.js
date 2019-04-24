@@ -9,30 +9,35 @@ exports.main = async (event, context) => {
   const db = cloud.database({
     env: event.env
   });
-  const questionCollection = db.collection("questions");
   const wxContext = cloud.getWXContext();
-  await db.collection("questions").add({
+  const result = await db.collection("questions").add({
     data: {
       title: event.title,
       content: event.content,
       columns: event.columns,
       images: event.images || [],
+      anonymous: event.anonymous,
       createdTime: new Date().toISOString(),
 
       openid: wxContext.OPENID, //todo? put it in a userInfo object
       avatar: event.avatar,
       nickName: event.nickName
     },
-    // success(){
+  });
+  await db.collection("hotRate").add({
+    data: {
+      questionId: result._id,
+      collectNum: 0,
+      readCount: 0,
+      replyCount: 0,
+      searchCount: 0,
+      thumbupCount: 0,
+      hotVal: 0,//热度
 
-    // },
-    // fail() {
-
-    // },
-    // complete(){
-
-    // }
-  })  
+      createdTime: new Date().toISOString()
+    }
+  });
+  return result;
   // const wxContext = cloud.getWXContext()
 
   // return {

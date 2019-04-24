@@ -64,15 +64,25 @@ Page({
       action = 'cancel';
     }
     if(action) {
-      const questions = _t.data.questions;
-      questions.some(question => {
-        if(question._id == questionId) {
-          question.thumbupCount += (action == 'add' ? 1 : -1);
-          return true;
+      const myThumbups = {...this.data.myThumbups};
+      const thumbupCount = {...this.data.thumbupCount};
+
+      if(action === 'add') {
+        myThumbups[questionId] = true;
+        thumbupCount[questionId] = (thumbupCount[questionId] || 0) + 1;
+      } else {
+        delete myThumbups[questionId];
+        if(!isNaN(thumbupCount[questionId]) && (thumbupCount[questionId] >= 1)){
+          thumbupCount[questionId] -= 1;
+        } else {
+          thumbupCount[questionId] = 0;
         }
+      }
+      this.setData({
+        thumbupCount,
+        myThumbups
       });
-      action == 'add' ? (myThumbups[questionId] = true) : (delete myThumbups[questionId]);
-      this.setData({myThumbups, questions});
+      wx.cloud.init();
       wx.cloud.callFunction({
         name: 'thumbups',
         data: {
@@ -162,18 +172,58 @@ Page({
     });
   },
   getHotSpot() {
-
+    wx.cloud.init();
+    const _t = this;
+    const now = Date.now();
+    const timeLimit = new Date(now - 3 * 24 * 3600 * 1000); //3天内
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const _ = db.command;
+    db.collection("hotRate")
+    .where({
+      createdTime: _.gt(timeLimit.toISOString())
+    })
+    .orderBy('hotVal', 'desc')
+    .field({
+      questionId: true
+    })
+    .get()
+    .then(resp => {
+      return resp.data.map(item => item.questionId);
+    }).then(questionIds=> {
+      db.collection("questions")
+      .where({
+        _id: _.in(questionIds)
+      })
+      .get()
+      .then(resp => {
+        const questions = resp.data;
+        if(questions.length) {
+          const colQuestions = _t.data.colQuestions, ids = [];
+          questions.forEach(item => {
+            item.formattedTime = util.timeFormattor(item.createdTime);
+            ids.push(item._id);
+          });
+          colQuestions['hotspot'] = questions;
+          _t.setData({
+            colQuestions
+          });
+          _t.getThumbupNum(ids);
+          _t.getReplyNum(ids);
+        }
+      })
+    })
   },
-  getQuestions: function(column) {
-    let columns = column;
-    if(column === 'hotspot') {
+  getQuestions: function(columnId) {
+    let columns = columnId;
+    if(columnId === 'hotspot') {
       this.getHotSpot();
       return;
     }
-    if(column === 'interested'){
+    if(columnId === 'interested'){
       columns = globalData.curUserInterestedColumns;
     }
-    console.log('getQuestions:', column)
     const _t  = this;
     wx.cloud.init();
     wx.cloud.callFunction({
@@ -185,7 +235,7 @@ Page({
           ['createdTime', 'desc']
         ],
         limit: 20,
-        equals: column !== 'all' ? {columns} : null
+        equals: columnId !== 'all' ? {columns} : null
         //fields: []
       }
     }).then(function (resp) {
@@ -196,8 +246,8 @@ Page({
           item.formattedTime = util.timeFormattor(item.createdTime);
           ids.push(item._id);
         });
-        colQuestions[column] = result;
-        colLatestAndOldestTime[column] = {
+        colQuestions[columnId] = result;
+        colLatestAndOldestTime[columnId] = {
           latest: result[0].createdTime,
           oldest: result[result.length - 1].createdTime
         };
@@ -228,30 +278,6 @@ Page({
         });
         app.globalData.myQuestionThumbups = myThumbups;
       }
-    })
-  },
-  getHotSearches: function() {
-    wx.cloud.init();
-    const db = wx.cloud.database({
-      env: config.env
-    });
-    const _ = db.command, _t = this;
-    const questionCollection = db.collection("questions");
-    questionCollection.where({
-      searchCount: _.neq(null)
-    })
-    .orderBy('searchCount', 'desc')
-    .orderBy('createdTime', 'desc')
-    .limit(10).get().then(function(resp){
-      const data = resp.data;
-      data.forEach(item => {
-        item.formatedTime = util.timeFormattor(item.createdTime);
-        item.shortContent = item.content.substr(0, 40);
-        item.images = item.images || [];
-      });
-      _t.setData({
-        hotSearches: data,
-      });
     })
   },
   onLoad: function () {
@@ -298,7 +324,6 @@ Page({
         //todo? error
       }
       // this.getMyThumbups();
-      // this.getHotSearches();
     });
 
   },
@@ -373,7 +398,8 @@ Page({
     const _t = this;
     const {activeTab, tabIndex2ColId, colLatestAndOldestTime} = _t.data;
     const activeTabId = tabIndex2ColId[activeTab];
-    if(activeTabId === 'hopspot') {
+    if(activeTabId === 'hotspot') {
+      _t.getHotSpot();
       return;
     }
     const latestTime = colLatestAndOldestTime[activeTabId] && colLatestAndOldestTime[activeTabId].latest;
@@ -416,6 +442,9 @@ Page({
     const _t = this;
     const {activeTab, tabIndex2ColId, colHasMoreData, colLatestAndOldestTime} = _t.data;
     const activeTabId = tabIndex2ColId[activeTab];
+    if(activeTabId === 'hotspot') {//热点只下拉刷新
+      return;
+    }
     if(colHasMoreData[activeTabId] && colHasMoreData[activeTabId].hasMoreData === false) {
       return;
     }
@@ -463,8 +492,7 @@ Page({
     })
   },
   onReachBottom(){
-    const {activeTab} = this.data;
-    activeTab == 0 && this.getMoreQuestions();
+    this.getMoreQuestions();
   },
 
   onTouchStart(evt) {

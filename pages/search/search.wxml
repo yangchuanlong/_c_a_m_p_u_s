@@ -2,9 +2,9 @@
   <view class='section'>
       <view wx:for="{{results}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
             <view class="author">
-                <image src="{{item.avatar}}" class="avatar" wx:if="{{item.avatar}}" ></image>                 
-                <image wx:else src="../images/userIcon.png" class="avatar" style="background:gray"></image>
-                <text class="nickName">{{item.nickName}}</text>
+                <image src="{{item.avatar || '../images/userIcon.png'}}" class="avatar" wx:if="{{!item.anonymous}}" ></image>
+                <image wx:else src="../images/anonymousUserImg.png"   class='avatar'></image>
+                <text class="nickName">{{item.anonymous ? "匿名" : item.nickName}}</text>
                 <text class="date">{{item.formatedTime}}</text>
             </view>
             <view class="title">{{item.title}}</view>

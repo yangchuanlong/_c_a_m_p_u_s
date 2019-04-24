@@ -186,5 +186,5 @@ page{
     margin-top: 8rpx;
 }
 .dlg-wrapper .column.chosen text{
-    border-color: teal;
+    border:4rpx solid #369;
 }

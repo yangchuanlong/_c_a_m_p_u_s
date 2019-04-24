@@ -11,6 +11,11 @@
             +
         </view>
     </view>
+    <view class='anonymous'>
+        <checkbox-group bindchange="checkboxChange" bindchange="onToggle">
+            <checkbox value="anonymous" checked="{{false}}" /> <text>匿名发表</text>
+        </checkbox-group>
+    </view>
     <button
       class='confirmBtn'
       bindtap="submit"
