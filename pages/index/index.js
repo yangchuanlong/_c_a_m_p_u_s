@@ -234,8 +234,8 @@ Page({
           ['createdTime', 'desc']
       ],
       limit: 20,
-      equals: columnId !== 'all' ? {columns} : null
-      //fields: []
+      equals: columnId !== 'all' ? {columns} : null,
+      fields: ["_id", "createdTime", "images", "openid", "title", "abstract"]
     })
     .then(function (resp) {
       const result = resp.data;
@@ -467,7 +467,8 @@ Page({
             ['createdTime', 'desc']
         ],
         limit: 10,
-        equals: activeTabId !== 'all' ? {columns: activeTabId} : null
+        equals: activeTabId !== 'all' ? {columns: activeTabId} : null,
+        fields: ["_id", "createdTime", "images", "openid", "title", "abstract"]
     })
     .then(resp => {
       const result = resp.data;

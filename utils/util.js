@@ -116,9 +116,6 @@ const getQuestions = function(params) {
         }
     });
     let subCollection = db.collection("questions").where(conditions);
-    if(Object.keys(fields).length) {
-        subCollection = subCollection.field(fields);
-    }
     orderBy.forEach(ob => {
         subCollection = subCollection.orderBy(ob[0], ob[1]);
     });
@@ -131,7 +128,9 @@ const getQuestions = function(params) {
     //         question.content = question.content.substr(0, 40) + '...';
     //     }
     // });
-    // return result.data;
+    if(Object.keys(fields).length) {
+        return subCollection.field(fields).get();
+    }
     return subCollection.get()
 }
 module.exports = {

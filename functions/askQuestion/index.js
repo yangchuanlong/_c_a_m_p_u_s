@@ -18,6 +18,7 @@ exports.main = async (event, context) => {
       images: event.images || [],
       anonymous: event.anonymous,
       createdTime: new Date().toISOString(),
+      abstract: event.content.substr(0, 40),
 
       openid: wxContext.OPENID, //todo? put it in a userInfo object
       avatar: event.avatar,
