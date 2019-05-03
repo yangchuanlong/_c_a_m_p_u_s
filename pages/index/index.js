@@ -45,7 +45,8 @@ Page({
     collegeColumns: [],
     chosenInterestedCols: {},
     setInterestedLoading: false,
-    showInterestedSettingDlg: false
+    showInterestedSettingDlg: false,
+    users: {}
   },
   //事件处理函数
   bindViewTap: function() {
@@ -241,10 +242,11 @@ Page({
     }).then(function (resp) {
       const result = resp.result;
       if(result.length) {
-        const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
+        const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[], openIdSet = new Set();
         result.forEach(item => {
           item.formattedTime = util.timeFormattor(item.createdTime);
           ids.push(item._id);
+          openIdSet.add(item.openid);
         });
         colQuestions[columnId] = result;
         colLatestAndOldestTime[columnId] = {
@@ -254,6 +256,11 @@ Page({
         _t.setData({colQuestions, colLatestAndOldestTime});
         _t.getThumbupNum(ids);
         _t.getReplyNum(ids);
+        util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
+          _t.setData({
+            users: usersObj
+          });
+        });
       }
     }).catch(e => {
       console.log(e)
@@ -343,8 +350,10 @@ Page({
       },
     }).then(function (resp) {
       if(Array.isArray(resp.result) && resp.result.length) {
-        globalData.curUserCollegeId = resp.result[0].collegeId;
-        globalData.curUserInterestedColumns = resp.result[0].interestedColumns;
+        const curUser = resp.result[0];
+        globalData.curUserCollegeId = curUser.collegeId;
+        globalData.curUserInterestedColumns = curUser.interestedColumns;
+        globalData.users = {...globalData.users, [curUser.openid]: curUser};
         return resp.result[0];
       } else {
         return false;

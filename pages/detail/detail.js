@@ -1,5 +1,6 @@
 import config from '../../utils/config.js';
 const app = getApp(), globalData = app.globalData;
+const util = require('../../utils/util.js');
 Page({
 
   /**
@@ -10,12 +11,18 @@ Page({
     inputedComment: '',
     sendBtnDisabled: true,
     sendBtnLoading: false,
-    mainReplies: [],
     replyMap: {},
     chosenReply: null,
     placeholder: "说点什么...",
     myThumbups: {},//对回复的点赞,
     scanCount: 0, //浏览量
+    lastTime: new Date().toISOString(),
+    mainReplies: [],
+    users: globalData.users,
+    chosenMainReplyId: "",
+    chosenSubReplyId: "",
+    repliedOpenId: "",
+    expandedReply: null,//点击子回复后展示的回复列表
   },
 
   scan(id){//把问题的浏览数加1
@@ -26,12 +33,26 @@ Page({
       data:{
         env:config.env,
         action: 'add',
-        questionId: id,        
+        questionId: id,
       },
       success() {
         _t.getScanNum(id);
       }
     });
+    wx.cloud.callFunction({
+      name: 'addCount',
+      data: {
+        env: config.env,
+        ids: [id],
+        countType: 'readCount'
+      },
+      success(result) {
+        console.log(result)
+      },
+      fail(error) {
+        console.log(error)
+      }
+    })
   },
   getScanNum(questionId){//获取浏览数
     const _t = this;
@@ -70,41 +91,168 @@ Page({
         detail
       })
     });
+    _t.data.lastTime = new Date().toISOString();
+    _t.data.questionId = options.id;
     _t.scan(options.id);
-
-    const replyCollection = db.collection("replies");
-    replyCollection.where({
-      questionId: options.id
-    }).get().then(res => {
-      const replyMap = {}, mainReplies = [], subReplies = [], ids = [];
-      res.data.forEach(reply => {
-        const date = new Date(reply.createdTime);     
-        const item = {
-          content: reply.content,
-          createdTime: `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`,
-          user: reply.user,
-          _id: reply._id,
-          subordinateTo: reply.subordinateTo
-        };
-        replyMap[reply._id] = item;
-        if (!item.subordinateTo) {
-          item.subordinates = [];//子评论
-          mainReplies.push(item)
-        } else {
-          subReplies.push(item);
-        }
-        ids.push(reply._id);
-      });
-      subReplies.forEach(subReply => {
-        replyMap[subReply.subordinateTo].subordinates.push(subReply);
-      });
-      _t.setData({
-        mainReplies,
-        replyMap
-      });
-      _t.getMyThumbupsForReplies(ids);
-      _t.getThumbupOfReplies(ids);
+    _t.getReplies(options.id);
+  },
+  getSubReplies(questionId, mainReplyIds) {
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: config.env
     });
+    const _ = db.command, _t = this;
+    const replyCollection = db.collection("replies");
+    const mainReplies = _t.data.mainReplies.slice();
+    const replyMap = {..._t.data.replyMap};
+    const openIdSet = new Set();
+    Promise.all(
+      mainReplyIds.map(mainReplyId => { //获取每条主评价的两个子评论
+        return replyCollection.where({
+          questionId,
+          subordinateTo: mainReplyId
+        })
+        .limit(2)
+        .get()
+        .then(resp => {
+          const data = resp.data;
+          if(data.length) {
+            mainReplies.some(mainReply => {
+              if(mainReply._id === mainReplyId) {
+                mainReply.subReplies = resp.data;
+                return true;
+              }
+            });
+            data.forEach(item => {
+              replyMap[item._id] = item;
+              openIdSet.add(item.openid);
+              item.createdTime = util.timeFormattor(item.createdTime);
+            });
+          }
+          console.log('get sub reply:', resp)
+        })
+      })
+    ).then(() => {
+      _t.setData({mainReplies, replyMap});
+      util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
+        _t.setData({ users: usersObj });
+        console.log(usersObj)
+      });
+    });
+  },
+  getMainReplies(questionId) {
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const _ = db.command, _t = this;
+    db.collection("replies").where({
+      questionId,
+      subordinateTo: null,
+      createdTime: _.lt(_t.data.lastTime),
+    })
+    .orderBy("createdTime", "desc")
+    .limit(10)
+    .get()
+    .then(resp => {
+      const data = resp.data, ids = [], openIdSet = new Set(), replyMap = {..._t.data.replyMap};
+      if(data.length){
+        _t.data.lastTime = data[data.length - 1].createdTime;
+        data.forEach(item => {
+          ids.push(item._id);
+          openIdSet.add(item.openid);
+          replyMap[item._id] = item;
+          item.createdTime = util.timeFormattor(item.createdTime);
+        });
+        const mainReplies = _t.data.mainReplies.concat(data);
+        _t.setData({mainReplies, replyMap});
+        _t.getSubReplies(questionId, ids);
+        util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
+          _t.setData({ users: usersObj });
+        });
+      }
+    })
+  },
+  onMainReplyClick(evt) {
+    const mainReplyId = evt.currentTarget.dataset.replyId;
+    const authorId = evt.currentTarget.dataset.author;
+    if(evt.target.id == 'js-thumbup' || evt.target.id == 'js-thumbup-cancel') {
+      return;
+    }
+    const { users } = this.data;
+    this.setData({
+      chosenMainReplyId: mainReplyId,
+      placeholder: `回复${users[authorId].nickName}:`,
+      repliedOpenId: authorId
+    });
+  },
+  onExpandedMainReplyClick(evt) {
+    this.onMainReplyClick(evt);
+  },
+  onSubReplyClick(evt) {
+    const _t = this;
+    const chosenSubReplyId = evt.currentTarget.dataset.replyId;
+    const authorId = evt.currentTarget.dataset.author;
+    const chosenMainReplyId = evt.currentTarget.dataset.mainReplyId;
+    const { users, mainReplies } = this.data;
+    this.setData({
+      chosenMainReplyId,
+      chosenSubReplyId,
+      placeholder: `回复${users[authorId].nickName}:`,
+      repliedOpenId: authorId
+    });
+    mainReplies.some(mainReply => {
+      if(mainReply._id === chosenMainReplyId) {
+        _t.setData({
+          expandedReply: mainReply
+        });
+        _t.getAllSubRepliesOfExpanded(chosenMainReplyId);
+        return true;
+      }
+    });
+  },
+  onExpandedSubReplyClick(evt) {
+    const authorId = evt.currentTarget.dataset.author;
+    const { users } = this.data;
+    this.setData({
+      placeholder: `回复${users[authorId].nickName}:`,
+      repliedOpenId: authorId
+    });
+  },
+  getAllSubRepliesOfExpanded(mainId) {
+    wx.cloud.init();
+    const _t = this;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    db.collection("replies")
+      .where({
+        questionId: _t.data.questionId,
+        subordinateTo: mainId
+      })
+      .get()
+      .then(resp => {
+        const expandedReply = _t.data.expandedReply || {};
+        const openIdSet = new Set();
+        expandedReply.subReplies = resp.data.map(item => {
+          openIdSet.add(item.openid);
+          return {
+            ...item,
+            createdTime: util.timeFormattor(item.createdTime)
+          }
+        });
+        _t.setData({
+          expandedReply
+        });
+        util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
+          _t.setData({ users: usersObj });
+        });
+      })
+  },
+  getReplies(questionId) {
+    this.getMainReplies(questionId);
+    //   _t.getMyThumbupsForReplies(ids);
+    //   _t.getThumbupOfReplies(ids);
   },
   getMyThumbupsForReplies: function(ids) {//获取'我'对回复的点赞
     if(!ids.length) {
@@ -217,22 +365,20 @@ Page({
     this.setData({
       sendBtnLoading: true
     });
-   
+    const { trimmedReply, questionId, chosenMainReplyId, repliedOpenId} = this.data;
     const data = {
       env:config.env,
-      content: this.data.trimmedReply,
-      questionId: this.data.questionId,
-      subordinateTo: this.data.chosenReply && this.data.chosenReply._id,
-      user: {
-        avatar: globalData.userInfo.avatarUrl,
-        nickName: globalData.userInfo.nickName
-      }
+      content: trimmedReply,
+      questionId: questionId,
+      subordinateTo: chosenMainReplyId || undefined,
+      repliedOpenId: repliedOpenId || undefined,
+      createdTime: new Date().toISOString()
     };
     wx.cloud.callFunction({
       name: 'reply',
       data
     }).then(function (resp) {
-        const _id = resp.result;
+        const {_id, openid } = resp.result;
         _t.setData({
           inputedComment: "",
           sendBtnDisabled: true,
@@ -240,22 +386,36 @@ Page({
         });
         data._id = _id; //添加到评论区
         data.thumbupCount = 0;
-        _t.data.replyMap[_id] = data;
-        if(!_t.data.chosenReply) {//主回复
-          data.subordinates = [];
-          const mainReplies = _t.data.mainReplies;          
-          mainReplies.push(data);
-          _t.setData({
-            mainReplies,
-          })
+        data.questionId = questionId;
+        data.createdTime = util.timeFormattor(data.createdTime);
+        data.openid = openid;
+        const {chosenMainReplyId} = _t.data;
+        const mainReplies = _t.data.mainReplies.slice();
+        if(!chosenMainReplyId) {//主回复
+          mainReplies.unshift(data);
+          _t.setData({ mainReplies });
         } else { //子回复
-          data.subordinateTo = _t.data.chosenReply._id;          
-          _t.data.chosenReply.subordinates.push(data);
-          _t.data.replyMap[data.subordinateTo].subordinates.push(data);
+          mainReplies.some(reply => {
+            if(reply._id === chosenMainReplyId) {
+              const subReplies = reply.subReplies || [];
+              subReplies.push(data);
+              reply.subReplies = subReplies.slice(-2);
+              return;
+            }
+          });
           _t.setData({
-            chosenReply: _t.data.chosenReply,
-            replyMap: _t.data.replyMap
-          })
+            mainReplies
+          });
+        }
+        let expandedReply = _t.data.expandedReply;
+        if(expandedReply) {
+          expandedReply = {...expandedReply};
+          const subReplies = expandedReply.subReplies || [];
+          subReplies.push(data);
+          expandedReply.subReplies = subReplies.slice();
+          _t.setData({
+            expandedReply
+          });
         }
     }, function (err) {
         _t.setData({
@@ -266,67 +426,61 @@ Page({
 
   onCloseDlg() {
     this.setData({
-      chosenReply: null,
+      chosenMainReplyId: '',
+      expandedReply: null,
+      repliedOpenId: '',
       placeholder: '说点什么...'
     })
   },
-  onMainReplyClick(evt) {
-  const mainReplyId = evt.currentTarget.dataset.replyId;
-    if(evt.target.id == 'js-thumbup' || evt.target.id == 'js-thumbup-cancel') {
-      return;
-    }
-    const mainReply = this.data.replyMap[mainReplyId];
-    this.setData({
-      chosenReply: mainReply,
-      placeholder: `回复${mainReply.user.nickName}:`
-    })
+  getMoreReplies() {
+
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    
+
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-    
+
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-    
+
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    
+
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    
+    this.getMoreReplies();
   },
 
   /**
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-    
+
   }
 })

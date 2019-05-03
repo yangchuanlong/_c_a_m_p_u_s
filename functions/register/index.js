@@ -20,7 +20,7 @@ exports.main = async (event, context) => {
       gender: event.gender
     }
   });
-  return result;
+  return { _id: result._id, openid: wxContext.OPENID};
   // return {
   //   event,
   //   openid: wxContext.OPENID,

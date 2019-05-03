@@ -14,11 +14,11 @@ exports.main = async (event, context) => {
         data: {
             content: event.content,
             questionId: event.questionId,
-            user: event.user,
             subordinateTo: event.subordinateTo,
+            repliedOpenId: event.repliedOpenId,
 
             openid: wxContext.OPENID,
-            createdTime: new Date().toISOString(),
+            createdTime: event.createdTime || new Date().toISOString(),
         },
         success: () => {
         },
@@ -27,7 +27,7 @@ exports.main = async (event, context) => {
         complete: () => {
         }
     });
-    return result._id;
+    return {_id: result._id, openid: wxContext.OPENID};
     // return {
     //   event,
     //   openid: wxContext.OPENID,

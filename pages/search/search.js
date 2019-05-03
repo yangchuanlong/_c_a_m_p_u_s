@@ -1,11 +1,14 @@
 import config from '../../utils/config.js';
+import utils from '../../utils/util.js';
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    results: []
+    results: [],
+    users: {}
   },
   gotoDetail(evt) {
     const questionId = evt.currentTarget.dataset.id;
@@ -47,17 +50,18 @@ Page({
   },
 
   addSearchCount(data) {
-    const _t = this, ids = [];
+    const _t = this, ids = [], openidSet = new Set();
     wx.cloud.init();
     data.forEach(item => {
       ids.push(item._id);
+      openidSet.add(item.openid)
     });
     wx.cloud.callFunction({
       name: 'addCount',
       data: {
         env: config.env,
         ids,
-        type: 'searchCount'
+        countType: 'searchCount'
       },
       success(result) {
          console.log(result)
@@ -65,6 +69,11 @@ Page({
       fail(error) {
         console.log(error)
       }
+    });
+    utils.getRegisteredUsers(Array.from(openidSet)).then(usersObj => {
+      _t.setData({
+        users: usersObj
+      })
     })
   },
   /**

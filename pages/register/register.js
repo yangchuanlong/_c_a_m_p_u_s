@@ -237,6 +237,7 @@ Page({
       if(resp.result.errMsg === 'collection.add:ok') { //success
         globalData.curUserCollegeId = data.selectedCollege.collegeId;
         globalData.curUserGrade = data.selectedGrade.value;
+        globalData.users = {...globalData.users, [resp.result.openid]: data};
         wx.redirectTo({
           url: "/pages/index/index"
         })

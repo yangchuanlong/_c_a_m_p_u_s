@@ -15,7 +15,7 @@ exports.main = async (event, context) => {
     questionId: _.in(ids)
   }).update({
     data: {
-      searchCount: _.inc(1)
+      [event.countType]: _.inc(1)
     }
   });
   const batchTimes = Math.ceil(ids.length / 20);

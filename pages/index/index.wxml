@@ -17,8 +17,8 @@
            <view wx:for="{{colQuestions[item.en_name] || []}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
                <view class="author">
                    <image src="../images/anonymousUserImg.png" class="avatar" wx:if="{{item.anonymous}}"></image>
-                   <image src="{{item.avatar  || '../images/userIcon.png'}}" class="avatar" wx:else></image>
-                   <text class="nickName">{{item.anonymous ? "匿名" : item.nickName}}</text>
+                   <image src="{{users[item.openid].avatar  || '../images/userIcon.png'}}" class="avatar" wx:else></image>
+                   <text class="nickName">{{item.anonymous ? "匿名" : users[item.openid].nickName}}</text>
                    <text class="date">{{item.formattedTime}}</text>
                </view>
                <view class="title">{{item.title}}</view>
