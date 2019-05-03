@@ -227,20 +227,18 @@ Page({
     }
     const _t  = this;
     wx.cloud.init();
-    wx.cloud.callFunction({
-      name: 'getQuestions',
-      data: {
-        env: config.env,
-        //commands: [ ['createdTime', 'lt', `value`]  ],
-        orderBy: [
+    util.getQuestions({
+      env: config.env,
+      //commands: [ ['createdTime', 'lt', `value`]  ],
+      orderBy: [
           ['createdTime', 'desc']
-        ],
-        limit: 20,
-        equals: columnId !== 'all' ? {columns} : null
-        //fields: []
-      }
-    }).then(function (resp) {
-      const result = resp.result;
+      ],
+      limit: 20,
+      equals: columnId !== 'all' ? {columns} : null
+      //fields: []
+    })
+    .then(function (resp) {
+      const result = resp.data;
       if(result.length) {
         const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[], openIdSet = new Set();
         result.forEach(item => {
@@ -413,20 +411,18 @@ Page({
     }
     const latestTime = colLatestAndOldestTime[activeTabId] && colLatestAndOldestTime[activeTabId].latest;
     wx.cloud.init();
-    wx.cloud.callFunction({
-      name: 'getQuestions',
-      data: {
+    util.getQuestions({
         env: config.env,
         commands: [
-          ['createdTime', 'gt', latestTime || new Date().toISOString()]
+            ['createdTime', 'gt', latestTime || new Date().toISOString()]
         ],
         orderBy: [
-          ['createdTime', 'desc']
+            ['createdTime', 'desc']
         ],
         equals: activeTabId !== 'all' ? {columns: activeTabId} : null
-      }
-    }).then(function (resp) {
-      const result = resp.result;
+    })
+    .then(function (resp) {
+      const result = resp.data;
       if(result.length) {
         const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
         result.forEach(item => {
@@ -462,9 +458,7 @@ Page({
     });
     const oldestTime = colLatestAndOldestTime[activeTabId] && colLatestAndOldestTime[activeTabId].oldest;
     wx.cloud.init();
-    wx.cloud.callFunction({
-      name: "getQuestions",
-      data: {
+    util.getQuestions({
         env: config.env,
         commands: [
             ['createdTime', 'lt', oldestTime || new Date().toISOString()]
@@ -472,10 +466,11 @@ Page({
         orderBy: [
             ['createdTime', 'desc']
         ],
-        limit: 10
-      }
-    }).then(resp => {
-      const result = resp.result;
+        limit: 10,
+        equals: activeTabId !== 'all' ? {columns: activeTabId} : null
+    })
+    .then(resp => {
+      const result = resp.data;
       if(result.length) {
         const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
         result.forEach(item => {

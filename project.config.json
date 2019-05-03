@@ -13,7 +13,7 @@
 		"autoAudits": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.5.0",
+	"libVersion": "2.6.6",
 	"appid": "wx1eff8bc48b789e69",
 	"projectname": "campus",
 	"debugOptions": {
