@@ -23,6 +23,7 @@ Page({
     chosenSubReplyId: "",
     repliedOpenId: "",
     expandedReply: null,//点击子回复后展示的回复列表
+    thumbups: {}
   },
 
   scan(id){//把问题的浏览数加1
@@ -167,6 +168,7 @@ Page({
         const mainReplies = _t.data.mainReplies.concat(data);
         _t.setData({mainReplies, replyMap});
         _t.getSubReplies(questionId, ids);
+        _t.getMyThumbupsForReplies(ids);
         util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
           _t.setData({ users: usersObj });
         });
@@ -259,24 +261,24 @@ Page({
       return;
     }
     const _t = this;
-    wx.cloud.callFunction({
-      name: 'thumbups',
-      data: {
-        env:config.env,
-        action: 'get',
-        ids,
-        type: 'reply'
-      },
-      success: function (resp) {
-        const myThumbups = {};
-          resp.result.data.forEach(item => {
-              myThumbups[item.questionOrReplyId] = true;
-          });
-          _t.setData({
-              myThumbups
-          });
-      }
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: config.env
     });
+    const _ = db.command;
+    db.collection("thumbups").where({
+      questionOrReplyId: _.in(ids),
+      openid: globalData.curUser.openid,
+      type: 'reply'
+    }).get().then(function (resp) {
+      const myThumbups = {..._t.data.myThumbups};
+      resp.data.forEach(item => {
+        myThumbups[item.questionOrReplyId] = true;
+      });
+      _t.setData({
+        myThumbups
+      });
+    })
   },
   getThumbupOfReplies(ids){
       const _t = this;
@@ -306,46 +308,51 @@ Page({
       })
   },
   thumbup: function(evt) {
-      const id = evt.currentTarget.dataset.id;
-      wx.cloud.callFunction({
-          name: 'thumbups',
-          data: {
-              env:config.env,
-              action: 'add',
-              questionOrReplyId: id,
-              type: 'reply'
-          }
-      });
-      const myThumbups = this.data.myThumbups;
-      const replyMap = this.data.replyMap;
-      myThumbups[id] = true;
-      replyMap[id].thumbupCount += 1;
-      this.setData({
-          myThumbups,
-          replyMap
-      });
+    wx.cloud.init();
+    const _t = this;
+    const id = evt.currentTarget.dataset.id;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const myThumbups = {..._t.data.myThumbups};
+    db.collection("thumbups").add({
+      data: {
+        openid: globalData.curUser.openid,
+        questionOrReplyId: id,
+        type: 'reply'
+      },
+      success: function (resp) {
+        console.log(resp)
+      },
+      fail(err) {
+        console.log(err)
+      }
+    });
+    myThumbups[id] = true;
+    _t.setData({
+      myThumbups
+    });
   },
   cancelThumbup: function(evt) {
-      const id = evt.currentTarget.dataset.id;
-      wx.cloud.callFunction({
-          name: 'thumbups',
-          data: {
-              env:config.env,
-              action: 'cancel',
-              questionOrReplyId: id,
-              type: 'reply'
-          }
+    const _t = this;
+    const id = evt.currentTarget.dataset.id;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const thumbupCollection = db.collection("thumbups");
+    const myThumbups = {..._t.data.myThumbups};
+    thumbupCollection.where({
+      questionOrReplyId: id,
+      openid: globalData.curUser.openid
+    }).get().then(function (resp) {
+      resp.data.forEach(item => {
+        thumbupCollection.doc(item._id).remove();
       });
-      const myThumbups = this.data.myThumbups;
-      const replyMap = this.data.replyMap;
-      delete myThumbups[id];
-      if(replyMap[id].thumbupCount > 0) {
-          replyMap[id].thumbupCount -= 1;
-      }
-      this.setData({
-          myThumbups,
-          replyMap
-      });
+    })
+    delete myThumbups[id];
+    _t.setData({
+      myThumbups
+    });
   },
   onInput(evt) {
     const inputedReply = evt.detail.value;

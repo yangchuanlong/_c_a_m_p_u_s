@@ -238,6 +238,10 @@ Page({
         globalData.curUserCollegeId = data.selectedCollege.collegeId;
         globalData.curUserGrade = data.selectedGrade.value;
         globalData.users = {...globalData.users, [resp.result.openid]: data};
+        globalData.curUser = {
+          ...data,
+          openid: resp.result.openid
+        };
         wx.redirectTo({
           url: "/pages/index/index"
         })

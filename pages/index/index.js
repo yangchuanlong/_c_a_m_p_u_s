@@ -352,6 +352,7 @@ Page({
         globalData.curUserCollegeId = curUser.collegeId;
         globalData.curUserInterestedColumns = curUser.interestedColumns;
         globalData.users = {...globalData.users, [curUser.openid]: curUser};
+        globalData.curUser = resp.result[0];
         return resp.result[0];
       } else {
         return false;

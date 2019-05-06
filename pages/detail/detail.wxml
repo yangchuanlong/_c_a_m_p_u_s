@@ -117,7 +117,10 @@
                             <text style='flex:1'></text>
                             <text>{{subReply.createdTime}}</text>
                         </view>
-                        <view class='replyContent'>{{subReply.content}}</view>
+                        <view class='replyContent'>
+                            <text wx:if="{{subItem.repliedOpenId}}">回复 {{users[subItem.repliedOpenId].nickName}}:</text>
+                            {{subItem.content}}
+                        </view>
                         <view class="actions">
                             <image wx:if="{{myThumbups[subItem._id]}}" src="../images/thumbup.png"
                                    data-id="{{subItem._id}}" bindtap="cancelThumbup"></image>
