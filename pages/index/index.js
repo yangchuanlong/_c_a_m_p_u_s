@@ -55,7 +55,11 @@ Page({
     })
   },
   gotoDetail(evt) {
+    wx.cloud.init();
     const _t = this;
+    const db = wx.cloud.database({
+        env: config.env
+    });
     const questionId = evt.currentTarget.dataset.id;
     const myThumbups = this.data.myThumbups;
     let action = '';
@@ -65,12 +69,25 @@ Page({
       action = 'cancel';
     }
     if(action) {
+      const thumbupCollection = db.collection("thumbups");
       const myThumbups = {...this.data.myThumbups};
       const thumbupCount = {...this.data.thumbupCount};
-
       if(action === 'add') {
         myThumbups[questionId] = true;
         thumbupCount[questionId] = (thumbupCount[questionId] || 0) + 1;
+        thumbupCollection.add({
+            data: {
+                openid: globalData.curUser.openid,
+                questionOrReplyId: questionId,
+                type: 'question'
+            },
+            success: function (resp) {
+                console.log(resp)
+            },
+            fail(err) {
+                console.log(err)
+            }
+        });
       } else {
         delete myThumbups[questionId];
         if(!isNaN(thumbupCount[questionId]) && (thumbupCount[questionId] >= 1)){
@@ -78,20 +95,18 @@ Page({
         } else {
           thumbupCount[questionId] = 0;
         }
+        thumbupCollection.where({
+            questionOrReplyId: questionId,
+            openid: globalData.curUser.openid
+        }).get().then(function (resp) {
+            resp.data.forEach(item => {
+                thumbupCollection.doc(item._id).remove();
+            });
+        })
       }
       this.setData({
         thumbupCount,
         myThumbups
-      });
-      wx.cloud.init();
-      wx.cloud.callFunction({
-        name: 'thumbups',
-        data: {
-          env:config.env,
-          action,
-          questionOrReplyId: questionId,
-          type: 'question'
-        }
       });
       return;
     }
@@ -212,6 +227,7 @@ Page({
           });
           _t.getThumbupNum(ids);
           _t.getReplyNum(ids);
+          _t.getMyThumbups(ids);
         }
       })
     })
@@ -254,6 +270,7 @@ Page({
         _t.setData({colQuestions, colLatestAndOldestTime});
         _t.getThumbupNum(ids);
         _t.getReplyNum(ids);
+        _t.getMyThumbups(ids);
         util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
           _t.setData({
             users: usersObj
@@ -264,26 +281,33 @@ Page({
       console.log(e)
     })
   },
-  getMyThumbups: function() {
-    const _t = this;
-    wx.cloud.callFunction({
-      name: 'thumbups',
-      data: {
-        env:config.env,
-        action: 'get',
-        type: 'question'
-      },
-      success: function (resp) {
-        const myThumbups = {};
-        resp.result.data.forEach(item => {
-          myThumbups[item.questionOrReplyId] = true;
-        });
-        _t.setData({
-          myThumbups
-        });
-        app.globalData.myQuestionThumbups = myThumbups;
+  getMyThumbups: function(ids) {
+      if(!ids.length) {
+          return;
       }
-    })
+      ids = ids.filter(id => !this.data.myThumbups[id]);
+      if(!ids.length){
+          return;
+      }
+      const _t = this;
+      wx.cloud.init();
+      const db = wx.cloud.database({
+          env: config.env
+      });
+      const _ = db.command;
+      db.collection("thumbups").where({
+          questionOrReplyId: _.in(ids),
+          openid: globalData.curUser.openid,
+          type: 'question'
+      }).get().then(function (resp) {
+          const myThumbups = {..._t.data.myThumbups};
+          resp.data.forEach(item => {
+              myThumbups[item.questionOrReplyId] = true;
+          });
+          _t.setData({
+              myThumbups
+          });
+      })
   },
   onLoad: function () {
     const _t = this;

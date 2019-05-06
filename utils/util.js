@@ -105,7 +105,7 @@ const getQuestions = function(params) {
                                 columns: col
                             };
                         });
-                        delete event.equals.columns;
+                        delete params.equals.columns;
                         Object.assign(conditions, params.equals);
                         conditions = _.and(conditions, _.or(orArr));
                     } else {
