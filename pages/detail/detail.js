@@ -107,6 +107,7 @@ Page({
     const mainReplies = _t.data.mainReplies.slice();
     const replyMap = {..._t.data.replyMap};
     const openIdSet = new Set();
+    const ids = [];
     Promise.all(
       mainReplyIds.map(mainReplyId => { //获取每条主评价的两个子评论
         return replyCollection.where({
@@ -126,6 +127,7 @@ Page({
             });
             data.forEach(item => {
               replyMap[item._id] = item;
+              ids.push(item._id);
               openIdSet.add(item.openid);
               item.createdTime = util.timeFormattor(item.createdTime);
             });
@@ -139,6 +141,7 @@ Page({
         _t.setData({ users: usersObj });
         console.log(usersObj)
       });
+      _t.getMyThumbupsForReplies(ids);
     });
   },
   getMainReplies(questionId) {
@@ -234,10 +237,11 @@ Page({
       })
       .get()
       .then(resp => {
-        const expandedReply = _t.data.expandedReply || {};
+        const expandedReply = _t.data.expandedReply || {}, ids = [];
         const openIdSet = new Set();
         expandedReply.subReplies = resp.data.map(item => {
           openIdSet.add(item.openid);
+          ids.push(item._id);
           return {
             ...item,
             createdTime: util.timeFormattor(item.createdTime)
@@ -249,6 +253,7 @@ Page({
         util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
           _t.setData({ users: usersObj });
         });
+        _t.getMyThumbupsForReplies(ids);
       })
   },
   getReplies(questionId) {
@@ -259,6 +264,10 @@ Page({
   getMyThumbupsForReplies: function(ids) {//获取'我'对回复的点赞
     if(!ids.length) {
       return;
+    }
+    ids = ids.filter(id => !this.data.myThumbups[id]);
+    if(!ids.length){
+        return;
     }
     const _t = this;
     wx.cloud.init();
@@ -424,6 +433,21 @@ Page({
             expandedReply
           });
         }
+
+        wx.cloud.callFunction({
+            name: 'addCount',
+            data: {
+                env: config.env,
+                ids: [questionId],
+                countType: 'replyCount'
+            },
+            // success(result) {
+            //     console.log(result)
+            // },
+            // fail(error) {
+            //     console.log(error)
+            // }
+        })
     }, function (err) {
         _t.setData({
             sendBtnLoading: false

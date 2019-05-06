@@ -64,10 +64,10 @@
                         </view>
                         <view class="actions">
                             <image wx:if="{{myThumbups[subReply._id]}}"
-                                   src="../images/thumbup.png" data-id="{{replyMap[subReply._id]}}"
+                                   src="../images/thumbup.png" data-id="{{subReply._id}}"
                                    bindtap="cancelThumbup"></image>
                             <image wx:else src="../images/not-thumbup.png"
-                                   data-id="{{replyMap[subReply._id]}}" bindtap="thumbup"></image>
+                                   data-id="{{subReply._id}}" bindtap="thumbup"></image>
                             <text>赞({{replyMap[subReply._id].thumbupCount}})</text>
                         </view>
                         <view class='moreReplies' wx:if="{{subIndex==1}}">
@@ -104,16 +104,16 @@
                     <view
                         class='replyItem subReplyItem'
                         wx:for="{{expandedReply.subReplies}}"
-                        wx:for-item="subReply"
+                        wx:for-item="subItem"
                         wx:key="{{subItem._id}}"
-                        data-reply-id="{{subReply._id}}"
-                        data-author="{{subReply.openid}}"
+                        data-reply-id="{{subItem._id}}"
+                        data-author="{{subItem.openid}}"
                         data-main-reply-id="{{expandedReply._id}}"
                         catchtap="onExpandedSubReplyClick"
                     >
                         <view class='replier'>
                             <image src="{{subItem.user.avatar}}"></image>
-                            <text class='nickName'>{{users[subReply.openid].nickName}}:</text>
+                            <text class='nickName'>{{users[subItem.openid].nickName}}:</text>
                             <text style='flex:1'></text>
                             <text>{{subReply.createdTime}}</text>
                         </view>
@@ -126,7 +126,7 @@
                                    data-id="{{subItem._id}}" bindtap="cancelThumbup"></image>
                             <image wx:else src="../images/not-thumbup.png" data-id="{{subItem._id}}"
                                    bindtap="thumbup"></image>
-                            <text>赞({{replyMap[subReply._id].thumbupCount}})</text>
+                            <text>赞({{replyMap[subItem._id].thumbupCount}})</text>
                         </view>
                     </view>
                 </view>
