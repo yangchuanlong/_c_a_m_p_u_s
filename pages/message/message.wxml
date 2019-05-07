@@ -7,22 +7,4 @@
       <view>刚刚</view>
     </view>
   </view>
-
-  <view class='item'>
-    <image src="../images/userIcon.png" style="background:gray"></image>
-    <view class='content'>
-      <view class='name'>大飞</view>
-      <view>为你点了一个赞</view>
-      <view>刚刚</view>
-    </view>
-  </view>
-
-  <view class='item'>
-    <image src="../images/userIcon.png" style="background:gray"></image>
-    <view class='content'>
-      <view class='name'>大飞</view>
-      <view>为你点了一个赞</view>
-      <view>刚刚</view>
-    </view>
-  </view>
 </view>

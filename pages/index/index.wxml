@@ -14,7 +14,7 @@
     </scroll-view>
    <view class="sectionWrapper" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd">
        <view class="section" wx:for="{{tabs}}" style="display: {{activeTab == index ? '' : 'none'}}" id="{{item.en_name}}" wx:key="tabContent-{{index}}">
-           <view wx:for="{{colQuestions[item.en_name] || []}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
+           <view wx:for="{{colQuestions[item.en_name] || []}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" data-author-id="{{item.openid}}" bindtap='gotoDetail'>
                <view class="author">
                    <image src="../images/anonymousUserImg.png" class="avatar" wx:if="{{item.anonymous}}"></image>
                    <image src="{{users[item.openid].avatar  || '../images/userIcon.png'}}" class="avatar" wx:else></image>

@@ -60,7 +60,7 @@ Page({
     const db = wx.cloud.database({
         env: config.env
     });
-    const questionId = evt.currentTarget.dataset.id;
+    const questionId = evt.currentTarget.dataset.id, authorId = evt.currentTarget.dataset.authorId;
     const myThumbups = this.data.myThumbups;
     let action = '';
     if (evt.target.id === 'js-thumbup') {
@@ -82,7 +82,7 @@ Page({
                 type: 'question'
             },
             success: function (resp) {
-                console.log(resp)
+              _t.putMessage({ questionId, authorId });
             },
             fail(err) {
                 console.log(err)
@@ -112,6 +112,25 @@ Page({
     }
     wx.navigateTo({
       url: '/pages/detail/detail?id=' + questionId,
+    })
+  },
+  putMessage({questionId, authorId}){
+    wx.cloud.init();
+    wx.cloud.callFunction({
+      name: 'message',
+      data: {
+        env: config.env,
+        actionType: 'add',
+        type: 1, //1:点赞问题
+        receiverId: authorId,
+        questionId,
+      },
+      success(res) {
+        console.log(res)
+      },
+      fail(err) {
+        console.log(err)
+      }
     })
   },
   gotoAsk() {
