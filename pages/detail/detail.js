@@ -76,6 +76,7 @@ Page({
   onLoad: function (options) {
     console.log(options.id);
     this.data.questionId = options.id;
+    this.data.authorId = options.authorId;
     const _t = this;
     wx.cloud.init();
     const db = wx.cloud.database({
@@ -433,7 +434,6 @@ Page({
             expandedReply
           });
         }
-
         wx.cloud.callFunction({
             name: 'addCount',
             data: {
@@ -447,6 +447,16 @@ Page({
             // fail(error) {
             //     console.log(error)
             // }
+        });
+        wx.cloud.callFunction({
+            name: 'message',
+            data: {
+                env: config.env,
+                actionType: 'add',
+                type: 2, //2:回复问题
+                receiverId: _t.data.authorId,
+                questionId,
+            }
         })
     }, function (err) {
         _t.setData({

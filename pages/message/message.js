@@ -16,24 +16,60 @@ Page({
    */
   onLoad: function (options) {
     wx.cloud.init();
+    const _t = this;
     const db = wx.cloud.database({
       env: config.env
     });
     const _ = db.command;
     db.collection("messages").where({
       receiverId: globalData.curUser.openid,
-      'unread': _.neq([])
-    }).get().then(resp => {
+    })
+    .orderBy("updatedTime", 'desc')
+    .field({
+      _id: false
+    })
+    .get()
+    .then(resp => {
       const data = resp.data;
       if(data.length) {
-        const questionIds = [];
+        const questionIds = [], result = {};
         data.forEach(item => {
           questionIds.push(item.questionId);
+          const time = new Date(item.updatedTime);
+          result[item.questionId] = {
+            unreadNum: item.unread.length,
+            updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+          }
         });
+        _t.getQuestionTitleAbstract(questionIds, result);
       }
     });
   },
-
+  getQuestionTitleAbstract(questionIds, result) {
+    const _t = this;
+    const db = wx.cloud.database({
+        env: config.env
+    });
+    const _ = db.command;
+    db.collection("questions").where({
+      _id: _.in(questionIds)
+    })
+    .field({
+        title: true,
+        abstract: true,
+    })
+    .get()
+    .then(resp => {
+      resp.data.forEach(question => {
+        result[question._id].title = question.title;
+        result[question._id].abstract = question.abstract;
+      });
+      const messages = Object.values(result);
+      _t.setData({
+          messages
+      });
+    })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

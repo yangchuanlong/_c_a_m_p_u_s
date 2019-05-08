@@ -74,6 +74,19 @@ page{
     right: 120rpx;
     bottom: 10rpx;
 }
+.unreadNum{
+    position: absolute;
+    display: flex;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background:red;
+    justify-content: center;
+    align-items: center;
+    color:white;
+    top:100rpx;
+    left:50rpx;
+}
 .section{
   width: 100%;
   margin-top:6rpx;

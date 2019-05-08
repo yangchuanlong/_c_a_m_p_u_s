@@ -27,7 +27,8 @@ exports.main = async (event, context) => {
              unread: [{
                type: event.type,  //1:点赞问题， 2: 回复问题 3: 点赞回复  4：回复别人的回复
                sender: wxContext.OPENID
-             }]
+             }],
+             updatedTime: new Date().toISOString()
            }
          });
        } else {
@@ -36,7 +37,8 @@ exports.main = async (event, context) => {
              unread: _.push({
                type: event.type,
                sender: wxContext.OPENID
-             })
+             }),
+             updatedTime: new Date().toISOString()
            }
          })
        }

@@ -44,6 +44,7 @@
         <image src="../images/edit.png" class="editIcon" bindtap='gotoAsk'></image>
         <image src="../images/userIcon.png" class="userIcon" bindtap='gotoMine'></image>
         <image src="../images/message.png" class="message" bindtap='gotoMsg'></image>
+        <text wx:if="{{unreadNum}}" class="unreadNum">{{unreadNum}}</text>
     </view>
     <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
       <image src='../images/loading.gif'></image>

@@ -46,7 +46,8 @@ Page({
     chosenInterestedCols: {},
     setInterestedLoading: false,
     showInterestedSettingDlg: false,
-    users: {}
+    users: {},
+    unreadNum: 0
   },
   //事件处理函数
   bindViewTap: function() {
@@ -111,7 +112,7 @@ Page({
       return;
     }
     wx.navigateTo({
-      url: '/pages/detail/detail?id=' + questionId,
+      url: `/pages/detail/detail?id=${questionId}&authorId=${authorId}`,
     })
   },
   putMessage({questionId, authorId}){
@@ -368,6 +369,7 @@ Page({
         });
         _t.getColumnsOfCollege(user.collegeId, !!user.interestedColumns); //send request to fetch columns by collegeId
         _t.getQuestions('all');//获取"全部"栏目的问题
+        _t.getUnreadMsg();
       } else {
         //todo? error
       }
@@ -537,6 +539,30 @@ Page({
     }).catch(e => {
       _t.setData({
           showLoading: false
+      });
+    })
+  },
+  getUnreadMsg(){
+    wx.cloud.init();
+    const _t = this;
+    const db = wx.cloud.database({
+        env: config.env
+    });
+    const _ = db.command;
+    db.collection("messages").where({
+        receiverId: globalData.curUser.openid,
+        unread: _.neq([])
+    }).field({
+        unread: true
+    })
+    .get()
+    .then(function (resp) {
+      let unreadNum = 0;
+      resp.data.forEach(item => {
+          unreadNum += item.unread.length;
+      });
+      _t.setData({
+          unreadNum
       });
     })
   },
