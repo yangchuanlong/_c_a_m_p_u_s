@@ -321,6 +321,8 @@ Page({
     wx.cloud.init();
     const _t = this;
     const id = evt.currentTarget.dataset.id;
+    const replyAuthor = evt.currentTarget.dataset.replyAuthor;
+    console.log(replyAuthor);
     const db = wx.cloud.database({
       env: config.env
     });
@@ -333,6 +335,16 @@ Page({
       },
       success: function (resp) {
         console.log(resp)
+          wx.cloud.callFunction({
+          name: 'message',
+          data: {
+              env: config.env,
+              actionType: 'add',
+              type: 3, //3: 点赞回复
+              receiverId: replyAuthor,
+              questionId: _t.data.questionId
+          }
+        })
       },
       fail(err) {
         console.log(err)
@@ -448,16 +460,23 @@ Page({
             //     console.log(error)
             // }
         });
+
+        const msgData = {
+            env: config.env,
+            actionType: 'add',
+            questionId,
+            abstract: trimmedReply.substr(0, 40)
+        };
+        if(!chosenMainReplyId) {//回复问题
+            msgData.type = 2;
+            msgData.receiverId = _t.data.authorId;
+        } else { //回复别人的回复
+            msgData.type = 4;
+            msgData.receiverId = _t.data.repliedOpenId
+        }
         wx.cloud.callFunction({
             name: 'message',
-            data: {
-                env: config.env,
-                actionType: 'add',
-                type: 2, //2:回复问题
-                receiverId: _t.data.authorId,
-                questionId,
-                abstract: trimmedReply.substr(0, 40)
-            }
+            data: msgData
         })
     }, function (err) {
         _t.setData({

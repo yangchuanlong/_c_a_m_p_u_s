@@ -36,7 +36,7 @@
                     <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel'
                            data-id="{{item._id}}" bindtap="cancelThumbup"></image>
                     <image wx:else src="../images/not-thumbup.png" id='js-thumbup' data-id="{{item._id}}"
-                           bindtap="thumbup"></image>
+                           bindtap="thumbup" data-reply-author="{{item.openid}}"></image>
                     <text>赞({{replyMap[item._id].thumbupCount}})</text>
                     |
                     <text>回复({{item.subordinates.length}})</text>
@@ -67,7 +67,7 @@
                                    src="../images/thumbup.png" data-id="{{subReply._id}}"
                                    bindtap="cancelThumbup"></image>
                             <image wx:else src="../images/not-thumbup.png"
-                                   data-id="{{subReply._id}}" bindtap="thumbup"></image>
+                                   data-id="{{subReply._id}}" bindtap="thumbup" data-reply-author="{{subReply.openid}}"></image>
                             <text>赞({{replyMap[subReply._id].thumbupCount}})</text>
                         </view>
                         <view class='moreReplies' wx:if="{{subIndex==1}}">
@@ -95,7 +95,7 @@
                     <image wx:if="{{myThumbups[chosenReply._id]}}" src="../images/thumbup.png"
                            data-id="{{chosenReply._id}}" id='js-thumbup-cancel' bindtap="cancelThumbup"></image>
                     <image wx:else src="../images/not-thumbup.png" id='js-thumbup' data-id="{{chosenReply._id}}"
-                           bindtap="thumbup"></image>
+                           bindtap="thumbup" data-reply-author="{{chosenReply.openid}}"></image>
                     <text>赞({{replyMap[chosenReply._id].thumbupCount}})</text>
                     |
                     <text>回复({{chosenReply.subordinates.length}})</text>
@@ -125,7 +125,7 @@
                             <image wx:if="{{myThumbups[subItem._id]}}" src="../images/thumbup.png"
                                    data-id="{{subItem._id}}" bindtap="cancelThumbup"></image>
                             <image wx:else src="../images/not-thumbup.png" data-id="{{subItem._id}}"
-                                   bindtap="thumbup"></image>
+                                   bindtap="thumbup" data-reply-author="{{subItem.openid}}"></image>
                             <text>赞({{replyMap[subItem._id].thumbupCount}})</text>
                         </view>
                     </view>
