@@ -16,28 +16,28 @@ exports.main = async (event, context) => {
     case 'add':
      return collection.where({
        questionId: event.questionId,
-       receiverId: event.receiverId
+       receiverId: event.receiverId,
      }).get().then(({data}) => {
+       const msg = {
+           type: event.type,  //1:点赞问题， 2: 回复问题 3: 点赞回复  4：回复别人的回复
+           sender: wxContext.OPENID,
+           abstract: event.abstract || '', //回复内容摘要
+           createdTime: new Date().toISOString()
+       };
        if(!data.length) {
          return collection.add({
            data: {
              questionId: event.questionId,
              receiverId: event.receiverId,
              read: [],
-             unread: [{
-               type: event.type,  //1:点赞问题， 2: 回复问题 3: 点赞回复  4：回复别人的回复
-               sender: wxContext.OPENID
-             }],
+             unread: [msg],
              updatedTime: new Date().toISOString()
            }
          });
        } else {
          return collection.doc(data[0]._id).update({
            data: {
-             unread: _.push({
-               type: event.type,
-               sender: wxContext.OPENID
-             }),
+             unread: _.push(msg),
              updatedTime: new Date().toISOString()
            }
          })

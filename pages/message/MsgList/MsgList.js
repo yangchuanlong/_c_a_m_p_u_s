@@ -1,6 +1,6 @@
 
 
-import config from '../../utils/config.js';
+import config from '../../../utils/config.js';
 const app = getApp(), globalData = app.globalData;
 Page({
 
@@ -16,6 +16,7 @@ Page({
    */
   onLoad: function (options) {
     wx.cloud.init();
+
     const _t = this;
     const db = wx.cloud.database({
       env: config.env
@@ -25,9 +26,6 @@ Page({
       receiverId: globalData.curUser.openid,
     })
     .orderBy("updatedTime", 'desc')
-    .field({
-      _id: false
-    })
     .get()
     .then(resp => {
       const data = resp.data;
@@ -37,6 +35,7 @@ Page({
           questionIds.push(item.questionId);
           const time = new Date(item.updatedTime);
           result[item.questionId] = {
+            questionId: item.questionId,
             unreadNum: item.unread.length,
             updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
           }
@@ -68,6 +67,13 @@ Page({
       _t.setData({
           messages
       });
+    })
+  },
+
+  gotoMsgDetail(evt) {
+    const questionId = evt.currentTarget.dataset.questionId;
+    wx.navigateTo({
+        url: '/pages/message/MsgDetail/MsgDetail?questionIds=' + questionId
     })
   },
   /**

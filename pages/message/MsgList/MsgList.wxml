@@ -1,0 +1,13 @@
+<view class='container'>
+  <view class="item" wx:for="{{messages}}" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
+    <view class="left">
+      <text class="icon">问</text>
+      <text class="unreadNum">{{item.unreadNum}}</text>
+    </view>
+    <view class="right">
+      <view class="title">{{item.title}}</view>
+      <view class="abstract">{{item.abstract}}</view>
+      <view class="time">{{item.updatedTime}}</view>
+    </view>
+  </view>
+</view>

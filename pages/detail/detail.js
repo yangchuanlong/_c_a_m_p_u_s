@@ -456,6 +456,7 @@ Page({
                 type: 2, //2:回复问题
                 receiverId: _t.data.authorId,
                 questionId,
+                abstract: trimmedReply.substr(0, 40)
             }
         })
     }, function (err) {

@@ -1,0 +1,32 @@
+
+.container {
+    padding: 0 16rpx;
+}
+.item{
+    width: 100%;
+}
+.item:not(:first-child) {
+    margin-top: 48rpx;
+}
+.author{
+    display: flex;
+    align-items: center;
+}
+.nickName{
+    margin: 0 16rpx;
+}
+.tags text{
+    display: inline-block;
+    background: #b5d2fa;
+    border-radius: 16rpx;
+    padding: 3rpx 8rpx;
+}
+.time{
+    color: gray;
+}
+.author image{
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    border: 1px solid #c7aaa4;
+}

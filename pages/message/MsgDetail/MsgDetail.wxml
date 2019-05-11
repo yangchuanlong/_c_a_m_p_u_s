@@ -1,0 +1,21 @@
+
+<view class="container">
+    <view class="item" wx:for="{{msgs}}">
+        <view class="author">
+            <image src="{{users[item.sender] && users[item.sender].avatar}}"></image>
+            <view class="nickName">{{users[item.sender] && users[item.sender].nickName}}</view>
+            <!--<view class="tags">-->
+                <!--<text>新生报到</text>-->
+            <!--</view>-->
+            <view style="flex:1"></view>
+            <view class="time">{{item.createdTime}}</view>
+        </view>
+        <view wx:if="{{item.type == 1 || item.type == 3}}">
+            为你点了一个赞
+        </view>
+        <view wx:else>
+            <text> {{item.type == 2 ? '评论：' : '回复你'}} </text>
+            {{item.abstract}}
+        </view>
+    </view>
+</view>

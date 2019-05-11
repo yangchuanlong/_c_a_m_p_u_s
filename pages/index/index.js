@@ -147,7 +147,7 @@ Page({
   },
   gotoMsg() {
     wx.navigateTo({
-      url: '../message/message',
+      url: '../message/MsgList/MsgList',
     })
   },
   inputSearch(evt){

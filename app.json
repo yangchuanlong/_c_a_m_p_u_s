@@ -7,7 +7,8 @@
     "pages/questionEdit/questionEdit",
     "pages/editor/editor",
     "pages/mine/mine",
-    "pages/message/message",
+    "pages/message/MsgList/MsgList",
+    "pages/message/MsgDetail/MsgDetail",
     "pages/detail/detail",
     "pages/search/search",
     "pages/register/register"
