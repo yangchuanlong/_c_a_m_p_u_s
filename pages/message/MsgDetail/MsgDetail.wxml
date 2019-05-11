@@ -14,7 +14,7 @@
             为你点了一个赞
         </view>
         <view wx:else>
-            <text> {{item.type == 2 ? '评论：' : '回复你'}} </text>
+            <text  style="display:inline-block"> {{item.type == 2 ? '评论:' : '回复你:'}} </text>
             {{item.abstract}}
         </view>
     </view>

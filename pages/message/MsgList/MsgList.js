@@ -72,8 +72,18 @@ Page({
 
   gotoMsgDetail(evt) {
     const questionId = evt.currentTarget.dataset.questionId;
+    const messages = this.data.messages.slice();
+    messages.some(msg => {
+      if(msg.questionId === questionId){
+        msg.unreadNum = 0;
+        return true;
+      }
+    });
+    this.setData({
+        messages
+    });
     wx.navigateTo({
-        url: '/pages/message/MsgDetail/MsgDetail?questionIds=' + questionId
+        url: '/pages/message/MsgDetail/MsgDetail?questionId=' + questionId
     })
   },
   /**

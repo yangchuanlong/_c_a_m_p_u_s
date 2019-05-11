@@ -2,7 +2,7 @@
   <view class="item" wx:for="{{messages}}" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
     <view class="left">
       <text class="icon">问</text>
-      <text class="unreadNum">{{item.unreadNum}}</text>
+      <text class="unreadNum" wx:if="{{item.unreadNum}}">{{item.unreadNum}}</text>
     </view>
     <view class="right">
       <view class="title">{{item.title}}</view>

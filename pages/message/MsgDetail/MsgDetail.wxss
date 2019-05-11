@@ -11,6 +11,7 @@
 .author{
     display: flex;
     align-items: center;
+    margin-bottom: 8rpx;
 }
 .nickName{
     margin: 0 16rpx;

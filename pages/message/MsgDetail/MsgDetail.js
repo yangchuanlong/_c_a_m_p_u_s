@@ -1,6 +1,7 @@
 
 import config from '../../../utils/config.js';
 const util = require('../../../utils/util.js');
+const app = getApp(), globalData = app.globalData;
 Page({
 
   /**
@@ -17,12 +18,13 @@ Page({
   onLoad: function (options) {
     wx.cloud.init();
     const _t = this;
-    const id = options.id;
+    const questionId = options.questionId;
     const db = wx.cloud.database({
         env: config.env
     });
     db.collection("messages").where({
-        _id: id
+        questionId,
+        receiverId: globalData.curUser.openid
     })
     .get()
     .then(resp => {
@@ -41,11 +43,14 @@ Page({
           msgs.push(item);
       });
       _t.setData({ msgs });
-      _t.getMsgDetail(msgs);
+      _t.getSendersInfo(msgs);
+      if(message.unread.length) {
+        _t.setUnreadToRead(message._id);
+      }
     })
   },
 
-  getMsgDetail(msgs) {
+  getSendersInfo(msgs) {
     const openids = [], _t = this;
     msgs.forEach(item => {
       msgs.push(item.sender);
@@ -55,6 +60,17 @@ Page({
           users
       });
     });
+  },
+
+  setUnreadToRead(id){//未读消息设置为已读
+    wx.cloud.init();
+    wx.cloud.callFunction({
+        name: 'message',
+        data: {
+          actionType: 'read',
+          id,
+        }
+    })
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
