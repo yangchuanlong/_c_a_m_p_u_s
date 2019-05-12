@@ -1,5 +1,5 @@
 {
-  "pages":[
+  "pages": [
     "pages/index/index",
     "pages/logs/logs",
     "pages/test/test",
@@ -14,11 +14,12 @@
     "pages/register/register",
     "pages/profile/profile"
   ],
-  "window":{
-    "backgroundTextStyle":"light",
+  "window": {
+    "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
-    "navigationBarTextStyle":"black",
+    "navigationBarTextStyle": "black",
     "onReachBottomDistance": 50
-  }
+  },
+  "sitemapLocation": "sitemap.json"
 }

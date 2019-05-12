@@ -1,4 +1,12 @@
-<view class="container">
+<button
+    wx:if="{{!hasUserInfo && canIUse}}"
+    open-type="getUserInfo"
+    bindgetuserinfo="getUserInfo"
+    type="primay"
+>
+    授权获取头像昵称
+</button>
+<view wx:else class="container">
     <view class="main" bindtap="togglePopup" wx:if="{{curStep === 1}}">
         <view class="title">请选择院校</view>
 

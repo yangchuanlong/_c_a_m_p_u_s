@@ -199,5 +199,5 @@ page{
     margin-top: 8rpx;
 }
 .dlg-wrapper .column.chosen text{
-    border:4rpx solid #369;
+    border:4rpx solid blue;
 }
