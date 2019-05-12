@@ -142,7 +142,7 @@ Page({
   },
   gotoMine() {
     wx.navigateTo({
-      url: '../mine/mine',
+      url: '../profile/profile',
     })
   },
   gotoMsg() {

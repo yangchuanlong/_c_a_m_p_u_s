@@ -24,3 +24,7 @@
     padding: 12rpx 16rpx;    
     box-sizing: border-box;
 }
+.tabPane navigator{
+    color: #0000dd;
+}
+

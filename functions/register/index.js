@@ -17,7 +17,8 @@ exports.main = async (event, context) => {
       grade: event.grade,
       nickName: event.nickName,
       avatar: event.avatar,
-      gender: event.gender
+      gender: event.gender,
+      createdTime: new Date().toISOString()
     }
   });
   return { _id: result._id, openid: wxContext.OPENID};

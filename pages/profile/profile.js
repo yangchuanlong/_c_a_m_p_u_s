@@ -1,18 +1,48 @@
 
+import config from '../../utils/config.js';
+const app = getApp(), globalData = app.globalData;
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    
+    curUser: globalData.curUser,
+    gradeMap: {
+      1: '大一',
+      2: '大二',
+      3: '大三',
+      4: '大四'
+    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    
+    const _t = this;
+    if(!globalData.curUser.collegeName) {
+      wx.cloud.init();
+      wx.cloud.database({
+        env: config.env
+      })
+      .collection("college")
+      .where({
+          collegeId: globalData.curUser.collegeId
+      })
+      .field({
+        _id: false,
+        collegeName: true
+      })
+      .get()
+      .then(({data}) => {
+        const collegeName = data[0].collegeName;
+        globalData.curUser.collegeName = collegeName;
+        _t.setData({
+            curUser: globalData.curUser
+        })
+      })
+    }
   },
 
   /**

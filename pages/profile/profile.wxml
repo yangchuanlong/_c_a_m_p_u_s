@@ -2,14 +2,18 @@
 <view class="container">
  <view class="header">
   <view class="avatar">
-      <image src="../images/anonymousUserImg.png"></image>
+      <image src="{{curUser.avatar}}"></image>
   </view>
   <view class="userCollegeGrade">
-      <view class="collegeName">广二师</view>
-      <view class="grade">大二</view>
+      <view class="collegeName">{{curUser.collegeName}}</view>
+      <view class="grade">{{gradeMap[curUser.grade]}}</view>
   </view>
+  <view class="nickName">{{curUser.nickName}}</view>
  </view>
  <view class="main">
-
+     <navigator url="/pages/message/MsgList/MsgList">我的消息</navigator>
+     <navigator url="/pages/mine/mine">我的提问</navigator>
+     <navigator url="/pages/mine/mine">我的收藏</navigator>
+     <navigator>关于我们</navigator>
  </view>
 </view>

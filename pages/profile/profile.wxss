@@ -2,6 +2,40 @@
 .container{
     padding: 0 16rpx;
 }
+.header{
+    width: 100%;
+    border-bottom: 1rpx solid lightgray;
+    padding-bottom: 16rpx;
+}
 .userCollegeGrade{
     display:flex;
+    justify-content:center;
+}
+.grade{
+    margin-left: 16rpx;
+}
+
+.nickName{
+    text-align: center;
+}
+.avatar {
+    width: 100%;
+    text-align: center;
+}
+.avatar image{
+    width: 150rpx;
+    height: 150rpx;
+    border-radius: 50%;
+    display: inline-block;
+}
+.main{
+    width: 100%;
+    margin-top: 40rpx;
+    background: #f8f8f8;
+}
+.main navigator{
+    padding: 24rpx;
+}
+.main navigator:nth-child(even) {
+    background: lightgray;
 }
