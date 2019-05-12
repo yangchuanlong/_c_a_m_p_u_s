@@ -84,6 +84,20 @@ Page({
             },
             success: function (resp) {
               _t.putMessage({ questionId, authorId });
+              wx.cloud.callFunction({
+                  name: 'addCount',
+                  data: {
+                      env: config.env,
+                      ids: [questionId],
+                      countType: 'thumbupCount'
+                  },
+                  // success(result) {
+                  //     console.log(result)
+                  // },
+                  // fail(error) {
+                  //     console.log(error)
+                  // }
+              });
             },
             fail(err) {
                 console.log(err)
