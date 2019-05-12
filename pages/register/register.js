@@ -234,7 +234,7 @@ Page({
         gender: userInfo.gender
       }
     }).then(resp => {
-      if(resp.result.errMsg === 'collection.add:ok') { //success
+      if(resp.result && resp.result._id) { //success
         globalData.curUserCollegeId = data.selectedCollege.collegeId;
         globalData.users = {...globalData.users, [resp.result.openid]: data};
         globalData.curUser = {

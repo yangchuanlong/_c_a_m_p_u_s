@@ -59,7 +59,7 @@ Page({
         },
         success(res) {
           wx.redirectTo({
-            url: '/pages/mine/mine',
+            url: '/pages/index/index',
           })
         },
         fail(e) {

@@ -367,7 +367,7 @@ Page({
           finishChecking: true,
           showOverlay: false
         });
-        _t.getColumnsOfCollege(user.collegeId, !!user.interestedColumns); //send request to fetch columns by collegeId
+        _t.getColumnsOfCollege(user.collegeId, !!(globalData.curUserInterestedColumns && globalData.curUserInterestedColumns.length)); //send request to fetch columns by collegeId
         _t.getQuestions('all');//获取"全部"栏目的问题
         _t.getUnreadMsg();
       } else {
