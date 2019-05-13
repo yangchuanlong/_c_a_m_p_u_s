@@ -10,4 +10,7 @@
       <view class="time">{{item.updatedTime}}</view>
     </view>
   </view>
+  <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
+    <image src='../../images/loading.gif'></image>
+  </view>
 </view>

@@ -36,5 +36,6 @@ App({
   globalData: {
     userInfo: null,
     inputedTxt: null,
+    readMsgNum: 0
   }
 })

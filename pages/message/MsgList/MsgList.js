@@ -8,7 +8,10 @@ Page({
    * 页面的初始数据
    */
   data: {
-    messages: []
+    messages: [],
+    timeLimit: new Date().toISOString(),
+    hasMoreMsg: true,
+    showLoading: false
   },
 
   /**
@@ -16,33 +19,51 @@ Page({
    */
   onLoad: function (options) {
     wx.cloud.init();
-
+    this.getMsgs();
+  },
+  getMsgs() {
+    if(!this.data.hasMoreMsg) {
+      return;
+    }
+    if(this.data.showLoading){
+      return;
+    }
+    console.log('fetch msgs')
     const _t = this;
     const db = wx.cloud.database({
       env: config.env
     });
     const _ = db.command;
+    _t.setData({showLoading: true});
     db.collection("messages").where({
       receiverId: globalData.curUser.openid,
+      updatedTime: _.lt(_t.data.timeLimit)
     })
-    .orderBy("updatedTime", 'desc')
-    .get()
-    .then(resp => {
-      const data = resp.data;
-      if(data.length) {
-        const questionIds = [], result = {};
-        data.forEach(item => {
-          questionIds.push(item.questionId);
-          const time = new Date(item.updatedTime);
-          result[item.questionId] = {
-            questionId: item.questionId,
-            unreadNum: item.unread.length,
-            updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
-          }
-        });
-        _t.getQuestionTitleAbstract(questionIds, result);
-      }
-    });
+      .limit(10)
+      .orderBy("updatedTime", 'desc')
+      .get()
+      .then(resp => {
+        const data = resp.data;
+        if(data.length) {
+          const questionIds = [], result = {};
+          data.forEach(item => {
+            questionIds.push(item.questionId);
+            const time = new Date(item.updatedTime);
+            result[item.questionId] = {
+              questionId: item.questionId,
+              unreadNum: item.unread.length,
+              updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+            }
+          });
+          _t.data.timeLimit = data[data.length - 1].updatedTime;
+          _t.getQuestionTitleAbstract(questionIds, result);
+        } else {
+          _t.data.hasMoreMsg = false;
+        }
+        _t.setData({showLoading: false});
+      }).catch(e => {
+        _t.setData({showLoading: false});
+      });
   },
   getQuestionTitleAbstract(questionIds, result) {
     const _t = this;
@@ -65,7 +86,7 @@ Page({
       });
       const messages = Object.values(result);
       _t.setData({
-          messages
+          messages: _t.data.messages.concat(messages)
       });
     })
   },
@@ -75,6 +96,7 @@ Page({
     const messages = this.data.messages.slice();
     messages.some(msg => {
       if(msg.questionId === questionId){
+        globalData.readMsgNum += msg.unreadNum;
         msg.unreadNum = 0;
         return true;
       }
@@ -125,7 +147,7 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    this.getMsgs();
   },
 
   /**

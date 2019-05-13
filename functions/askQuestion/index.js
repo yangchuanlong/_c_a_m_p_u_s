@@ -15,14 +15,12 @@ exports.main = async (event, context) => {
       title: event.title,
       content: event.content,
       columns: event.columns,
-      images: event.images || [],
       anonymous: event.anonymous,
-      createdTime: new Date().toISOString(),
-      abstract: event.content.substr(0, 40),
+      images: event.images || [],
 
-      openid: wxContext.OPENID, //todo? put it in a userInfo object
-      avatar: event.avatar,
-      nickName: event.nickName
+      abstract: event.content.substr(0, 40),
+      createdTime: new Date().toISOString(),
+      openid: wxContext.OPENID,
     },
   });
   await db.collection("hotRate").add({

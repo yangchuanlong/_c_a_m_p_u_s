@@ -86,6 +86,8 @@ page{
     color:white;
     top:100rpx;
     left:50rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .section{
   width: 100%;

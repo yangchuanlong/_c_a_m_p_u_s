@@ -54,4 +54,13 @@
   color: #e0e0e0;
   font-size: 32rpx;
 }
-
+.loading{
+  width: 100%;
+  height: 100rpx;
+}
+.loading image{
+  width: 100rpx;
+  height: 100rpx;
+  margin: 0 auto;
+  display:block;
+}

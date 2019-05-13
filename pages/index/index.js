@@ -15,9 +15,6 @@ const defaultColumns = [{
 }];
 Page({
   data: {
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
     questions: [],
     lastestQuestionTime: null,
     oldestQuestionTime: null,
@@ -285,7 +282,7 @@ Page({
       ],
       limit: 20,
       equals: columnId !== 'all' ? {columns} : null,
-      fields: ["_id", "createdTime", "images", "openid", "title", "abstract"]
+      fields: ["_id", "createdTime", "images", "openid", "title", "abstract", "anonymous"]
     })
     .then(function (resp) {
       const result = resp.data;
@@ -345,32 +342,6 @@ Page({
   },
   onLoad: function () {
     const _t = this;
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
-      })
-    } else if (this.data.canIUse){
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
-    }
     this.checkRegister().then(function (user) {
       if(user === false) {
         wx.redirectTo({
@@ -387,9 +358,12 @@ Page({
       } else {
         //todo? error
       }
-      // this.getMyThumbups();
     });
-
+  },
+  onShow(){
+    const unreadNum = this.data.unreadNum - globalData.readMsgNum;
+    globalData.readMsgNum = 0;
+    this.setData({unreadNum})
   },
   checkRegister: function() {
     wx.cloud.init();
@@ -441,13 +415,6 @@ Page({
         tabIndex2ColId[index] = col.en_name;
       });
       _t.setData({ tabs, tabIndex2ColId, collegeColumns: columns, showInterestedSettingDlg: !interestedSetted});
-    })
-  },
-  getUserInfo: function(e) {
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
     })
   },
   onTabClick(evt){

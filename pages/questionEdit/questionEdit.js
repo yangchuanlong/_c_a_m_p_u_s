@@ -53,9 +53,7 @@ Page({
           content: data.content,
           columns: data.columns,
           anonymous: data.anonymous,
-          images,
-          avatar: globalData.userInfo.avatarUrl,
-          nickName: globalData.userInfo.nickName
+          images
         },
         success(res) {
           wx.redirectTo({
