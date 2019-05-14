@@ -2,6 +2,7 @@
 //获取应用实例
 import config from '../../utils/config.js';
 const util = require('../../utils/util.js');
+const enums = require("../../utils/enum");
 const app = getApp(), globalData = app.globalData;
 const defaultColumns = [{
   en_name: 'all',
@@ -44,7 +45,8 @@ Page({
     setInterestedLoading: false,
     showInterestedSettingDlg: false,
     users: {},
-    unreadNum: 0
+    unreadNum: 0,
+    gradeEnum: enums.gradeEnum
   },
   //事件处理函数
   bindViewTap: function() {
@@ -249,7 +251,7 @@ Page({
         if(questions.length) {
           const colQuestions = _t.data.colQuestions, ids = [];
           questions.forEach(item => {
-            item.formattedTime = util.timeFormattor(item.createdTime);
+            item.formattedTime = util.dateDiff(item.createdTime);
             ids.push(item._id);
           });
           colQuestions['hotspot'] = questions;
@@ -289,7 +291,7 @@ Page({
       if(result.length) {
         const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[], openIdSet = new Set();
         result.forEach(item => {
-          item.formattedTime = util.timeFormattor(item.createdTime);
+          item.formattedTime = util.dateDiff(item.createdTime);
           ids.push(item._id);
           openIdSet.add(item.openid);
         });
@@ -403,11 +405,15 @@ Page({
     db.collection("college").where({
       collegeId
     }).field({
-      columns: true
+      columns: true,
+      collegeName: true
     }).get().then(function (resp) {
       let columns = [];
       if(resp.data.length) {
         columns = resp.data[0].columns.filter(column => !! column).sort((col1, col2) => col1.order - col2.order);
+        const collegeName = resp.data[0].collegeName;
+        wx.setNavigationBarTitle({title: collegeName});
+        globalData.curUser.collegeName = collegeName;
       }
       globalData.columns = columns;
       const tabs = defaultColumns.concat(columns), tabIndex2ColId = {};
@@ -453,7 +459,7 @@ Page({
       if(result.length) {
         const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
         result.forEach(item => {
-            item.formattedTime = util.timeFormattor(item.createdTime);
+            item.formattedTime = util.dateDiff(item.createdTime);
             ids.push(item._id);
         });
         colQuestions[activeTabId] = result.concat(colQuestions[activeTabId] || []);
@@ -502,7 +508,7 @@ Page({
       if(result.length) {
         const colQuestions = _t.data.colQuestions, colLatestAndOldestTime = _t.data.colLatestAndOldestTime, ids=[];
         result.forEach(item => {
-            item.formattedTime = util.timeFormattor(item.createdTime);
+            item.formattedTime = util.dateDiff(item.createdTime);
             ids.push(item._id);
         });
         colQuestions[activeTabId] = (colQuestions[activeTabId] || []).concat(result);

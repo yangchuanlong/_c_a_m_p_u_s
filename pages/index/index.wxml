@@ -4,7 +4,7 @@
       <input confirm-type='search'
       bindinput='inputSearch'
       bindconfirm='startSearch'
-      placeholder='请输入搜索内容'
+      placeholder='在这里搜搜看...'
       />
     </view>
     <scroll-view class='tabs' bindtap='onTabClick' scroll-into-view="{{toColumn}}" scroll-x>
@@ -16,10 +16,13 @@
        <view class="section" wx:for="{{tabs}}" style="display: {{activeTab == index ? '' : 'none'}}" id="{{item.en_name}}" wx:key="tabContent-{{index}}">
            <view wx:for="{{colQuestions[item.en_name] || []}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" data-author-id="{{item.openid}}" bindtap='gotoDetail'>
                <view class="author">
-                   <image src="../images/anonymousUserImg.png" class="avatar" wx:if="{{item.anonymous}}"></image>
-                   <image src="{{users[item.openid].avatar  || '../images/userIcon.png'}}" class="avatar" wx:else></image>
+                   <image wx:if="{{item.anonymous}}" src="../images/anonymousUserImg.png" class="avatar"></image>
+                   <image wx:else src="{{users[item.openid].avatar  || '../images/userIcon.png'}}" class="avatar"></image>
                    <text class="nickName">{{item.anonymous ? "匿名" : users[item.openid].nickName}}</text>
+                   <text class="gradeTag">{{gradeEnum[users[item.openid].grade + '-' + users[item.openid].gender]}}</text>
+                   <text style="flex:1"></text>
                    <text class="date">{{item.formattedTime}}</text>
+                   <text>{{item.dateDiff}}</text>
                </view>
                <view class="title">{{item.title}}</view>
                <view class="shortContent">{{item.content}}</view>
