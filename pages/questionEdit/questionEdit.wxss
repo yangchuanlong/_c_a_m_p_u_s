@@ -3,32 +3,52 @@
 }
 textarea{
   width: 100%;
-  padding: 8rpx;
+  padding: 0 24rpx;
   box-sizing: border-box;
+  height: 318rpx;
 }
+.characterNum{
+    font-size: 30rpx;
+    color: #8b95a3;
+    text-align: right;
+    width: 100%;
+    padding-right: 30rpx;
+    margin-top: 24rpx;
+}
+
 .imageWrapper{
     width: 100%;
     padding: 8rpx;
     box-sizing: border-box;
+    margin-top: 56rpx;
 }
 .imageWrapper .imageItemWrapper, .imageWrapper .addImgBtn{
-    width: 100rpx;
-    height: 100rpx;
-    display: inline-block;
+    width: 215rpx;
+    height: 215rpx;
+    line-height: 215rpx;
+    background-color: #f0f2f3;
+    border-radius: 10rpx;
+    opacity: 0.5;
+    font-size: 84rpx;
+    text-align: center;
+    display:inline-block;
     vertical-align: top;
-    margin-top: 6rpx;
+    position: relative;
+    margin-top: 8rpx;
 }
 .imageItemWrapper{
-    height:inherit;
-    margin-right: 18rpx;
+    margin-right: 22rpx;
     position: relative;
 }
 .deleteIcon{
     position: absolute;
     top:-40rpx;
-    right:-12rpx;
+    right:-30rpx;
     color:#ccc;
     padding: 6rpx;
+    height: 36rpx;
+    line-height: 35rpx;
+    text-align: center;
 }
 
 .imageWrapper image{
@@ -42,9 +62,20 @@ textarea{
     line-height: 100rpx;
     text-align:center;
 }
+.anonymous{
+    margin-top: 253rpx;
+    font-size: 28rpx;
+    color: #6e7b8c;
+}
+checkbox-group label{
+    display: flex;
+    align-items: center;
+}
 .confirmBtn{
-  width: 94%;
-  box-sizing: border-box;
-  margin-top: 48rpx;
-  line-height: 2.2;
+    width: 420rpx;
+    height: 86rpx;
+    background-image: linear-gradient(90deg, #66a1ff 0%, #94c5ff 100%), linear-gradient(#e5bbbc, #e5bbbc);
+    box-shadow: 0px 3rpx 15rpx 0px rgba(73, 144, 226, 0.3);
+    border-radius: 43rpx;
+    margin-top: 29rpx;
 }
