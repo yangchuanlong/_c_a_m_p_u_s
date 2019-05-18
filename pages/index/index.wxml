@@ -48,11 +48,13 @@
    </view>
 
     <view class="icons">
-        <image src="../images/icon.jpg" class="logo"></image>
-        <image src="../images/edit.png" class="editIcon" bindtap='gotoAsk'></image>
-        <image src="../images/userIcon.png" class="userIcon" bindtap='gotoMine'></image>
-        <image src="../images/message.png" class="message" bindtap='gotoMsg'></image>
+        <view class="iconfont iconfabiao editIcon" bindtap='gotoAsk'></view>
+        <view class="iconfont iconwode wode" bindtap='gotoMine'></view>
+        <view class="iconfont iconshouye message" bindtap='gotoMsg'></view>
         <text wx:if="{{unreadNum > 0}}" class="unreadNum">{{unreadNum}}</text>
+        <view class="chaSignWrapper">
+            <view class="iconfont iconcha"></view>
+        </view>
     </view>
     <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
       <image src='../images/loading.gif'></image>
