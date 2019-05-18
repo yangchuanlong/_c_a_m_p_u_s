@@ -46,7 +46,8 @@ Page({
     showInterestedSettingDlg: false,
     users: {},
     unreadNum: 0,
-    gradeEnum: enums.gradeEnum
+    gradeEnum: enums.gradeEnum,
+    colId2Col: {}
   },
   //事件处理函数
   bindViewTap: function() {
@@ -285,7 +286,7 @@ Page({
       ],
       limit: 20,
       equals: columnId !== 'all' ? {columns} : null,
-      fields: ["_id", "createdTime", "images", "openid", "title", "abstract", "anonymous"]
+      fields: ["_id", "createdTime", "images", "openid", "title", "abstract", "anonymous", 'columns']
     })
     .then(function (resp) {
       const result = resp.data;
@@ -413,15 +414,17 @@ Page({
       if(resp.data.length) {
         columns = resp.data[0].columns.filter(column => !! column).sort((col1, col2) => col1.order - col2.order);
         const collegeAbbrName = resp.data[0].abbrName;
-        wx.setNavigationBarTitle({title: collegeAbbrName + ' . 榴莲'});
+        wx.setNavigationBarTitle({title: collegeAbbrName + '.榴莲'});
         globalData.curUser.collegeName = collegeAbbrName;
       }
       globalData.columns = columns;
       const tabs = defaultColumns.concat(columns), tabIndex2ColId = {};
+      const  colId2Col = {};
       tabs.forEach((col, index) => {
         tabIndex2ColId[index] = col.en_name;
+        colId2Col[col.en_name] = col;
       });
-      _t.setData({ tabs, tabIndex2ColId, collegeColumns: columns, showInterestedSettingDlg: !interestedSetted});
+      _t.setData({colId2Col, tabs, tabIndex2ColId, collegeColumns: columns, showInterestedSettingDlg: !interestedSetted});
     })
   },
   onTabClick(evt){
@@ -502,7 +505,7 @@ Page({
         ],
         limit: 10,
         equals: activeTabId !== 'all' ? {columns: activeTabId} : null,
-        fields: ["_id", "createdTime", "images", "openid", "title", "abstract"]
+        fields: ["_id", "createdTime", "images", "openid", "title", "abstract", "anonymous", 'columns']
     })
     .then(resp => {
       const result = resp.data;

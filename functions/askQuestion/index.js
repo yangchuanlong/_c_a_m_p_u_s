@@ -19,7 +19,7 @@ exports.main = async (event, context) => {
       images: event.images || [],
       collegeId: event.collegeId,
 
-      abstract: event.content.substr(0, 40),
+      abstract: event.content.substr(0, 66) + (event.content.length > 66 ? '......' : ''),
       createdTime: new Date().toISOString(),
       openid: wxContext.OPENID,
     },

@@ -6,7 +6,7 @@
       bindconfirm='startSearch'
       placeholder='在这里搜搜看...'
       />
-      <i class="iconfont iconsousuo"></i>
+      <view class="iconfont iconsousuo" bindtap="startSearch"></view>
     </view>
     <view class="gap"></view>
     <scroll-view class='tabs' bindtap='onTabClick' scroll-into-view="{{toColumn}}" scroll-x>
@@ -28,18 +28,20 @@
                    <text>{{item.dateDiff}}</text>
                </view>
                <view class="title">{{item.title}}</view>
-               <view class="shortContent">{{item.content}}</view>
+               <view class="shortContent">{{item.abstract}}</view>
                <view class="imagesWrapper" wx:if="{{item.images.length}}">
                    <image wx:for="{{item.images}}" wx:for-item="imgItem" wx:key="{{imgItem}}" src="{{imgItem}}"></image>
                </view>
                <view class='actions'>
-                   <view>
-                       <image wx:if="{{myThumbups[item._id]}}" src="../images/thumbup.png" id='js-thumbup-cancel'></image>
-                       <image wx:else src="../images/not-thumbup.png" id='js-thumbup'></image>
-                   </view>
-                   <view> 赞({{thumbupCount[item._id] || 0}})</view>
-                   <view>|</view>
-                   <view>回答({{replyCount[item._id] || 0}})</view>
+                   <view wx:for="{{item.columns}}" wx:for-item="columnItem" class="belongedCol">{{colId2Col[columnItem].name}} </view>
+
+                   <view style="flex:1"></view>
+
+                   <view wx:if="{{myThumbups[item._id]}}" class="iconfont iconxin" id='js-thumbup-cancel'></view>
+                   <view wx:else class="iconfont iconzan" id='js-thumbup'></view>
+                   <view class="num">{{thumbupCount[item._id] || 0}}</view>
+                   <view class="iconfont iconpinglun"></view>
+                   <view class="num">{{replyCount[item._id] || 0}}</view>
                </view>
            </view>
        </view>
