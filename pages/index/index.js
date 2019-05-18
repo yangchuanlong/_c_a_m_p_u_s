@@ -233,7 +233,6 @@ Page({
     db.collection("hotRate")
     .where({
       createdTime: _.gt(timeLimit.toISOString()),
-      collegeId: globalData.curUser.collegeId
     })
     .orderBy('hotVal', 'desc')
     .field({
@@ -245,7 +244,18 @@ Page({
     }).then(questionIds=> {
       db.collection("questions")
       .where({
-        _id: _.in(questionIds)
+        _id: _.in(questionIds),
+        collegeId: globalData.curUser.collegeId
+      })
+      .field({
+          "_id": true,
+          "createdTime": true,
+          "images": true,
+          "openid": true,
+          "title": true,
+          "abstract": true,
+          "anonymous": true,
+          'columns': true
       })
       .get()
       .then(resp => {
