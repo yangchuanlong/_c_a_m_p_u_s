@@ -6,10 +6,13 @@
       bindconfirm='startSearch'
       placeholder='在这里搜搜看...'
       />
+      <i class="iconfont iconsousuo"></i>
     </view>
+    <view class="gap"></view>
     <scroll-view class='tabs' bindtap='onTabClick' scroll-into-view="{{toColumn}}" scroll-x>
         <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-tab-index='{{index}}' id="{{item.en_name}}" wx:key="tabTitle-{{item.en_name}}">
             {{item.name}}
+            <text class="dot"></text>
         </view>
     </scroll-view>
    <view class="sectionWrapper" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd">

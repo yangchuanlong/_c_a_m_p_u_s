@@ -6,52 +6,77 @@ page{
     padding:0;
 }
 .searchWrapper{
-  width:100%;
-  position: fixed;
-  background: #fff;
-  top: 0;
+    width:100%;
+    position: fixed;
+    background: #fff;
+    top: 0;
+    z-index: 1;
 }
 .searchWrapper input{
-  width: calc(100% - 36rpx);
-  margin: 8rpx auto 12rpx auto;
-  box-shadow: 0 0 32rpx #e0e0e0;
+    width: 690rpx;
+    height: 70rpx;
+    background-color: #fff;
+    box-shadow: 0px 5rpx 30rpx 0px #eef1f5;
+    margin: 0 auto;
+    border-radius: 10rpx;
+}
+.searchWrapper .iconsousuo{
+    position: absolute;
+    right: 50rpx;
+    top: 22rpx;
+    width: 26rpx;
+    height: 26rpx;
+    color: #bbc2c9;
+}
+.gap{
+    position: fixed;
+    height: 40rpx;
+    width: 100%;
+    top: 70rpx;
+    background: white;
 }
 .tabs{
     width:100%;
-    font-size:32rpx;
-    background: #E8E9ED;
+    box-sizing: border-box;
     position: fixed;
-    top: 72rpx;
-    border-bottom: 1px solid #ddd;
+    top: 110rpx;
     white-space: nowrap;
+    height: 58rpx;
+    background: #fff;
 }
 .tabs view{
-    padding: 24rpx 0;
     display:inline-block;
-    width: 20vw;
+    width: 20%;
     text-align:center;
-}
-.tabs .active{
-    color: #81afe3;
+    height: 58rpx;
+    font-size: 30rpx;
+    line-height: 36rpx;
+    letter-spacing: 0px;
+    color: #8b95a3;
     position: relative;
 }
-.tabs .active::after{
-    position: absolute;
-    content: '';
-    bottom: 4rpx;
-    display:block;
-    width: 12rpx;
-    height: 12rpx;
+.tabs .active{
+    color: #93c3ff;
+}
+.tabs .dot{
+    display:none;
+    width: 10rpx;
+    height: 10rpx;
+    top: 36rpx;
     left: 50%;
-    background: #81afe3;
-    border-radius: 50%;
     transform: translateX(-50%);
+    background: #93c3ff;
+}
+.tabs .active .dot{
+    position: absolute;
+    display:block;
+    border-radius: 50%;
 }
 
 .sectionWrapper{
     flex: 1;
     width: 100%;
-    margin-top: 176rpx;
+    margin-top: 170rpx;
 }
 .icons{
     position:fixed;
@@ -104,34 +129,47 @@ page{
 }
 .section{
   width: 100%;
-  margin-top:6rpx;
+  margin-top:44rpx;
 }
 .item{
-    background: #E8E9ED;
-    padding: 0rpx 12rpx;
+    padding: 0rpx 34rpx;
 }
 .item:not(:first-child) {
   margin-top:6rpx;
 }
 .author{
     display:flex;
-    border-bottom: 4rpx solid #ddd;
-    padding: 12rpx 6rpx;
+    align-items: center;
 }
 .author .avatar{
-    width: 50rpx;
-    height: 50rpx;
+    width: 68rpx;
+    height: 68rpx;
     border-radius: 50%;
 }
 .author .nickName{
-    margin-left: 16rpx;
+    margin-left: 24rpx;
+    height: 28rpx;
+    font-size: 30rpx;
+    line-height: 36rpx;
+    letter-spacing: 0px;
+    color: #6e7b8c;
 }
 .author .date{
-    color: #ccc;
-    margin-left: 12rpx;
+    height: 21rpx;
+    font-size: 26rpx;
+    line-height: 36rpx;
+    letter-spacing: 0px;
+    color: #b5bdc5;
 }
 .author .gradeTag{
-    margin-left: 24rpx;
+    margin-left:24rpx;
+    height: 38rpx;
+    font-size: 20rpx;
+    color: #feffff;
+    line-height: 38rpx;
+    background-color: #ff8e85;
+    border-radius: 19rpx;
+    padding: 0 16rpx;
 }
 .title{
     font-weight: bold;
