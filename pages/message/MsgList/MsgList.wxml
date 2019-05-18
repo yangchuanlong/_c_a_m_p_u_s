@@ -1,7 +1,19 @@
 <view class='container'>
+  <view class="item" style="display:none">  <!-- this is mock ui -->
+    <view class="left">
+      <text class="iconfont iconwenti icon"></text>
+      <text class="unreadNum">20</text>
+    </view>
+    <view class="right">
+      <view class="title">有同学知道什么时候开学吗？</view>
+      <view class="abstract">各高校新生报到时间上是不一样的...</view>
+      <view class="time">2019.03.14 12:23</view>
+    </view>
+  </view>
+
   <view class="item" wx:for="{{messages}}" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
     <view class="left">
-      <text class="icon">问</text>
+      <text class="iconfont iconwenti icon"></text>
       <text class="unreadNum" wx:if="{{item.unreadNum}}">{{item.unreadNum}}</text>
     </view>
     <view class="right">
