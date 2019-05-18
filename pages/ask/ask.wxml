@@ -1,10 +1,17 @@
 
 <view class="container">
-    <input placeholder="请输入问题标题" auto-focus bindinput="onInput"/>
+    <view class="inputWrapper">
+        <input placeholder="请输入问题标题" auto-focus bindinput="onInput"/>
+    </view>
+    <view class="choseTypeHint">请选择问题类型</view>
     <checkbox-group class="checkbox-group" bindchange="checkboxChange">
-        <label class="type" wx:for="{{columns}}">
-            <checkbox value="{{item.en_name}}"/>{{item.name}}
-        </label>
+        <view wx:for="{{chunkColumns}}" class="row" wx:for-item="rowItems">
+            <label
+                class="{{choseMap[item.en_name] ? 'type selected' : 'type'}}"
+                wx:for="{{rowItems}}"
+                ><checkbox wx:if="{{item.en_name}}" value="{{item.en_name}}"/>{{item.name}}</label>
+            <!-- label end tag next to checkbox start tag to use css :empty selector  -->
+        </view>
     </checkbox-group>
     <button type="primary" class='nextStepBtn' bindtap="onNextStep">下一步</button>
 </view>

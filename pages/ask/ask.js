@@ -5,7 +5,9 @@ Page({
     data: {
         columns: [],
         title: '',
-        chosenColumns: []
+        chosenColumns: [],
+        chunkColumns: [],
+        choseMap: {}
     },
     onNextStep(){
         if(!this.data.title) {
@@ -31,8 +33,14 @@ Page({
         console.log(this.data.title, this.data.chosenColumns)
     },
     checkboxChange(evt) {
+        const values = evt.detail.value;
+        const choseMap = {};
+        values.forEach(colId => {
+            choseMap[colId] = true
+        });
         this.setData({
-            chosenColumns: evt.detail.value
+            chosenColumns: values,
+            choseMap
         })
     },
     onInput(evt) {
@@ -43,8 +51,21 @@ Page({
     onLoad() {
         const _t = this;
         this.getColumns().then(columns => {
+            const chunkColumns = [];
+            columns.forEach((item, key) => {
+               const chunkKey = Math.floor(key / 4);
+                const tmp = (chunkColumns[chunkKey] = chunkColumns[chunkKey] || []);
+                tmp.push(item);
+            });
+            chunkColumns.forEach((item, key) => {
+               if(item.length < 4) {
+                   chunkColumns[key] = item.concat(Array(4 - item.length).fill({}))
+               }
+            });
+            console.log(chunkColumns)
             _t.setData({
-                columns
+                //columns,
+                chunkColumns
             });
         })
     },
