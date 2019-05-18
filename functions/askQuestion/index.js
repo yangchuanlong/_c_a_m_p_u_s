@@ -17,6 +17,7 @@ exports.main = async (event, context) => {
       columns: event.columns,
       anonymous: event.anonymous,
       images: event.images || [],
+      collegeId: event.collegeId,
 
       abstract: event.content.substr(0, 40),
       createdTime: new Date().toISOString(),

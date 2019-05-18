@@ -66,12 +66,14 @@ const getRegisteredUsers = function(openIds) {
 
 const getQuestions = function(params) {
     wx.cloud.init();
+    const app = getApp(), globalData = app.globalData;
     const db = wx.cloud.database({
         env: params.env
     });
     const _ = db.command;
     delete params.env;
     let conditions = {}, fields = {}, limit, orderBy = [];
+    params.equals = Object.assign({}, params.equals, {collegeId: globalData.curUser.collegeId}); //只获取本校的内容
     ["commands", "fields", "orderBy", "limit", "equals"].forEach(preDefinedParam => {
         switch (preDefinedParam) {
             case "commands":

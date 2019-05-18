@@ -231,7 +231,8 @@ Page({
     const _ = db.command;
     db.collection("hotRate")
     .where({
-      createdTime: _.gt(timeLimit.toISOString())
+      createdTime: _.gt(timeLimit.toISOString()),
+      collegeId: globalData.curUser.collegeId
     })
     .orderBy('hotVal', 'desc')
     .field({
@@ -406,14 +407,14 @@ Page({
       collegeId
     }).field({
       columns: true,
-      collegeName: true
+      abbrName: true
     }).get().then(function (resp) {
       let columns = [];
       if(resp.data.length) {
         columns = resp.data[0].columns.filter(column => !! column).sort((col1, col2) => col1.order - col2.order);
-        const collegeName = resp.data[0].collegeName;
-        wx.setNavigationBarTitle({title: collegeName});
-        globalData.curUser.collegeName = collegeName;
+        const collegeAbbrName = resp.data[0].abbrName;
+        wx.setNavigationBarTitle({title: collegeAbbrName + ' . 榴莲'});
+        globalData.curUser.collegeName = collegeAbbrName;
       }
       globalData.columns = columns;
       const tabs = defaultColumns.concat(columns), tabIndex2ColId = {};

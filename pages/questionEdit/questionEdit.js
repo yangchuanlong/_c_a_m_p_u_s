@@ -53,7 +53,8 @@ Page({
           content: data.content,
           columns: data.columns,
           anonymous: data.anonymous,
-          images
+          collegeId: globalData.curUser.collegeId,
+          images,
         },
         success(res) {
           wx.redirectTo({
