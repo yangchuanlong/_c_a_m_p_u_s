@@ -1,6 +1,7 @@
 
 import config from '../../../utils/config.js';
 const util = require('../../../utils/util.js');
+const enums = require("../../../utils/enum");
 const app = getApp(), globalData = app.globalData;
 Page({
 
@@ -9,7 +10,8 @@ Page({
    */
   data: {
     msgs: [],
-    users: {}
+    users: {},
+    gradeEnum: enums.gradeEnum,
   },
 
   /**
@@ -32,14 +34,13 @@ Page({
       const message = resp.data[0];
       message.unread.reverse();
       message.unread.forEach(item => {
-        const time = new Date(item.createdTime || Date.now());
-        item.createdTime = `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`;
+        item.createdTime = util.dateDiff(item.createdTime);
         msgs.push(item);
       });
       message.read.reverse();
       message.read.forEach(item => {
           const time = new Date(item.createdTime || Date.now());
-          item.createdTime = `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`;
+          item.createdTime = util.dateDiff(item.createdTime);
           msgs.push(item);
       });
       _t.setData({ msgs });

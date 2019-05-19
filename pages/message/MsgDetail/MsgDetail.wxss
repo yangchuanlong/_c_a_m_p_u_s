@@ -6,7 +6,7 @@
     width: 100%;
 }
 .item:not(:first-child) {
-    margin-top: 48rpx;
+    margin-top: 55rpx;
 }
 .author{
     display: flex;
@@ -14,20 +14,29 @@
     margin-bottom: 8rpx;
 }
 .nickName{
-    margin: 0 16rpx;
+    font-size: 28rpx;
+    color: #6e7b8c;
+    margin-left: 15rpx;
 }
-.tags text{
-    display: inline-block;
-    background: #b5d2fa;
-    border-radius: 16rpx;
-    padding: 3rpx 8rpx;
+.gradeTag{
+    margin-left:24rpx;
+    font-size: 20rpx;
+    color: #feffff;
+    background-color: #ff8e85;
+    border-radius: 19rpx;
+    padding: 9rpx 16rpx;
 }
 .time{
-    color: gray;
+    font-size: 26rpx;
+    color: #b5bdc5;
+}
+.msgContent{
+    font-size: 30rpx;
+    color: #6e7b8c;
+    margin-top: 33rpx;
 }
 .author image{
-    width: 80rpx;
-    height: 80rpx;
+    width: 60rpx;
+    height: 60rpx;
     border-radius: 50%;
-    border: 1px solid #c7aaa4;
 }
