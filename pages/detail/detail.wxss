@@ -10,27 +10,45 @@
   width: 100%;
   text-align: left;
   font-weight: bold;
+  font-size: 34rpx;
+  color: #6e7b8c;
+  display:flex;
+  align-items: center;
+}
+.iconwenti{
+  color: #97cffd;
+  font-size: 37rpx;
+  margin-right: 19rpx;
 }
 .author{
   display:flex;
+  align-items: center;
   width:100%;
   margin-top: 24rpx;
 }
 .author text{
   color: #ddd;
 }
+.scanNum{
+  margin-left:  24rpx;
+}
 .author .avatar{
-  width: 50rpx;
-  height: 50rpx;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
 }
 .nickName{
-  margin-left: 16rpx;
+  margin-left: 24rpx;
+  font-size: 30rpx;
+  color: #6e7b8c;
 }
 .content{
   width: 100%;
   margin-top: 24rpx;
-  min-height: 600rpx;
+  min-height: 400rpx;
+  line-height: 50rpx;
+  color: #6e7b8c;
+  text-indent: 64rpx
 }
 .imagesWrapper{
   margin-top: 12rpx;
@@ -87,23 +105,35 @@
 }
 .replier{
   display:flex;
+  align-items: center;
   color: #ddd;
 }
 .replier image{
-  width: 50rpx;
-  height: 50rpx;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
 }
+.replier .iconxin {
+  color: #f7a10E;
+}
 .replier .nickName{
-  margin-left: 12rpx;
+  margin-left: 24rpx;
+  font-size: 30rpx;
+  color: #6e7b8c;
+}
+.replier .time {
+  font-size: 26rpx;
+  color: #b5bdc5;
+  margin-left: 28rpx;
 }
 .replyContent{
-  padding-left: 50rpx;
+  padding-left: 90rpx;
+  font-size: 30rpx;
+  color: #6e7b8c;
+  margin-top: 10rpx;
 }
 .replyItem{
-  border-top: 2rpx solid #dadada;
-  margin-top: 16rpx;
-  padding-top: 16rpx;
+  margin-top: 44rpx;
 }
 
 .replyItem .actions{
@@ -146,11 +176,12 @@
 }
 
 .subReplies{
-  padding-left: 50rpx;
+  padding-left: 100rpx;
 }
 .subReplyItem{
-  background: #EBE9E9;
   padding:12rpx;
+  background-color: #f7f8fa;
+  border-radius: 10rpx;
 }
 .moreReplies{
   color:#298DF8;

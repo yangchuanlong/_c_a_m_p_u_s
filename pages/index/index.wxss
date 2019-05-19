@@ -196,7 +196,6 @@ page{
 .imagesWrapper{
     margin-top: 30rpx;
     display: flex;
-    justify-content: space-between;
 }
 .imagesWrapper image{
     display: inline-block;
@@ -204,6 +203,9 @@ page{
     height:156rpx;
     background-color: #eeeeee;
     border-radius: 10rpx;
+}
+.imagesWrapper image:not(:first-child){
+    margin-left: 24rpx;
 }
 .imagesWrapper image:nth-child(n+5){
     display:none;

@@ -23,7 +23,7 @@ Page({
     chosenSubReplyId: "",
     repliedOpenId: "",
     expandedReply: null,//点击子回复后展示的回复列表
-    thumbups: {}
+    thumbups: {},
   },
 
   scan(id){//把问题的浏览数加1
@@ -87,14 +87,14 @@ Page({
       _id: options.id
     }).get().then(res => {
       const detail = res.data[0];
-      const createdTime = detail.createdTime ? new Date(detail.createdTime) : new Date();
-      detail.createdTime = `${createdTime.getFullYear()}.${createdTime.getMonth()+1}.${createdTime.getDate()}`;
+      detail.createdTime = util.dateDiff(detail.createdTime);
       _t.setData({
-        detail
-      })
+        detail,
+        authorId: detail.openid,
+        users: globalData.users
+      });
     });
     _t.data.lastTime = new Date().toISOString();
-    _t.data.questionId = options.id;
     _t.scan(options.id);
     _t.getReplies(options.id);
   },
@@ -130,7 +130,7 @@ Page({
               replyMap[item._id] = item;
               ids.push(item._id);
               openIdSet.add(item.openid);
-              item.createdTime = util.timeFormattor(item.createdTime);
+              item.createdTime = util.dateDiff(item.createdTime);
             });
           }
           console.log('get sub reply:', resp)
@@ -167,7 +167,7 @@ Page({
           ids.push(item._id);
           openIdSet.add(item.openid);
           replyMap[item._id] = item;
-          item.createdTime = util.timeFormattor(item.createdTime);
+          item.createdTime = util.dateDiff(item.createdTime);
         });
         const mainReplies = _t.data.mainReplies.concat(data);
         _t.setData({mainReplies, replyMap});
@@ -245,7 +245,7 @@ Page({
           ids.push(item._id);
           return {
             ...item,
-            createdTime: util.timeFormattor(item.createdTime)
+            createdTime: util.dateDiff(item.createdTime)
           }
         });
         _t.setData({
@@ -416,7 +416,7 @@ Page({
         data._id = _id; //添加到评论区
         data.thumbupCount = 0;
         data.questionId = questionId;
-        data.createdTime = util.timeFormattor(data.createdTime);
+        data.createdTime = util.dateDiff(data.createdTime);
         data.openid = openid;
         const {chosenMainReplyId} = _t.data;
         const mainReplies = _t.data.mainReplies.slice();
