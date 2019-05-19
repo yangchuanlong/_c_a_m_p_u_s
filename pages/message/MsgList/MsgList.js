@@ -9,9 +9,10 @@ Page({
    */
   data: {
     messages: [],
-    timeLimit: new Date().toISOString(),
     hasMoreMsg: true,
-    showLoading: false
+    showLoading: false,
+    latestTime: new Date().toISOString(),
+    oldestTime: new Date().toISOString(),
   },
 
   /**
@@ -22,13 +23,43 @@ Page({
     this.getMsgs();
   },
   getMsgs() {
-    if(!this.data.hasMoreMsg) {
+      const _t = this;
+      const db = wx.cloud.database({
+          env: config.env
+      });
+      const _ = db.command;
+      db.collection("messages").where({
+          receiverId: globalData.curUser.openid
+      })
+      .orderBy("updatedTime", 'desc')
+      .get()
+      .then(resp => {
+          const data = resp.data;
+          if(data.length) {
+              _t.data.latestTime = data[0].updatedTime;
+              _t.data.oldestTime = data[data.length - 1].updatedTime;
+              const questionIds = [], result = {};
+              data.forEach(item => {
+                  const time = new Date(item.updatedTime);
+                  questionIds.push(item.questionId);
+                  result[item.questionId] = {
+                      questionId: item.questionId,
+                      unreadNum: item.unread.length,
+                      updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+                  }
+              });
+              _t.getQuestionTitleAbstract(questionIds, result);
+          }
+      }).catch(e => {
+      });
+  },
+  getMoreMsgs() {
+    if(!this.data.hasMoreMsg){
       return;
     }
     if(this.data.showLoading){
       return;
     }
-    console.log('fetch msgs')
     const _t = this;
     const db = wx.cloud.database({
       env: config.env
@@ -37,7 +68,7 @@ Page({
     _t.setData({showLoading: true});
     db.collection("messages").where({
       receiverId: globalData.curUser.openid,
-      updatedTime: _.lt(_t.data.timeLimit)
+      updatedTime: _.lt(_t.data.oldestTime)
     })
       .limit(10)
       .orderBy("updatedTime", 'desc')
@@ -45,6 +76,7 @@ Page({
       .then(resp => {
         const data = resp.data;
         if(data.length) {
+          _t.data.oldestTime = data[data.length - 1].updatedTime;
           const questionIds = [], result = {};
           data.forEach(item => {
             questionIds.push(item.questionId);
@@ -55,7 +87,6 @@ Page({
               updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
             }
           });
-          _t.data.timeLimit = data[data.length - 1].updatedTime;
           _t.getQuestionTitleAbstract(questionIds, result);
         } else {
           _t.data.hasMoreMsg = false;
@@ -108,6 +139,46 @@ Page({
         url: '/pages/message/MsgDetail/MsgDetail?questionId=' + questionId
     })
   },
+
+  getLatestMsgs() {
+      const _t = this;
+      if(_t.data.getLatestLoading){
+        return;
+      }
+      _t.data.getLatestLoading = true;
+      const db = wx.cloud.database({
+          env: config.env
+      });
+      const _ = db.command;
+      db.collection("messages").where({
+          receiverId: globalData.curUser.openid,
+          updatedTime: _.gt(_t.data.latestTime)
+      })
+      .orderBy("updatedTime", 'desc')
+      .get()
+      .then(resp => {
+          _t.data.getLatestLoading = false;
+          const data = resp.data;
+          if(data.length) {
+              _t.data.oldestTime = data[data.length - 1].updatedTime;
+              const questionIds = [], result = {};
+              data.forEach(item => {
+                  questionIds.push(item.questionId);
+                  const time = new Date(item.updatedTime);
+                  result[item.questionId] = {
+                      questionId: item.questionId,
+                      unreadNum: item.unread.length,
+                      updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+                  }
+              });
+              _t.data.messages = _t.data.messages.filter(msg => questionIds.indexOf(msg.questionId) !== -1);//已经获取到的msg,可能又被回复， updatedTime被更新， 下拉刷新又被获取到
+              _t.getQuestionTitleAbstract(questionIds, result);
+          }
+          _t.setData({showLoading: false});
+      }).catch(e => {
+          _t.data.getLatestLoading = false;
+      });
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -140,14 +211,14 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    this.getLatestMsgs();
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    this.getMsgs();
+    this.getMoreMsgs();
   },
 
   /**
