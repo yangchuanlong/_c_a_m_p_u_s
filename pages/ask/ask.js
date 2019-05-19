@@ -7,7 +7,8 @@ Page({
         title: '',
         chosenColumns: [],
         chunkColumns: [],
-        choseMap: {}
+        choseMap: {},
+        disabled: false
     },
     onNextStep(){
         if(!this.data.title) {
@@ -23,24 +24,26 @@ Page({
                 title: '请选择分类',
                 icon: 'none',
                 duration: 500
-            })
+            });
             return;
         }
         const data = this.data;
         wx.navigateTo({
           url: '../questionEdit/questionEdit' + `?title=${data.title}&columns=${data.chosenColumns.join(",")}`,
-        })
+        });
         console.log(this.data.title, this.data.chosenColumns)
     },
     checkboxChange(evt) {
         const values = evt.detail.value;
         const choseMap = {};
+        const disabled = values.length >=3;
         values.forEach(colId => {
             choseMap[colId] = true
         });
         this.setData({
             chosenColumns: values,
-            choseMap
+            choseMap,
+            disabled
         })
     },
     onInput(evt) {
@@ -92,6 +95,15 @@ Page({
                 globalData.columns = columns;
                 return columns;
             })
+        }
+    },
+    labelClick(evt){
+        if(evt.currentTarget.dataset.disabled){
+            wx.showToast({
+                title: '您最多只能选三个栏目',
+                icon: 'none',
+                duration: 1000
+            });
         }
     }
 });

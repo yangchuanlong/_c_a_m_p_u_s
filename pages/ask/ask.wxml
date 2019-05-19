@@ -9,7 +9,13 @@
             <label
                 class="{{choseMap[item.en_name] ? 'type selected' : 'type'}}"
                 wx:for="{{rowItems}}"
-                ><checkbox wx:if="{{item.en_name}}" value="{{item.en_name}}"/>{{item.name}}</label>
+                data-disabled="{{disabled && !choseMap[item.en_name]}}"
+                bindtap="labelClick"
+                ><checkbox
+                   wx:if="{{item.en_name}}"
+                   value="{{item.en_name}}"
+                   disabled="{{disabled && !choseMap[item.en_name]}}"
+            />{{item.name}}</label>
             <!-- label end tag next to checkbox start tag to use css :empty selector  -->
         </view>
     </checkbox-group>
