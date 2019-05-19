@@ -12,6 +12,7 @@ Page({
     msgs: [],
     users: {},
     gradeEnum: enums.gradeEnum,
+    questionId: ''
   },
 
   /**
@@ -48,7 +49,10 @@ Page({
       if(message.unread.length) {
         _t.setUnreadToRead(message._id);
       }
-    })
+    });
+    this.setData({
+        questionId
+    });
   },
 
   getSendersInfo(msgs) {
@@ -72,6 +76,12 @@ Page({
           id,
         }
     })
+  },
+
+  gotoQuestion() {
+    wx.navigateTo({
+        url: '/pages/detail/detail?id=' + this.data.questionId
+    });
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

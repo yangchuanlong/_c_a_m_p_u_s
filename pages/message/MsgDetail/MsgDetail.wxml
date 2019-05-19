@@ -1,6 +1,6 @@
 
 <view class="container">
-    <view class="item" wx:for="{{msgs}}">
+    <view class="item" wx:for="{{msgs}}" bindtap="gotoQuestion">
         <view class="author">
             <image src="{{users[item.sender] && users[item.sender].avatar}}"></image>
             <view class="nickName">{{users[item.sender] && users[item.sender].nickName}}</view>
