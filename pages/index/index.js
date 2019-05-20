@@ -47,13 +47,25 @@ Page({
     users: {},
     unreadNum: 0,
     gradeEnum: enums.gradeEnum,
-    colId2Col: {}
+    colId2Col: {},
+    isSuperAdmin: false
   },
   //事件处理函数
   bindViewTap: function() {
     wx.navigateTo({
       url: '../logs/logs'
     })
+  },
+  delQuestion(questionId, questionTitle) {
+      wx.showModal({
+          title: `确定要删除'${questionTitle}'吗？`,
+          success(res){
+             if(res.confirm) {
+
+             } else if(res.cancel) {
+             }
+          }
+      });
   },
   gotoDetail(evt) {
     wx.cloud.init();
@@ -68,8 +80,14 @@ Page({
       action = 'add';
     } else if(evt.target.id === 'js-thumbup-cancel') {
       action = 'cancel';
+    } else if(evt.target.id === 'js-delete') {
+       action = 'delete'
     }
     if(action) {
+      if(action === 'delete') {
+        this.delQuestion(questionId, evt.target.dataset.questionTitle);
+        return;
+      }
       const thumbupCollection = db.collection("thumbups");
       const myThumbups = {...this.data.myThumbups};
       const thumbupCount = {...this.data.thumbupCount};
@@ -369,6 +387,9 @@ Page({
         _t.getColumnsOfCollege(user.collegeId, !!(globalData.curUserInterestedColumns && globalData.curUserInterestedColumns.length)); //send request to fetch columns by collegeId
         _t.getQuestions('all');//获取"全部"栏目的问题
         _t.getUnreadMsg();
+        _t.setData({
+            isSuperAdmin: util.isSuperAdmin(globalData.curUser.openid)
+        })
       } else {
         //todo? error
       }

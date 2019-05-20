@@ -25,7 +25,7 @@
                    <text class="gradeTag">{{gradeEnum[users[item.openid].grade + '-' + users[item.openid].gender]}}</text>
                    <text style="flex:1"></text>
                    <text class="date">{{item.formattedTime}}</text>
-                   <text>{{item.dateDiff}}</text>
+                   <text wx:if="{{isSuperAdmin}}" class="deleteIcon" id="js-delete" data-question-title="{{item.title}}"> x </text>
                </view>
                <view class="title">{{item.title}}</view>
                <view class="shortContent">{{item.abstract}}</view>

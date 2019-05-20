@@ -178,6 +178,11 @@ page{
     border-radius: 19rpx;
     padding: 9rpx 16rpx;
 }
+.author .deleteIcon{
+    font-size: 30rpx;
+    color: #b5bdc5;
+    margin-left: 16rpx;
+}
 .title{
     height: 32rpx;
     font-size: 34rpx;

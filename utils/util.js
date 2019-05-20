@@ -189,12 +189,19 @@ const dateDiff = function (dateStr) {
   return '刚刚';
 };
 
+const isSuperAdmin = function(openid) {
+    const ret = config.administrators.super.includes(openid);
+    return ret;
+};
+
+
 module.exports = {
   formatTime: formatTime,
   timeFormattor: timeFormattor,
   getRegisteredUsers,
   getQuestions,
-  dateDiff
+  dateDiff,
+  isSuperAdmin
 };
 
 
