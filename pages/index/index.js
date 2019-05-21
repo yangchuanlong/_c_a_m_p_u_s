@@ -16,7 +16,6 @@ const defaultColumns = [{
 }];
 Page({
   data: {
-    questions: [],
     lastestQuestionTime: null,
     oldestQuestionTime: null,
     searchTxt: '',
@@ -55,17 +54,6 @@ Page({
     wx.navigateTo({
       url: '../logs/logs'
     })
-  },
-  delQuestion(questionId, questionTitle) {
-      wx.showModal({
-          title: `确定要删除'${questionTitle}'吗？`,
-          success(res){
-             if(res.confirm) {
-
-             } else if(res.cancel) {
-             }
-          }
-      });
   },
   gotoDetail(evt) {
     wx.cloud.init();
@@ -670,5 +658,35 @@ Page({
             icon: 'none'
         });
     })
-  }
+  },
+  delQuestion(questionId, questionTitle) {
+      const _t = this;
+      wx.showModal({
+          title: `确定要删除'${questionTitle}'吗？`,
+          success(res){
+              if(res.confirm) {
+                  console.log("确定删除" + questionId);
+                  wx.cloud.init();
+                  wx.cloud.callFunction({
+                      name: 'delQuestion',
+                      data: {
+                          env: config.env,
+                          questionId
+                      },
+                      success: function (res) {
+                          const colQuestions = _t.data.colQuestions;
+                          for(let colId in colQuestions) {
+                            colQuestions[colId] = colQuestions[colId].filter(item => item._id !== questionId);
+                          }
+                          _t.setData({ colQuestions });
+                      },
+                      fail: function (err) {
+                          console.log(err)
+                      }
+                  })
+              } else if(res.cancel) {
+              }
+          }
+      })
+  },
 });
