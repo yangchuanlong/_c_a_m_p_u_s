@@ -42,6 +42,10 @@ Page({
             curUser: globalData.curUser
         })
       })
+    } else {
+      this.setData({
+          curUser: globalData.curUser
+      })
     }
   },
 

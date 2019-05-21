@@ -1,19 +1,38 @@
 
 <view class="container">
+<image src="../images/profile_bg.png" class="bgImg"></image>
  <view class="header">
-  <view class="avatar">
-      <image src="{{curUser.avatar}}"></image>
-  </view>
+  <image src="{{curUser.avatar}}" class="avatar"></image>
+  <view class="nickName">{{curUser.nickName}}</view>
   <view class="userCollegeGrade">
       <view class="collegeName">{{curUser.collegeName}}</view>
       <view class="grade">{{gradeMap[curUser.grade]}}</view>
   </view>
-  <view class="nickName">{{curUser.nickName}}</view>
  </view>
  <view class="main">
-     <navigator url="/pages/message/MsgList/MsgList">我的消息</navigator>
-     <navigator url="/pages/mine/mine">我的提问</navigator>
-     <navigator url="/pages/mine/mine">我的收藏</navigator>
-     <navigator>关于我们</navigator>
+     <navigator url="/pages/message/MsgList/MsgList">
+         <image src='../images/msgIcon.png'></image>
+          <text>我的消息</text>
+          <text style="flex:1"></text>
+          <text class='rightArrow'> > </text>
+     </navigator>
+     <navigator url="/pages/mine/mine">
+         <image src='../images/askIcon.png'></image>
+         <text>我的提问</text>
+         <text style="flex:1"></text>
+         <text class='rightArrow'> > </text>
+     </navigator>
+     <navigator url="/pages/mine/mine">
+         <image src='../images/collectIcon.png'></image>
+         <text>我的收藏</text>
+         <text style="flex:1"></text>
+         <text class='rightArrow'> > </text>
+     </navigator>
+     <navigator>
+         <image src='../images/aboutUsIcon.png'></image>
+         <text>关于我们</text>
+         <text style="flex:1"></text>
+         <text class='rightArrow'> > </text>
+     </navigator>
  </view>
 </view>
