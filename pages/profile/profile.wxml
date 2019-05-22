@@ -11,28 +11,28 @@
  </view>
  <view class="main">
      <navigator url="/pages/message/MsgList/MsgList">
-         <image src='../images/msgIcon.png'></image>
+         <image src='../images/msgIcon.png' class="icon"></image>
           <text>我的消息</text>
           <text style="flex:1"></text>
-          <text class='rightArrow'> > </text>
+          <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
      <navigator url="/pages/mine/mine">
-         <image src='../images/askIcon.png'></image>
+         <image src='../images/askIcon.png' class="icon"></image>
          <text>我的提问</text>
          <text style="flex:1"></text>
-         <text class='rightArrow'> > </text>
+         <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
      <navigator url="/pages/mine/mine">
-         <image src='../images/collectIcon.png'></image>
+         <image src='../images/collectIcon.png' class="icon"></image>
          <text>我的收藏</text>
          <text style="flex:1"></text>
-         <text class='rightArrow'> > </text>
+         <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
      <navigator>
-         <image src='../images/aboutUsIcon.png'></image>
+         <image src='../images/aboutUsIcon.png' class="icon"></image>
          <text>关于我们</text>
          <text style="flex:1"></text>
-         <text class='rightArrow'> > </text>
+         <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
  </view>
 </view>

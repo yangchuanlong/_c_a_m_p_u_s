@@ -65,18 +65,19 @@
     border-radius: 10rpx;
     box-shadow: 0px 5px 50px 0px #eef1f5;
 }
-.main navigator image{
+.main navigator .icon{
     width: 80rpx;
     height: 80rpx;
     margin-right: 30rpx;
+}
+.main navigator .rightArrow{
+    width: 50rpx;
+    height: 50rpx;
 }
 .main navigator:not(:first-child) {
   margin-top: 40rpx;
 }
 
-.main navigator .rightArrow{
-  color: #b5bdc5;
-}
 .main .navigator-hover:first-child{
     opacity: 1;
 }
