@@ -47,13 +47,13 @@
        </view>
    </view>
 
-    <view class="icons">
+    <view class="icons {{hideRightBottomIcons ? 'hideRightBottomIcons' : ''}}">
         <view class="iconfont iconfabiao editIcon" bindtap='gotoAsk'></view>
         <view class="iconfont iconwode wode" bindtap='gotoMine'></view>
         <view class="iconfont iconshouye message" bindtap='gotoMsg'></view>
         <text wx:if="{{unreadNum > 0}}" class="unreadNum">{{unreadNum}}</text>
         <view class="chaSignWrapper">
-            <view class="iconfont iconcha"></view>
+            <view class="iconfont iconcha" bindtap="onHideRightBottomIcon"></view>
         </view>
     </view>
     <view class='loading' style='display:{{showLoading ? "" : "none"}}'>

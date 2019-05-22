@@ -92,6 +92,7 @@ page{
     background: #fff;
     border-radius: 100% 0 0 0;
     box-shadow: 0px 0px 30rpx #eef1f5;
+    overflow: hidden;
 }
 .chaSignWrapper{
     position: absolute;
@@ -124,19 +125,18 @@ page{
 }
 .unreadNum{
     position: absolute;
-    display: flex;
     width: 40rpx;
     height: 40rpx;
+    line-height: 40rpx;
+    text-align:center;
     border-radius: 50%;
     background:red;
-    justify-content: center;
-    align-items: center;
     color:white;
-    top:35rpx;
-    right:25rpx;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 24rpx;
+    right:25rpx;
+    bottom:196rpx;
 }
 .section{
   width: 100%;
@@ -297,4 +297,36 @@ page{
 }
 .dlg-wrapper .column.chosen text{
     border:4rpx solid blue;
+}
+
+.hideRightBottomIcons{
+    animation: hideIcons 1s;
+    animation-fill-mode: forwards;
+}
+.iconcha{
+    transform-origin:50% 50%;
+}
+.hideRightBottomIcons .iconcha{
+    animation: hideChaIcons 0.5s !important;
+    animation-fill-mode: forwards;
+    animation-delay: .5s;
+}
+@keyframes hideIcons {
+    0%{
+        width:268rpx;
+        height:268rpx;
+    }
+    100%{
+        width: 0;
+        height: 0;
+    }
+}
+@keyframes hideChaIcons { /*隐藏叉号的动画*/
+    0%{
+        transform:rotate(0);
+    }
+    100%{
+        transform:rotate(90deg);
+        opacity: 0;
+    }
 }

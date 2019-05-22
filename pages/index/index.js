@@ -47,7 +47,8 @@ Page({
     unreadNum: 0,
     gradeEnum: enums.gradeEnum,
     colId2Col: {},
-    isSuperAdmin: false
+    isSuperAdmin: false,
+    hideRightBottomIcons: false
   },
   //事件处理函数
   bindViewTap: function() {
@@ -689,4 +690,9 @@ Page({
           }
       })
   },
+  onHideRightBottomIcon() {
+    this.setData({
+        hideRightBottomIcons: true
+    })
+  }
 });
