@@ -434,7 +434,7 @@ Page({
       if(resp.data.length) {
         columns = resp.data[0].columns.filter(column => !! column).sort((col1, col2) => col1.order - col2.order);
         const collegeAbbrName = resp.data[0].abbrName;
-        wx.setNavigationBarTitle({title: collegeAbbrName + '.榴莲'});
+        wx.setNavigationBarTitle({title: collegeAbbrName + '·榴莲'});
         globalData.curUser.collegeName = collegeAbbrName;
       }
       globalData.columns = columns;
