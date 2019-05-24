@@ -56,6 +56,7 @@
             <view class="iconfont iconcha" bindtap="onHideRightBottomIcon"></view>
         </view>
     </view>
+    <image src="../images/logo.png" class="logo {{hideRightBottomIcons ? 'show' : 'hide'}}" bindtap='onClickLogo'></image>
     <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
       <image src='../images/loading.gif'></image>
     </view>

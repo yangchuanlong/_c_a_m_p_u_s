@@ -694,5 +694,10 @@ Page({
     this.setData({
         hideRightBottomIcons: true
     })
+  },
+  onClickLogo() {
+    this.setData({
+      hideRightBottomIcons: false
+    })
   }
 });

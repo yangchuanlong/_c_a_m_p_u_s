@@ -93,6 +93,7 @@ page{
     border-radius: 100% 0 0 0;
     box-shadow: 0px 0px 30rpx #eef1f5;
     overflow: hidden;
+    transition: all 1s;
 }
 .chaSignWrapper{
     position: absolute;
@@ -101,12 +102,14 @@ page{
     border-radius: 100% 0 0 0;
     box-shadow: 0px 0px 30rpx #eef1f5;
     width: 118rpx;
-    height: 118rpx;
+    height: 118rpx;   
 }
 .iconcha{
     position: absolute;
     bottom: 30rpx;
     right: 30rpx;
+    transition: .5s !important;
+    transition-delay:  .2s;
 }
 .editIcon, .wode, .message{
     position:absolute;
@@ -118,6 +121,18 @@ page{
 .wode{
     right: 167rpx;
     bottom: 30rpx;
+}
+.logo{
+    position:fixed;
+    right:50rpx;
+    bottom:50rpx;
+    width:90rpx;
+    height:90rpx;
+    border-radius:50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 1s;
+    transition-delay: .5s;
 }
 .message{
     right: 30rpx;
@@ -138,6 +153,28 @@ page{
     right:25rpx;
     bottom:196rpx;
 }
+
+.hideRightBottomIcons{
+    width: 0;
+    height: 0;
+}
+.iconcha{
+    transform-origin:50% 50%;
+}
+.hideRightBottomIcons .iconcha{   
+    transform:rotate(90deg);
+    opacity: 0;    
+}
+.logo.show{
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+.logo.hide{
+  transition: .5s;
+  transition-delay: 0;
+}
+
 .section{
   width: 100%;
   margin-top:44rpx;
@@ -297,36 +334,4 @@ page{
 }
 .dlg-wrapper .column.chosen text{
     border:4rpx solid blue;
-}
-
-.hideRightBottomIcons{
-    animation: hideIcons 1s;
-    animation-fill-mode: forwards;
-}
-.iconcha{
-    transform-origin:50% 50%;
-}
-.hideRightBottomIcons .iconcha{
-    animation: hideChaIcons 0.5s !important;
-    animation-fill-mode: forwards;
-    animation-delay: .5s;
-}
-@keyframes hideIcons {
-    0%{
-        width:268rpx;
-        height:268rpx;
-    }
-    100%{
-        width: 0;
-        height: 0;
-    }
-}
-@keyframes hideChaIcons { /*隐藏叉号的动画*/
-    0%{
-        transform:rotate(0);
-    }
-    100%{
-        transform:rotate(90deg);
-        opacity: 0;
-    }
 }
