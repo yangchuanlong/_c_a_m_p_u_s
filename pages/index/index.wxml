@@ -1,20 +1,24 @@
 <!--index.wxml-->
 <view class="container"  style="visibility: {{finishChecking ? '' : 'hidden'}}">
-    <view class='searchWrapper'>
-      <input confirm-type='search'
-      bindinput='inputSearch'
-      bindconfirm='startSearch'
-      placeholder='在这里搜搜看...'
-      />
-      <view class="iconfont iconsousuo" bindtap="startSearch"></view>
-    </view>
-    <view class="gap"></view>
-    <scroll-view class='tabs' bindtap='onTabClick' scroll-into-view="{{toColumn}}" scroll-x>
-        <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-tab-index='{{index}}' id="{{item.en_name}}" wx:key="tabTitle-{{item.en_name}}">
-            {{item.name}}
-            <text class="dot"></text>
+    <view class="header">
+        <view class='searchWrapper'>
+            <input confirm-type='search'
+                   bindinput='inputSearch'
+                   bindconfirm='startSearch'
+                   placeholder='在这里搜搜看...'
+                   placeholder-class='phclass'
+            />
+            <view class="iconfont iconsousuo" bindtap="startSearch"></view>
         </view>
-    </scroll-view>
+        <scroll-view class='tabs' bindtap='onTabClick' scroll-into-view="{{toColumn}}" scroll-x>
+            <view wx:for="{{tabs}}" class="{{activeTab == index ? 'active' : ''}}" data-tab-index='{{index}}' id="{{item.en_name}}" wx:key="tabTitle-{{item.en_name}}">
+                {{item.name}}
+                <text class="dot"></text>
+            </view>
+        </scroll-view>
+    </view>
+
+
    <view class="sectionWrapper" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd">
        <view class="section" wx:for="{{tabs}}" style="display: {{activeTab == index ? '' : 'none'}}" id="{{item.en_name}}" wx:key="tabContent-{{index}}">
            <view wx:for="{{colQuestions[item.en_name] || []}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" data-author-id="{{item.openid}}" bindtap='gotoDetail'>

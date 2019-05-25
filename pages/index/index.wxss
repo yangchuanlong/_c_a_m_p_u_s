@@ -5,49 +5,48 @@ page{
 .container {
     padding:0;
 }
-.searchWrapper{
+.header{
+    height: 190rpx;
+    width: 100%;
     position: fixed;
     background: #fff;
-    top: 0;
-    z-index: 6;
+    z-index: 10;
+}
+.searchWrapper{
+    background: #fff;
+    top: 0;    
     width: 696rpx;
     height: 72rpx;
-    margin: 0 auto;
+    margin: 20rpx auto 0;
     box-shadow: 0px 5rpx 30rpx 0px #eef1f5;
     border-radius: 10rpx;
+    position: relative;
 }
 .searchWrapper input{
     height: 72rpx;
     width: calc(100% - 100rpx);
+    padding-left: 20rpx;
+}
+.phclass{
+  font-size: 26rpx;
+  color: #b5bdc5;
 }
 .searchWrapper .iconsousuo{
     position:absolute;
     right:0rpx;
     top:50%;
-    width:26rpx;
-    height:26rpx;
-    color:#bbc2c9;
-    padding: 21rpx;
-    z-index:2;
+    color:#bbc2c9;  
     transform:translateY(-50%);
+    margin-right: 21rpx;
 }
-.gap{
-    position: fixed;
-    height: 60rpx;
-    width: 100%;
-    top: 70rpx;
-    background: #fff;
-    border:1rpx solid #fff;
-    z-index: 2;
-}
+
 .tabs{
     width:100%;
     box-sizing: border-box;
-    position: fixed;
     top: 110rpx;
     white-space: nowrap;
-    background: #fff;
-    z-index: 3;
+    background: #fff;    
+    margin-top: 40rpx;
 }
 .tabs view{
     display:inline-block;
@@ -81,7 +80,7 @@ page{
 .sectionWrapper{
     flex: 1;
     width: 100%;
-    margin-top: 170rpx;
+    margin-top: 190rpx;
 }
 .icons{
     position:fixed;
