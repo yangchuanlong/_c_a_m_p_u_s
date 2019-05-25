@@ -5,7 +5,7 @@
     <view class="imageWrapper">
         <view wx:for="{{tempFilePaths}}" class="imageItemWrapper">
             <image src="{{item}}"></image>
-            <text class="deleteIcon" data-index="{{index}}" bindtap="deleteChosenImg">x</text>
+            <text class="deleteIcon iconfont iconcha" data-index="{{index}}" bindtap="deleteChosenImg"></text>
         </view>
         <view class="iconfont iconzhaoxiang addImgBtn"  bindtap="onChooseImg"></view>
     </view>

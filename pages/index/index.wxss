@@ -51,7 +51,7 @@ page{
 }
 .tabs view{
     display:inline-block;
-    width: 20%;
+    width: 18.6%;
     text-align:center;
     height: 58rpx;
     font-size: 30rpx;
@@ -180,10 +180,11 @@ page{
   margin-top:44rpx;
 }
 .item{
-    padding: 0rpx 34rpx;
+    padding: 0rpx 34rpx 30rpx;
 }
 .item:not(:first-child) {
-  margin-top:60rpx;
+  padding-top:30rpx;
+  border-top: 1rpx solid #f0f0f0;
 }
 .author{
     display:flex;
@@ -213,7 +214,9 @@ page{
     color: #feffff;
     background-color: #ff8e85;
     border-radius: 19rpx;
-    padding: 9rpx 16rpx;
+    padding: 0 16rpx;
+    height: 38rpx;
+    line-height: 38rpx;
 }
 .author .deleteIcon{
     font-size: 30rpx;
@@ -272,15 +275,17 @@ page{
     border-radius: 19rpx;
     border: solid 1rpx #66a1ff;
     opacity: 0.8;
-    padding: 9rpx 16rpx;
+    padding: 0 16rpx;
     font-size: 20rpx;
-    color: #66a1ff;
+    color: #66a1ff !important;
+    height: 38rpx;
+    line-height: 38rpx;
 }
 .belongedCol:not(:first-child){
     margin-left: 30rpx;
 }
 .actions .iconxin{
-    color: #f7a10E;
+    color: #ff6666;
 }
 .loading{
   width: 100%;

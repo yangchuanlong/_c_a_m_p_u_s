@@ -1,7 +1,7 @@
 
 <view class="container">
     <view class="inputWrapper">
-        <input placeholder="请输入问题标题" auto-focus bindinput="onInput"/>
+        <input placeholder="请输入问题标题" auto-focus bindinput="onInput" placeholder-class="phcolor"/>
     </view>
     <view class="choseTypeHint">请选择问题类型</view>
     <checkbox-group class="checkbox-group" bindchange="checkboxChange">

@@ -27,14 +27,13 @@ textarea{
     height: 215rpx;
     line-height: 215rpx;
     background-color: #f0f2f3;
-    border-radius: 10rpx;
-    opacity: 0.5;
+    border-radius: 10rpx;    
     font-size: 84rpx;
     text-align: center;
     display:inline-block;
     vertical-align: top;
     position: relative;
-    margin-top: 8rpx;
+    margin-top: 24rpx;
 }
 .imageItemWrapper{
     margin-right: 22rpx;
@@ -42,13 +41,14 @@ textarea{
 }
 .deleteIcon{
     position: absolute;
-    top:-40rpx;
+    top:-30rpx;
     right:-30rpx;
     color:#ccc;
-    padding: 6rpx;
-    height: 36rpx;
-    line-height: 35rpx;
     text-align: center;
+    display: block;
+    width: 40rpx;
+    height: 40rpx;
+    line-height: 40rpx;
 }
 
 .imageWrapper image{
@@ -61,6 +61,7 @@ textarea{
     color:rgba(0, 0, 0, .8);
     line-height: 100rpx;
     text-align:center;
+    opacity: 0.5;
 }
 .anonymous{
     margin-top: 253rpx;
@@ -78,4 +79,5 @@ checkbox-group label{
     box-shadow: 0px 3rpx 15rpx 0px rgba(73, 144, 226, 0.3);
     border-radius: 43rpx;
     margin-top: 29rpx;
+    margin-bottom: 24rpx;
 }
