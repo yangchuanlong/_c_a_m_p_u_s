@@ -21,8 +21,8 @@
 }
 .unreadNum{
   position: absolute;
-  right: -10rpx;
-  top: -10rpx;
+  right:-5rpx;
+  top:-5rpx;
   background: red;
   color: white;
   width: 40rpx;
@@ -32,14 +32,8 @@
   text-align: center;
 }
 .icon{
-  font-size: 60rpx;
-  border:1px solid #9ecdff;
-  border-radius: 50%;
-  text-align: center;
   width: 100rpx;
   height: 100rpx;
-  line-height: 100rpx;
-  color: #9ecdff;
 }
 .right{
   flex: 1;

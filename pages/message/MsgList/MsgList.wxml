@@ -1,7 +1,8 @@
 <view class='container'>
   <view class="item" style="display:none">  <!-- this is mock ui -->
     <view class="left">
-      <text class="iconfont iconwenti icon"></text>
+      <!-- <text class="iconfont iconwenti icon"></text> -->
+      <image src='../../images/wentiIcon.png' class='icon'></image>
       <text class="unreadNum">20</text>
     </view>
     <view class="right">
@@ -13,7 +14,7 @@
 
   <view class="item" wx:for="{{messages}}" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
     <view class="left">
-      <text class="iconfont iconwenti icon"></text>
+      <image src='../../images/wentiIcon.png' class='icon'></image>
       <text class="unreadNum" wx:if="{{item.unreadNum}}">{{item.unreadNum}}</text>
     </view>
     <view class="right">

@@ -1,12 +1,18 @@
 
 .container {
-    padding: 0 16rpx;
+    padding: 0;
 }
 .item{
     width: 100%;
+    padding: 0 24rpx 40rpx;
+    box-sizing: border-box;
 }
 .item:not(:first-child) {
-    margin-top: 55rpx;
+    padding-top: 24rpx;
+    border-top:1rpx solid #f8f8f8;
+}
+.item:nth-child(even){
+  background: #f7fbff;
 }
 .author{
     display: flex;

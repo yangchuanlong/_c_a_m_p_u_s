@@ -143,6 +143,7 @@ Page({
   getLatestMsgs() {
       const _t = this;
       if(_t.data.getLatestLoading){
+        wx.stopPullDownRefresh();
         return;
       }
       _t.data.getLatestLoading = true;
@@ -175,8 +176,10 @@ Page({
               _t.getQuestionTitleAbstract(questionIds, result);
           }
           _t.setData({showLoading: false});
+          wx.stopPullDownRefresh();
       }).catch(e => {
           _t.data.getLatestLoading = false;
+          wx.stopPullDownRefresh();
       });
   },
   /**
