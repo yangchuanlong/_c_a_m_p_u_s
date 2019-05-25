@@ -13,14 +13,86 @@ Page({
       2: '大二',
       3: '大三',
       4: '大四'
-    }
+    },
+    columns: [],
+    chosenCols: {},
+    saving: false,
+    showDlg: false
   },
 
+  onEditInterestedCols() {
+    this.setData({
+      showDlg: true
+    });
+  },
+
+  onClickCol(evt) {
+    const enName = evt.currentTarget.dataset.enName;
+    const chosenCols = { ...this.data.chosenCols};
+    if (chosenCols[enName]) {
+      delete chosenCols[enName]
+    } else {
+      chosenCols[enName] = true;
+    }
+    this.setData({
+      chosenCols
+    });
+  },
+
+  onSave() {
+    const _t = this, interestedColumns = Object.keys(this.data.chosenCols);
+    if (!interestedColumns.length) {
+      wx.showToast({
+        title: '请至少选择一个栏目',
+        icon: 'none'
+      });
+      return;
+    }
+    _t.setData({
+      saving: true
+    });
+    wx.cloud.init();
+    wx.cloud.callFunction({
+      name: 'setInterestedColumns',
+      data: {
+        env: config.env,
+        interestedColumns
+      }
+    }).then(function() {
+      _t.setData({
+        saving: false,
+        showDlg: false
+      });
+    }).catch(err => {
+      wx.showToast({
+        title: '保存失败',
+        icon: 'none'
+      });
+      _t.setData({
+        saving: true
+      });
+    })
+  },
+  closeDlg() {
+      this.setData({
+        showDlg: false
+      });
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    const _t = this;
+    const _t = this, chosenCols = {};
+    _t.setData({
+       columns: globalData.columns
+    });
+    const interestedColumns = globalData.curUser.interestedColumns;
+    interestedColumns.forEach(col_en_name => {
+      chosenCols[col_en_name] = true;
+    });
+    this.setData({
+      chosenCols
+    });
     if(!globalData.curUser.collegeName) {
       wx.cloud.init();
       wx.cloud.database({

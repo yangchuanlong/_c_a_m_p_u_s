@@ -1,7 +1,8 @@
 
-<view class="container">
+<view class="container {{saving ? 'saving' : ''}}">
 <image src="../images/profile_bg.png" class="bgImg"></image>
  <view class="header">
+  <view class="iconfont iconfabiao editIcon" bindtap="onEditInterestedCols"></view>
   <image src="{{curUser.avatar}}" class="avatar"></image>
   <view class="nickName">{{curUser.nickName}}</view>
   <view class="userCollegeGrade">
@@ -34,5 +35,20 @@
          <text style="flex:1"></text>
          <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
+ </view>
+
+ <view class="dlg" wx:if='{{showDlg}}'>
+     <view class='wrapper'>
+        <view class='iconfont iconcha closeIcon' bindtap='closeDlg'></view>
+        <view class="title">请选择你感兴趣的栏目</view>
+        <view class="content">
+            <view class='colWrapper'  wx:for="{{columns}}" wx:key="{{item.en_name}}" >
+              <view class="{{chosenCols[item.en_name] ? 'selected' : ''}}" data-en-name="{{item.en_name}}" bindtap="onClickCol">
+                  {{item.name}}
+              </view>
+            </view>
+        </view>
+        <button type="primary" class="saveBtn" bindtap='onSave' loading='{{saving}}'>保存</button>
+     </view>
  </view>
 </view>
