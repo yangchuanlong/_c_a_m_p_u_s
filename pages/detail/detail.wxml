@@ -73,20 +73,18 @@
             <view class='replyItem' bindtap="onExpandedMainReplyClick" data-reply-id="{{expandedReply._id}}" data-author="{{expandedReply.openid}}">
                 <view class='replier'>
                     <image src="{{users[expandedReply.openid].avatar}}"></image>
-                    <text class='nickName'>{{users[expandedReply.openid].nickName}}:</text>
-                    <text style='flex:1'></text>
+                    <text class='nickName'>{{users[expandedReply.openid].nickName}}:</text>                    
                     <text  class="time">{{expandedReply.createdTime}}</text>
+                    <text style='flex:1'></text>
+                    <view class="actions">
+                        <view>{{replyMap[expandedReply._id].thumbupCount}} </view>
+                        <view wx:if="{{myThumbups[expandedReply._id]}}" class="iconfont iconxin" id='js-thumbup-cancel'
+                               data-id="{{expandedReply._id}}" bindtap="cancelThumbup"></view>
+                        <view wx:else  class="iconfont iconzan" id='js-thumbup' data-id="{{expandedReply._id}}"
+                               bindtap="thumbup" data-reply-author="{{expandedReply.openid}}"></view>
+                    </view>
                 </view>
                 <view class='replyContent'>{{expandedReply.content}}</view>
-                <view class="actions">
-                    <image wx:if="{{myThumbups[chosenReply._id]}}" src="../images/thumbup.png"
-                           data-id="{{chosenReply._id}}" id='js-thumbup-cancel' bindtap="cancelThumbup"></image>
-                    <image wx:else src="../images/not-thumbup.png" id='js-thumbup' data-id="{{chosenReply._id}}"
-                           bindtap="thumbup" data-reply-author="{{chosenReply.openid}}"></image>
-                    <text>赞({{replyMap[chosenReply._id].thumbupCount}})</text>
-                    |
-                    <text>回复({{chosenReply.subordinates.length}})</text>
-                </view>
                 <view class='subReplies' wx:if="{{expandedReply.subReplies.length}}">
                     <view
                         class='replyItem subReplyItem'
@@ -99,20 +97,8 @@
                         catchtap="onExpandedSubReplyClick"
                     >
                         <view class='replier'>
-                            <text class='nickName'>{{users[subItem.openid].nickName}}:</text>
-                            <text style='flex:1'></text>
-                            <text  class="time">{{subReply.createdTime}}</text>
-                        </view>
-                        <view class='replyContent'>
-                            <text wx:if="{{subItem.repliedOpenId}}">回复 {{users[subItem.repliedOpenId].nickName}}:</text>
-                            {{subItem.content}}
-                        </view>
-                        <view class="actions">
-                            <image wx:if="{{myThumbups[subItem._id]}}" src="../images/thumbup.png"
-                                   data-id="{{subItem._id}}" bindtap="cancelThumbup"></image>
-                            <image wx:else src="../images/not-thumbup.png" data-id="{{subItem._id}}"
-                                   bindtap="thumbup" data-reply-author="{{subItem.openid}}"></image>
-                            <text>赞({{replyMap[subItem._id].thumbupCount}})</text>
+                          <text class='nickName'>{{users[subItem.openid].nickName}} 回复 {{users[subItem.repliedOpenId].nickName}}:  </text>
+                            {{subItem.content}}                            
                         </view>
                     </view>
                 </view>

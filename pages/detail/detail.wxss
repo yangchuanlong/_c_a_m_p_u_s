@@ -114,7 +114,7 @@
   border-radius: 50%;
 }
 .replier .iconxin {
-  color: #f7a10E;
+  color: #ff6666;
 }
 .replier .nickName{
   margin-left: 24rpx;
@@ -182,6 +182,10 @@
   padding:12rpx;
   background-color: #f7f8fa;
   border-radius: 10rpx;
+}
+.subReplyItem .replier .nickName{
+  color:#66a1ff;
+  padding-right:8rpx; 
 }
 .moreReplies{
   color:#298DF8;
