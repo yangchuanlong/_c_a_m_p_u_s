@@ -1,0 +1,108 @@
+.item{
+    padding: 0rpx 34rpx 30rpx;
+}
+.item:not(:first-child) {
+  padding-top:30rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.author{
+    display:flex;
+    align-items: center;
+}
+.author text{
+    display: block;
+}
+.author .avatar{
+    width: 68rpx;
+    height: 68rpx;
+    border-radius: 50%;
+}
+.author .nickName{
+    margin-left: 24rpx;
+    font-size: 30rpx;
+    letter-spacing: 0px;
+    color: #6e7b8c;
+}
+.author .date{
+    font-size: 26rpx;
+    color: #b5bdc5;
+}
+.author .gradeTag{
+    margin-left:24rpx;
+    font-size: 20rpx;
+    color: #feffff;
+    background-color: #ff8e85;
+    border-radius: 19rpx;
+    padding: 0 16rpx;
+    height: 38rpx;
+    line-height: 38rpx;
+}
+.author .deleteIcon{
+    font-size: 30rpx;
+    color: #b5bdc5;
+    margin-left: 16rpx;
+}
+.title{
+    height: 32rpx;
+    font-size: 34rpx;
+    font-weight: 600;
+    font-stretch: normal;
+    line-height: 36rpx;
+    color: #6e7b8c;
+    margin-top: 34rpx;
+}
+.shortContent{
+    font-size: 30rpx;
+    line-height: 50rpx;
+    color: #8b95a3;
+    margin-top: 29rpx;
+}
+.imagesWrapper{
+    margin-top: 30rpx;
+    display: flex;
+}
+.imagesWrapper image{
+    display: inline-block;
+    width:156rpx;
+    height:156rpx;
+    background-color: #eeeeee;
+    border-radius: 10rpx;
+}
+.imagesWrapper image:not(:first-child){
+    margin-left: 24rpx;
+}
+.imagesWrapper image:nth-child(n+5){
+    display:none;
+}
+.actions{
+  display:flex;
+  font-size: 32rpx;
+  margin-top: 30rpx;
+  align-items: center;
+}
+.actions view{
+  color: #8b95a3;
+}
+.actions .iconpinglun{
+    margin-left: 70rpx;
+}
+.actions .num{
+    margin-left: 8rpx;
+    font-size: 34rpx;
+}
+.belongedCol{
+    border-radius: 19rpx;
+    border: solid 1rpx #66a1ff;
+    opacity: 0.8;
+    padding: 0 16rpx;
+    font-size: 20rpx;
+    color: #66a1ff !important;
+    height: 38rpx;
+    line-height: 38rpx;
+}
+.belongedCol:not(:first-child){
+    margin-left: 30rpx;
+}
+.actions .iconxin{
+    color: #ff6666;
+}

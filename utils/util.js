@@ -194,6 +194,65 @@ const isSuperAdmin = function(openid) {
     return ret;
 };
 
+const getThumbupNum = function(ids, type) {
+  if(!Array.isArray(ids) || !ids.length) {
+    return new Promise(resolve => {
+      resolve({});
+    });
+  }
+  wx.cloud.init();
+  const db = wx.cloud.database({
+    env: config.env
+  });
+  const collection = db.collection("thumbups");
+  const _ = db.command;
+  return Promise.all(
+    ids.map(id => {
+      return collection.where({
+        questionOrReplyId: id,
+        type
+      }).count().then(res => {
+         return res.total; 
+      })
+    })//end of map
+  ).then(result => {
+    const obj = {};
+    result.forEach((num, index) => {
+      const id = ids[index];
+      obj[id] = num;
+    });
+    return obj;
+  });
+}
+
+const getReplyNum = function(questionIds) {
+  if(!Array.isArray(questionIds) || !questionIds.length) {
+    return new Promise({});
+  }
+  wx.cloud.init();
+  const db = wx.cloud.database({
+    env: config.env
+  });
+  const collection = db.collection("replies");
+  const _ = db.command; 
+  return Promise.all(
+    questionIds.map(id => {
+      return collection.where({
+        questionId: id
+      }).count().then(res => {
+        return res.total;
+      })
+    })
+  ).then(result => {
+      const obj = {};
+      result.forEach((num, index) => {
+        const questionId = questionIds[index];
+        obj[questionId] = num;
+      });
+      return obj;
+  });
+};
+
 
 module.exports = {
   formatTime: formatTime,
@@ -201,7 +260,9 @@ module.exports = {
   getRegisteredUsers,
   getQuestions,
   dateDiff,
-  isSuperAdmin
+  isSuperAdmin,
+  getThumbupNum,
+  getReplyNum
 };
 
 

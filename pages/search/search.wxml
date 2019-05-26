@@ -2,17 +2,29 @@
   <view class='section'>
       <view wx:for="{{results}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
             <view class="author">
-                <image src="{{users[item.openid].avatar || '../images/userIcon.png'}}" class="avatar" wx:if="{{!item.anonymous}}" ></image>
-                <image wx:else src="../images/anonymousUserImg.png"   class='avatar'></image>
+                <image wx:if="{{item.anonymous}}" src="../images/anonymousUserImg.png" class="avatar"></image>
+                <image wx:else src="{{users[item.openid].avatar  || '../images/userIcon.png'}}" class="avatar"></image>
                 <text class="nickName">{{item.anonymous ? "匿名" : users[item.openid].nickName}}</text>
-                <text class="date">{{item.formatedTime}}</text>
+                <text class="gradeTag">{{gradeEnum[users[item.openid].grade + '-' + users[item.openid].gender]}}</text>
+                <text style="flex:1"></text>
+                <text class="date">{{item.formattedTime}}</text>
+                <text wx:if="{{isSuperAdmin}}" class="deleteIcon" id="js-delete" data-question-title="{{item.title}}"> x </text>
             </view>
             <view class="title">{{item.title}}</view>
-            <view class="shortContent">{{item.shortContent}}</view>
-            <view class='acions'>
-              <view>赞(12)</view>
-              <view>|</view>
-              <view>回答(867)</view>
+            <view class="shortContent">{{item.abstract}}</view>
+            <view class="imagesWrapper" wx:if="{{item.images.length}}">
+                <image wx:for="{{item.images}}" wx:for-item="imgItem" wx:key="{{imgItem}}" src="{{imgItem}}"></image>
+            </view>
+            <view class='actions'>
+                <view wx:for="{{item.columns}}" wx:for-item="columnItem" class="belongedCol">{{colId2Col[columnItem].name}} </view>
+
+                <view style="flex:1"></view>
+
+                <view wx:if="{{myThumbups[item._id]}}" class="iconfont iconxin" id='js-thumbup-cancel'></view>
+                <view wx:else class="iconfont iconzan" id='js-thumbup'></view>
+                <view class="num">{{thumbupCount[item._id] || 0}}</view>
+                <view class="iconfont iconpinglun"></view>
+                <view class="num">{{replyCount[item._id] || 0}}</view>
             </view>
         </view>
   </view>

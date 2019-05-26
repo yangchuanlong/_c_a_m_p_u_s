@@ -1,51 +1,8 @@
+@import '../index/questionItem.wxss';
 .container{
   padding: 0;
 }
 .section{
   width: 100%;
   margin-top:6rpx;
-}
-.item{
-    background: #E8E9ED;
-    padding: 0rpx 12rpx;    
-    width: 100%;
-}
-.item:not(:first-child) {
-  margin-top:6rpx;
-}
-.author{
-    display:flex;
-    border-bottom: 4rpx solid #ddd;
-    padding: 12rpx 6rpx;
-}
-.author .avatar{
-    width: 50rpx;
-    height: 50rpx;
-    border-radius: 50%;
-}
-.author .nickName{
-    margin-left: 16rpx;
-}
-.author .date{
-    color: #ccc;
-    margin-left: 12rpx;
-}
-.title{
-    font-weight: bold;
-    font-size: 32rpx;
-    margin-top:12rpx;
-}
-.shortContent{
-    font-size: 28rpx;
-    margin-top: 12rpx;
-}
-.acions{
-  display:flex;
-  font-size: 26rpx;
-  margin-top: 12rpx;
-  color: #D0D1D1;
-  padding-bottom: 12rpx;
-}
-.acions view{
-  margin-left: 16rpx;
 }

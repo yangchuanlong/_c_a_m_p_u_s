@@ -194,38 +194,17 @@ Page({
     this.setData({tabIndex2ColId})
   },
   getThumbupNum(questionIds) {
-    const _t = this;
-    wx.cloud.callFunction({
-      name: 'getThumbups',
-      data: {
-        env:config.env,
-        ids: questionIds,
-        type: 'question'
-      },
-      success: function ({result}) {
-        if(!result) {
-          return;
-        }
-        const thumbupCount = {..._t.data.thumbupCount, ...result};
-        _t.setData({ thumbupCount });
-      }
-    })
+    const _t = this;    
+    util.getThumbupNum(questionIds, 'question').then(result => {
+      const thumbupCount = { ..._t.data.thumbupCount, ...result};
+      _t.setData({ thumbupCount });
+    });
   },
   getReplyNum(questionIds){ //获取回复数
     const _t = this;
-    wx.cloud.callFunction({
-      name: 'getReplyNum',
-      data: {
-        env:config.env,
-        questionIds
-      },
-      success: function ({result}) { //result {[questionId]: Number, ...}
-        if(!result) {
-          return;
-        }
-        const replyCount = Object.assign({}, _t.data.replyCount, result);
-        _t.setData({ replyCount });
-      }
+    util.getReplyNum(questionIds).then(result => {
+      const replyCount = {..._t.data.replyCount, ...result};
+      _t.setData({ replyCount });
     });
   },
   getHotSpot() {
