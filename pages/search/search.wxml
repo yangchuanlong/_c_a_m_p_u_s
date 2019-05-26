@@ -1,6 +1,6 @@
 <view class='container'>
   <view class='section'>
-      <view wx:for="{{results}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}" bindtap='gotoDetail'>
+      <view wx:for="{{results}}" class="item" wx:key="{{item._id}}" data-id="{{item._id}}"  data-author-id="{{item.openid}}"  bindtap='gotoDetail'>
             <view class="author">
                 <image wx:if="{{item.anonymous}}" src="../images/anonymousUserImg.png" class="avatar"></image>
                 <image wx:else src="{{users[item.openid].avatar  || '../images/userIcon.png'}}" class="avatar"></image>
