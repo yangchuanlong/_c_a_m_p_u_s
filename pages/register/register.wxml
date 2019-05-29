@@ -7,14 +7,16 @@
     授权获取头像昵称
 </button>
 <view wx:else class="container">
+    <image src="../images/register_bg.png" class='headerBg'></image>
     <view class="main" bindtap="togglePopup" wx:if="{{curStep === 1}}">
         <view class="title">请选择院校</view>
 
-        <view class="selectList">
-            <view class="select">
-                <view class="selectedCollege" bindtap="toggleCollegeList" data-popup-switch="college">
-                    {{selectedCollege ? selectedCollege.collegeName : "--请选择学校--"}}
+        <view class="selectList collegeSelect">
+            <view class="select" style="z-index:3">
+                <view class="selectedCollege" data-popup-switch="college">
+                    {{selectedCollege ? selectedCollege.collegeName : "请选择院校"}}                    
                 </view>
+                <image src='../images/arrow-down.png' class='arrow-down' data-popup-switch="college"></image>
                 <view class="popup" style="visibility:{{ showCollegeList ? '': 'hidden' }}">
                     <view  class="college" wx:for="{{colleges}}" data-value="{{item.collegeId}}" bindtap="chooseCollege">
                         {{item.collegeName}}
@@ -22,9 +24,9 @@
                 </view>
             </view>
 
-            <view class="select">
+            <view class="select" wx:if="{{selectedCollege}}"  style="z-index:2">
                 <view class="selectedGrade" data-popup-switch="grade">
-                    {{selectedGrade ? selectedGrade.label : "--你的年级--"}}
+                    {{selectedGrade ? selectedGrade.label : "你的年级"}}
                 </view>
                 <view class="popup" style="visibility:{{ showGradeList ? '': 'hidden' }}">
                     <view wx:for="{{grades}}" data-value="{{item.value}}" class="grade" bindtap="chooseGrade">
@@ -34,8 +36,8 @@
             </view>
 
             <view class="select" wx:for="{{verifyQuestions}}" wx:for-item="question" wx:for-index="questionIdx">
-                <view class="selectedOption" data-question-idx="{{questionIdx}}" bindtap="toggleVerifyQuestionList" data-popup-switch="verfiyQuestion">
-                    {{question.selectedOption ? question.selectedOption.label : '--' + question.title + '--'}}
+                <view class="selectedOption" data-question-idx="{{questionIdx}}" bindtap="toggleVerifyQuestionList" data-popup-switch="verfiyQuestion"  style="z-index:1">
+                    {{question.selectedOption ? question.selectedOption.label : question.title}}
                 </view>
                 <view class="popup" style="visibility: {{showToggleMap[questionIdx] ? '' : 'hidden'}}">
                     <view wx:for="{{question.options}}" wx:for-item="option" class="option" data-value="{{option.value}}"
@@ -48,12 +50,12 @@
 
         </view>
 
-        <button size="mini" type="primary" class="submitBtn" bindtap="onSubmit">提交</button>
+        <button type="primary" wx:if="{{selectedCollege}}"  class="submitBtn" bindtap="onSubmit">提交</button>
     </view>
     <view class="main" wx:elif="{{curStep === 2}}">
         <view style="margin-top: 40rpx;">输入昵称(确定后不可修改)</view>
         <input bindinput="onNicknameInput" placeholder="请输入昵称" value="{{nickName}}" class="nickNameInput"/>
         <view class="hr"></view>
-        <button size="mini" type="primary" class="registerBtn" bindtap="onRegister" disabled="{{disabled}}" loading="{{loading}}">提交</button>
+        <button type="primary" class="registerBtn" bindtap="onRegister" disabled="{{disabled}}" loading="{{loading}}">提交</button>
     </view>
 </view>
