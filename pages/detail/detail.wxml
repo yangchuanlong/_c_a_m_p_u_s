@@ -12,9 +12,11 @@
         <text class="scanNum">阅读量：{{scanCount}}</text>
     </view>
     <view class='content'>
-        {{detail.content}}
+        <view class='textContent'>
+           {{detail.content}}
+        </view>
         <view class="imagesWrapper" wx:if="{{detail.images}}">
-            <image wx:for="{{detail.images}}" src="{{item}}" wx:key="{{item}}">{{item}}</image>
+            <image wx:for="{{detail.images}}" src="{{item}}" wx:key="{{item}}" mode="widthFix"></image>
         </view>
     </view>
     <view class='comments'>

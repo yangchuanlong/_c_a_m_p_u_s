@@ -47,7 +47,9 @@
   margin-top: 24rpx;
   min-height: 400rpx;
   line-height: 50rpx;
-  color: #6e7b8c;
+  color: #6e7b8c;  
+}
+.textContent{
   text-indent: 64rpx
 }
 .imagesWrapper{
@@ -55,7 +57,8 @@
 }
 .imagesWrapper image{
   width: 100%;
-  margin-bottom: 8rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 0 24rpx rgba(0, 0, 0, .05);
 }
 .title, .author, .content{
   padding-left: 12rpx;
