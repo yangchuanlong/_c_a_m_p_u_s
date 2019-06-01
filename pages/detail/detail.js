@@ -24,6 +24,7 @@ Page({
     repliedOpenId: "",
     expandedReply: null,//点击子回复后展示的回复列表
     thumbups: {},
+    mainReplyCount: 0
   },
 
   scan(id){//把问题的浏览数加1
@@ -58,15 +59,16 @@ Page({
   getScanNum(questionId){//获取浏览数
     const _t = this;
     wx.cloud.init();
-    wx.cloud.callFunction({
-      name: 'getScan',
-      data: {
-        env:config.env,
-        ids: [questionId]
-      },
-      success: function ({result}) {
-        const scanCount = result[questionId];
-        _t.setData({ scanCount });
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    db.collection('scan').where({
+      questionId
+    }).count().then(function(res) {
+      if(res && res.total) {
+        _t.setData({
+          scanCount: res.total
+        })
       }
     });
   },
@@ -97,6 +99,7 @@ Page({
     _t.data.lastTime = new Date().toISOString();
     _t.scan(options.id);
     _t.getReplies(options.id);
+    _t.getMainReplyCount(options.id);
   },
   getSubReplies(questionId, mainReplyIds) {
     wx.cloud.init();
@@ -144,6 +147,23 @@ Page({
       });
       _t.getMyThumbupsForReplies(ids);
     });
+  },
+  getMainReplyCount(questionId) {
+    const _t = this;
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    db.collection('replies').where({
+      questionId,
+      subordinateTo: null,
+    }).count().then(resp => {
+      if(resp && resp.total) {
+        _t.setData({
+          mainReplyCount: resp.total
+        })
+      }
+    })
   },
   getMainReplies(questionId) {
     wx.cloud.init();
@@ -259,8 +279,6 @@ Page({
   },
   getReplies(questionId) {
     this.getMainReplies(questionId);
-    //   _t.getMyThumbupsForReplies(ids);
-    //   _t.getThumbupOfReplies(ids);
   },
   getMyThumbupsForReplies: function(ids) {//获取'我'对回复的点赞
     if(!ids.length) {

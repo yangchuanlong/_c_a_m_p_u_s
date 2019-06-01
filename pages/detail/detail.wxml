@@ -20,7 +20,10 @@
         </view>
     </view>
     <view class='comments'>
-        <view class='subTitle'>评论区</view>
+        <view class='subTitle'>
+          <text>回答</text>
+          <text>{{mainReplyCount}}</text>
+        </view>
         <view class='comment-list'>
             <view
                 class='replyItem'
