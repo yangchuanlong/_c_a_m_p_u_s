@@ -79,7 +79,7 @@ page{
   color: #8b95a3;
   padding-left: 18rpx;
 }
-.submitBtn, .registerBtn{
+.submitBtn, .finishNicknameBtn, .registerBtn{
     width: 420rpx;
     height: 86rpx;
     line-height: 86rpx;
@@ -91,15 +91,56 @@ page{
 }
 
 .nickNameInput{
-    margin-top: 48rpx;
+    margin-top: 288rpx;   
+    text-align:center;
 }
 .hr{
     border-bottom: 1rpx solid #e6e6e6;
-    width: 90%;
     margin-top: 24rpx;
+     width:570rpx;
 }
 
+.finishNicknameBtn{
+    margin-top: 211rpx;
+}
+.stepThreeTitle{
+  width: 312rpx;
+	font-size: 34rpx;
+  color: #6e7b8c;
+  font-weight: bold;
+}
+.columns{
+  width: 570rpx;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 144rpx;
+}
+.columns view{
+  	width: 151rpx;
+    height: 61rpx;
+    line-height: 61rpx;
+    border-radius: 30rpx;
+    border: solid 1rpx #6e7b8c;
+    opacity: 0.8;
+    box-sizing: border-box;
+    justify-content: center;
+    text-align:center;
+    font-size: 30rpx;
+    color: #6e7b8c;
+}
+.columns view:nth-child(3n+2), .columns view:nth-child(3n+3){
+  margin-left: 58rpx;
+}
+.columns view:nth-child(n+4){
+  margin-top: 30rpx;
+}
 .registerBtn{
-    margin-top: 24rpx;
+  margin-top:140rpx;
+}
+.columns .selected{
+  background-image: linear-gradient(90deg, #66a1ff 0%, 	#94c5ff 100%);	
+	box-shadow: 0px 3rpx 15rpx 0px rgba(73, 144, 226, 0.3);
+  color: #fefefe;
+  border-color: transparent;
 }
 

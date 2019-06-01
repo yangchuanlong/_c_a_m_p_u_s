@@ -208,30 +208,3 @@ page{
     width: 50rpx;
     height: 50rpx;
 }
-.dlg-wrapper{
-    background: white;
-    border-radius: 8rpx;
-    width: 80vw;
-    padding: 24rpx;
-    text-align: center;
-}
-.dlg-title{
-    text-align:left;
-}
-.dlg-wrapper .columns{
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 24rpx;
-}
-.dlg-wrapper .columns .column{
-    width: 33.33%;
-}
-.dlg-wrapper .columns text{
-    display:inline-block;
-    padding: 6rpx 24rpx;
-    border:1rpx solid gray;
-    margin-top: 8rpx;
-}
-.dlg-wrapper .column.chosen text{
-    border:4rpx solid blue;
-}

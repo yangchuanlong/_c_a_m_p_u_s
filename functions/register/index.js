@@ -18,6 +18,7 @@ exports.main = async (event, context) => {
       nickName: event.nickName,
       avatar: event.avatar,
       gender: event.gender,
+      interestedColumns: event.interestedColumns,
       createdTime: new Date().toISOString()
     }
   });

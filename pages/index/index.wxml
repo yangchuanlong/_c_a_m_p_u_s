@@ -67,19 +67,4 @@
     <view class="overlay" style="display: {{showOverlay ? '' : 'none'}}">
         <image src='../images/loading.gif'></image>
     </view>
-    <view class="overlay interested" style="display: {{showInterestedSettingDlg ? '' : 'none'}}">
-        <view class="dlg-wrapper">
-            <view class="dlg-title">选择你想关注的话题</view>
-            <view class="columns">
-                <view class="column {{chosenInterestedCols[item.en_name] && 'chosen'}}"
-                      wx:for="{{collegeColumns}}"
-                      data-col="{{item.en_name}}"
-                      bindtap="onChooseCol"
-                >
-                    <text>{{item.name}}</text>
-                </view>
-            </view>
-            <button size="mini" type="primary" bindtap="setInterestedCols" loading="{{setInterestedLoading}}">完成</button>
-        </view>
-    </view>
 </view>

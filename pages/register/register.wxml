@@ -52,10 +52,24 @@
 
         <button type="primary" wx:if="{{selectedCollege}}"  class="submitBtn" bindtap="onSubmit">提交</button>
     </view>
-    <view class="main" wx:elif="{{curStep === 2}}">
-        <view style="margin-top: 40rpx;">输入昵称(确定后不可修改)</view>
+    <view class="main stepTwo" wx:elif="{{curStep === 2}}">
+        <view style="font-size:34rpx;color: #6e7b8c;">输入昵称</view>
+        <view style='font-size: 26rpx;color: #6e7b8c;margin-top:16rpx;'>(确定后不可修改)</view>
         <input bindinput="onNicknameInput" placeholder="请输入昵称" value="{{nickName}}" class="nickNameInput"/>
         <view class="hr"></view>
-        <button type="primary" class="registerBtn" bindtap="onRegister" disabled="{{disabled}}" loading="{{loading}}">提交</button>
+        <button type="primary" class="finishNicknameBtn" bindtap="onFinishNickName" disabled="{{disabled}}" loading="{{loading}}">下一步</button>
+    </view>
+    <view class="main stepThree" wx:elif="{{curStep === 3}}">
+      <view class='stepThreeTitle'>选择你想关注的话题</view>
+      <view class='columns'>
+        <view wx:for="{{selectedCollege.columns}}" 
+          data-en-name="{{item.en_name}}" 
+          bindtap='toggleSelectColumn'
+          class="{{selectedColumns[item.en_name] ? 'selected': ''}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+      <button type="primary" class="registerBtn" bindtap="onRegister" disabled="{{disabled}}" loading="{{loading}}">完成</button>
     </view>
 </view>

@@ -23,6 +23,7 @@ Page({
     loading: false,
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    selectedColumns: {}
   },
 
   /**
@@ -66,7 +67,8 @@ Page({
     });
     db.collection("college").field({
       collegeId: true,
-      collegeName: true
+      collegeName: true,
+      columns: true
     }).get().then(function (resp) {
       const colleges = resp.data || [];
       _t.setData({ colleges });
@@ -228,9 +230,9 @@ Page({
     this.setData({
       curStep: 2,
       nickName: app.globalData.userInfo.nickName
-    })
+    });
   },
-  onRegister() {
+  onFinishNickName() {
     const _t = this;
     const data = this.data, userInfo = app.globalData.userInfo;
     const nickName = data.nickName.replace(/!\s|\s$/, "");
@@ -241,7 +243,24 @@ Page({
       });
       return;
     }
+    this.setData({
+      nickName,
+      curStep: 3
+    });
+  },
+
+  onRegister() {
+    const _t = this;
+    const chosenColumns = Object.keys(this.data.selectedColumns);
+    if(chosenColumns.length < 3) {
+      wx.showToast({
+        title: '请选择至少三感兴趣的栏目',
+        icon: 'none'
+      });
+      return;
+    }
     this.setData({ disabled: true, loading: true });
+    const data = this.data, userInfo = app.globalData.userInfo;
     wx.cloud.init();
     wx.cloud.callFunction({
       name: 'register',
@@ -252,19 +271,26 @@ Page({
 
         nickName: this.data.nickName,
         avatar: userInfo.avatarUrl,
-        gender: userInfo.gender
+        gender: userInfo.gender,
+        interestedColumns: chosenColumns
       }
     }).then(resp => {
       if(resp.result && resp.result._id) { //success
         globalData.curUserCollegeId = data.selectedCollege.collegeId;
-        globalData.users = {...globalData.users, [resp.result.openid]: data};
         globalData.curUser = {
-          ...data,
-          openid: resp.result.openid
+          collegeId: data.selectedCollege.collegeId,
+          grade: data.selectedGrade.value,
+          nickName: data.nickName,
+          avatar: userInfo.avatarUrl,
+          gender: userInfo.gender,
+          interestedColumns: chosenColumns,
+          openid: resp.result.openid,
         };
+        globalData.users = { ...globalData.users, [resp.result.openid]: globalData.curUser };
         wx.redirectTo({
           url: "/pages/index/index"
-        })
+        });
+        global.curUserInterestedColumns = chosenColumns;
       } else {
         _t.setData({ disabled: false, loading: false });
       }
@@ -285,6 +311,27 @@ Page({
           userInfo: e.detail.userInfo,
           hasUserInfo: true
       })
+  },
+  toggleSelectColumn(evt) {
+    const _t  = this;
+    const columnId = evt.currentTarget.dataset.enName;
+    const selectedColumns = this.data.selectedColumns;
+    if(selectedColumns[columnId]) {
+      delete selectedColumns[columnId];
+    } else {
+      const selectedColNum = Object.keys(selectedColumns).length;
+      if (selectedColNum >= 6) {
+        wx.showToast({
+          title: '您最多只能选择六个感兴趣的栏目',
+          icon: 'none'
+        });
+        return;
+      }
+      selectedColumns[columnId] = true;
+    }
+    this.setData({
+      selectedColumns
+    });
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

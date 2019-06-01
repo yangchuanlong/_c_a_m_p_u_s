@@ -41,8 +41,6 @@ Page({
     replyCount: {},
     collegeColumns: [],
     chosenInterestedCols: {},
-    setInterestedLoading: false,
-    showInterestedSettingDlg: false,
     users: {},
     unreadNum: 0,
     gradeEnum: enums.gradeEnum,
@@ -194,7 +192,7 @@ Page({
     this.setData({tabIndex2ColId})
   },
   getThumbupNum(questionIds) {
-    const _t = this;    
+    const _t = this;
     util.getThumbupNum(questionIds, 'question').then(result => {
       const thumbupCount = { ..._t.data.thumbupCount, ...result};
       _t.setData({ thumbupCount });
@@ -352,7 +350,7 @@ Page({
           finishChecking: true,
           showOverlay: false
         });
-        _t.getColumnsOfCollege(user.collegeId, !!(globalData.curUserInterestedColumns && globalData.curUserInterestedColumns.length)); //send request to fetch columns by collegeId
+        _t.getColumnsOfCollege(user.collegeId); //send request to fetch columns by collegeId
         _t.getQuestions('all');//获取"全部"栏目的问题
         _t.getUnreadMsg();
         _t.setData({
@@ -397,7 +395,7 @@ Page({
       return "error";
     })
   },
-  getColumnsOfCollege(collegeId, interestedSetted) {
+  getColumnsOfCollege(collegeId) {
     wx.cloud.init();
     const _t = this;
     const db = wx.cloud.database({
@@ -423,7 +421,7 @@ Page({
         tabIndex2ColId[index] = col.en_name;
         colId2Col[col.en_name] = col;
       });
-      _t.setData({colId2Col, tabs, tabIndex2ColId, collegeColumns: columns, showInterestedSettingDlg: !interestedSetted});
+      _t.setData({colId2Col, tabs, tabIndex2ColId, collegeColumns: columns});
     })
   },
   onTabClick(evt){
@@ -593,51 +591,6 @@ Page({
         _t.getQuestions(tabId)
       }
     }
-  },
-  onChooseCol(evt) {
-    const chosenCol = evt.currentTarget.dataset.col;
-    const chosenInterestedCols = {...this.data.chosenInterestedCols};
-    if(chosenInterestedCols[chosenCol]){
-      delete chosenInterestedCols[chosenCol]
-    } else {
-      chosenInterestedCols[chosenCol] = true;
-    }
-    this.setData({
-        chosenInterestedCols
-    })
-  },
-  setInterestedCols() {
-    const _t = this, chosenInterestedCols = this.data.chosenInterestedCols;
-    if(!Object.keys(chosenInterestedCols).length) {
-      wx.showToast({
-          title: '请至少选择一个关注的话题',
-          icon: 'none'
-      });
-      return;
-    }
-    wx.cloud.init();
-    _t.setData({
-      setInterestedLoading: true
-    });
-    const interestedColumns = Object.keys(chosenInterestedCols);
-    wx.cloud.callFunction({
-        name: 'setInterestedColumns',
-        data: {
-          env: config.env,
-          interestedColumns
-        }
-    }).then(() => {
-        _t.setData({
-            setInterestedLoading: false,
-            showInterestedSettingDlg: false
-        });
-        globalData.curUserInterestedColumns = interestedColumns;
-    }).catch(e => {
-        wx.showToast({
-            title: '设置失败',
-            icon: 'none'
-        });
-    })
   },
   delQuestion(questionId, questionTitle) {
       const _t = this;
