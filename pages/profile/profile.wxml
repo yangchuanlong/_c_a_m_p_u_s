@@ -17,9 +17,9 @@
           <text style="flex:1"></text>
           <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
-     <navigator url="/pages/mine/mine">
+     <navigator url="/pages/mine/QuestionAndReply/QuestionAndReply">
          <image src='../images/askIcon.png' class="icon"></image>
-         <text>我的提问</text>
+         <text>我的问答</text>
          <text style="flex:1"></text>
          <image src="../images/arrow-right.png" class="rightArrow"></image>
      </navigator>
