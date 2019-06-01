@@ -6,7 +6,7 @@
     "pages/ask/ask",
     "pages/questionEdit/questionEdit",
     "pages/editor/editor",
-    "pages/mine/mine",
+    "pages/mine/QuestionAndReply/QuestionAndReply",
     "pages/message/MsgList/MsgList",
     "pages/message/MsgDetail/MsgDetail",
     "pages/detail/detail",

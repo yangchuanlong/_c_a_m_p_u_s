@@ -1,0 +1,16 @@
+<view class="container"
+      bindtouchstart="onTouchStart"
+      bindtouchend="onTouchEnd"
+>
+   <view class="item" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
+    <view class="left">
+      <image src='../../images/wentiIcon.png' class='icon'></image>
+      <text class="unreadNum" wx:if="{{item.unreadNum}}"></text>
+    </view>
+    <view class="right">
+      <view class="title"> 而我认为退热贴{{item.title}}</view>
+      <view class="abstract">324肆拾叁5吧{{item.abstract}}</view>
+      <view class="time">121{{item.updatedTime}}</view>
+    </view>
+  </view>   
+</view>

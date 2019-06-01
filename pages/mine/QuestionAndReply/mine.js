@@ -1,4 +1,4 @@
-import config from '../../utils/config.js';
+import config from '../../../utils/config.js';
 Page({
     data: {
         myQuestions: [],
