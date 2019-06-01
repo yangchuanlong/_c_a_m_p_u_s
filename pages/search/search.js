@@ -125,6 +125,9 @@ Page({
             title: new RegExp(options.searchTxt, 'i')
         }
       ])
+      .and({
+        collegeId: globalData.curUser.collegeId
+      })
     ).
     orderBy('searchCount', 'desc').
     get().then(({data}) => {
