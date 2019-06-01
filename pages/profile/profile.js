@@ -88,7 +88,7 @@ Page({
     _t.setData({
        columns: globalData.columns
     });
-    const interestedColumns = globalData.curUser.interestedColumns;
+    const interestedColumns = globalData.curUser.interestedColumns || [];
     interestedColumns.forEach(col_en_name => {
       chosenCols[col_en_name] = true;
     });
