@@ -12,6 +12,7 @@
     </view>
   </view>   
   </view> 
+  <view wx:if="{{!myQuestions.length && !showLoading}}">暂无问答</view>
   <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
     <image src='../../images/loading.gif'></image>
   </view>
