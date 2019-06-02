@@ -1,16 +1,18 @@
-<view class="container"
-      bindtouchstart="onTouchStart"
-      bindtouchend="onTouchEnd"
->
-   <view class="item" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
+<view class="container">
+  <view class='questions'>
+    <view class="item" bindtap="gotoQuestion" wx:for="{{myQuestions}}" data-question-id="{{item._id}}" data-author-id="{{item.openid}}">
     <view class="left">
       <image src='../../images/wentiIcon.png' class='icon'></image>
       <text class="unreadNum" wx:if="{{item.unreadNum}}"></text>
     </view>
     <view class="right">
-      <view class="title"> 而我认为退热贴{{item.title}}</view>
-      <view class="abstract">324肆拾叁5吧{{item.abstract}}</view>
-      <view class="time">121{{item.updatedTime}}</view>
+      <view class="title"> {{item.title}}</view>
+      <view class="abstract">{{item.abstract}}</view>
+      <view class="time">{{item.formattedTime}}</view>
     </view>
   </view>   
+  </view> 
+  <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
+    <image src='../../images/loading.gif'></image>
+  </view>
 </view>

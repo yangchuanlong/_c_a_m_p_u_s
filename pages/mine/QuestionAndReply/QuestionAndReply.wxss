@@ -1,1 +1,17 @@
 @import '../../message/MsgList/MsgList.wxss';
+page{
+  height: 100vh;
+}
+.container{
+  height: fit-content;
+}
+.loading{
+  width: 100%;
+  height: 100rpx;
+}
+.loading image{
+  width: 100rpx;
+  height: 100rpx;
+  margin: 0 auto;
+  display:block;
+}
