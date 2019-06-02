@@ -1,0 +1,79 @@
+
+
+<view class='container'>
+  <view class='aboutLiulian'>
+    <view class='title'>
+      <image src='../images/aboutUsIcon.png'></image>
+      <text>关于榴莲</text>
+    </view>
+    <view class='desc'>
+     新生入学须知，大学生活指导，各大社团活动...., 无论你是新生还是即将毕业，这里都有能帮到你的信息和同学...,
+     不懂就来榴莲问吧
+    </view>
+  </view>
+  <view class='members'>
+    <view class='title'>
+      <image src='../images/memberIcon.png'></image>
+      <text>成员介绍</text>
+    </view>
+    <view class='individuals'>
+     <view class='individual'>
+        <text>女神</text>
+        <view class='nickName'>荷包蛋</view>
+        <view class='intro'>
+          被UI耽搁的艺术家......
+        </view>        
+      </view>
+      <view class='individual'>
+        <image src='../images/members/dachong.png'></image>
+        <view class='nickName'>大虫</view>
+        <view class='intro'>
+          产品大大，为产品而生，爱好篮球，中国的奥尼尔...
+        </view>
+      </view>      
+      <view class='individual'>
+        <image src='../images/members/zulong.png'></image>
+        <view class='nickName'>祖龙</view>
+        <view class='intro'>
+          尝试，可能会失败；不尝试，连失败的机会都没有。放手一搏，成功可能就在眼前！
+        </view>        
+      </view>
+
+      <view class='individual'>
+        <image src='../images/members/dafei.png'></image>
+        <view class='nickName'>大飞</view>
+        <view class='intro'>
+          业务架构师，裆下传球堪称一绝...
+        </view>        
+      </view>
+
+      <view class='individual'>
+        <image src='../images/members/feidao.png'></image>
+        <view class='nickName'>飞刀</view>
+        <view class='intro'>
+          梦想成为技术大牛的菜鸟...
+        </view>        
+      </view>
+
+    </view>    
+  </view>
+
+  <view class='concatUs'>
+      <view class='title'>
+        <image src='../images/concatUsIcon.png'></image>
+        <text>联系我们</text>
+      </view>
+      <view class='concatMethodName'>
+        <view class='dot'></view>
+        <view>微信/邮箱</view>
+      </view>
+      
+      <view class='wechatAndEmail'>
+        <image src='../images/wechat.png' style='width: 42rpx;height: 34rpx;'></image>
+        <text>hks_Roger</text>
+        <text style='flex:1'></text>
+        <image src='../images/email.png'></image>
+        <text>yang_chuanlong@163.com</text>
+      </view>
+    </view> 
+</view>

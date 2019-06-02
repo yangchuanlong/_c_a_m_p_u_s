@@ -1,0 +1,98 @@
+
+page{
+  width:100vw;
+  height:100vh;
+}
+.container{
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 0 30rpx;
+}
+
+.title{
+  display: flex;
+  align-items: center;
+  color: #6e7b8c;
+}
+.aboutLiulian image{
+  width: 60rpx;
+	height: 60rpx;
+  margin-right: 16rpx;  
+}
+.aboutLiulian .desc{
+  font-size: 30rpx;
+  margin-top: 35rpx;
+  color: #6e7b8c;
+  line-height: 48rpx;
+}
+.members{
+  margin-top: 30rpx;
+}
+
+.title image{
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 16rpx;
+}
+.individuals{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 35rpx;
+}
+.individual{
+  width: calc(50% - 15rpx);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 30rpx;
+  line-height: 55rpx;
+	color: #8b95a3;
+  border-radius: 10rpx;
+	border: solid 1rpx #f0f2f3;
+}
+.individual:nth-child(n+3){
+  margin-top: 30rpx;
+}
+.individual image{
+  width: 180rpx;
+  height: 180rpx;
+}
+.individual .nickName{
+  text-align: center;
+}
+.individual .intro{
+  padding: 0 43rpx
+}
+.concatUs{
+  margin-top: 61rpx;
+}
+.concatMethodName{
+  color: #6e7b8c;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  margin-top: 50rpx;
+}
+.dot{
+  width: 10rpx;
+	height: 10rpx;
+	background-image: linear-gradient(90deg, #66a1ff 0%, 	#94c5ff 100%);
+  border-radius: 5rpx;
+  margin-right: 16rpx;
+}
+
+.wechatAndEmail{
+  display: flex;
+  font-size: 30rpx;
+  align-items: center;
+  margin-bottom: 59rpx;
+  margin-top: 28rpx;
+  padding:0 16rpx;
+}
+.wechatAndEmail image{
+  width: 42rpx;  
+  height: 34rpx;
+  margin-right: 16rpx;
+}
