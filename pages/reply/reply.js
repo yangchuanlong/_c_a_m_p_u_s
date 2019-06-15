@@ -42,7 +42,6 @@ Page({
     const data = {
       content: trimedInput,
       questionId: _t.data.questionId,
-      abstract: trimedInput.length < 66 ? trimedInput : (trimedInput.substring(0, 66) + '.....'),
       createdTime: new Date().toISOString(),
     };
     db.collection('replies').add({
@@ -82,7 +81,6 @@ Page({
         replyType: 'subReply'
       })
     }
-
   },
 
   /**

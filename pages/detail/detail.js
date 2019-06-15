@@ -215,8 +215,16 @@ Page({
       chosenMainReplyId: mainReplyId,
       repliedOpenId: authorId
     });
+    let clickedMainReply = null;
+    this.data.mainReplies.some(function(reply){
+      if(reply._id === mainReplyId) {
+        clickedMainReply = reply;
+        return true;
+      }
+    });
+    const mainReply = JSON.stringify({ ...clickedMainReply, content: encodeURIComponent(clickedMainReply.content)});    
     wx.navigateTo({
-      url: `/pages/subReplyList/subReplyList?mainReplyId=${mainReplyId}&questionId=${this.data.questionId}&authorId=${authorId}`,
+      url: `/pages/subReplyList/subReplyList?mainReply=${mainReply}`,
     });
   },
   onExpandedMainReplyClick(evt) {
@@ -541,13 +549,27 @@ Page({
    */
   onShow: function () {
     const _t = this;
-    const reply = globalData.reply; //从回复页面跳转回来
+    let reply = globalData.reply; //从回复页面跳转回来, 或者子回复列表页面跳转
     if (reply) {
-      if (!reply.subordinateTo) {//主回复
-        const mainReplies = _t.data.mainReplies.slice();
-        mainReplies.unshift(reply);
-        _t.setData({ mainReplies });
-      }
+      reply = Array.isArray(reply) ? reply : [reply];
+      const mainReplies = _t.data.mainReplies.slice();
+      reply.forEach(function(item) {
+        if (!item.subordinateTo) {//主回复          
+          mainReplies.unshift(item);          
+        } else {//子回复
+          let chosenMainReply = null;
+          mainReplies.some(reply => {
+            if(reply._id === _t.data.chosenMainReplyId) {
+              chosenMainReply = reply;
+              return true;
+            }
+          });
+          if (chosenMainReply) {
+            chosenMainReply.subReplies = (chosenMainReply.subReplies || []).concat(item);
+          }
+        }
+      });
+      _t.setData({ mainReplies });     
       delete globalData.reply;
     }
   },

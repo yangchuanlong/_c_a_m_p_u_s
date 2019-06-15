@@ -1,12 +1,56 @@
 
-<view class='container'>
+<view class='container' bindtap='onContainerClick'>
   <view class='replyAuthor'>
     <view class='replier'>
       <image src="{{author.avatar}}"></image>
+      <text class='nickName'>{{author.nickName}}</text>
+      <text class='time'>{{mainReply.createdTime}}</text>
     </view>
-    <view class='content'></view>
+    <view class='mainContent'>
+      {{mainReply.content}}  
+    </view>
   </view>
-  <view class='subReplies'>
+  <view class='summary'>
+      评论 <text>{{subReplyTotal}}</text>
+  </view>
+  <view class='subReplies'>    
+    <view class='replyItem' wx:for="{{subReplies}}" data-openid="{{item.openid || item._openid}}" data-reply-id='{{item._id}}'  catchtap='onChooseReply'>
+      <view class='replier'>
+        <image src='{{users[item.openid || item._openid].avatar}}'></image>
+        <text class='nickName'>{{users[item.openid || item._openid].nickName}}</text>
+        <text class='time'>{{item.createdTime}}</text>
+        <text style='flex:1'></text>
+        <view class="actions">
+            <view>{{thumbUpCount}} </view>            
+            <view
+              class='iconfont {{myThumbups[item._id] ? "iconxin" : "iconzan"}}'
+              id='thumbupBtn'
+              data-id="{{item._id}}"
+              data-openid="{{item._id}}"
+              data-action-type="{{myThumbups[item._id] ? 'cancel' : 'add'}}"
+              bindtap='onThumbup'
+            ></view>
+        </view>
+      </view>  
+      <view class='subReplyContent'>
+        回复：<text class='nickName'>{{users[item.repliedOpenId].nickName}}</text>
+        {{item.content}}
+      </view>
+    </view>
+  </view>
 
+  <view class='inputWrapper'>
+    <input cursor-spacing="16"
+      bindinput='onInput'
+      bindfocus='onFocus'
+      placeholder="{{placeholder}}"
+      bindblur="onBlur"
+      focus='{{autofocus}}'
+      value='{{comment}}'
+    ></input>
+    
+    <image wx:if="{{sending}}" src="../images/loading.gif" style="width:80rpx;height: 80rpx;"></image>
+    <image wx:elif="{{trimmedComment.length}}" src='../images/send_active.png' bindtap='onSend'></image>
+    <image wx:else src="../images/send_disabled.png"></image>
   </view>
 </view>

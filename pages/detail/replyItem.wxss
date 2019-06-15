@@ -1,0 +1,46 @@
+
+.replyItem{
+  margin-top: 44rpx;
+}
+
+.replyItem .actions{
+  display: flex;
+  font-size: 28rpx;
+  color: #cccaca;
+  align-items: center;
+  justify-content: flex-end;
+}
+.replyItem .actions image{
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.replier{
+  display:flex;
+  align-items: center;
+  color: #ddd;
+}
+.replier image{
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+}
+.replier .iconxin {
+  color: #ff6666;
+}
+.replier .nickName{
+  margin-left: 24rpx;
+  font-size: 30rpx;
+  color: #6e7b8c;
+}
+.replier .time {
+  font-size: 26rpx;
+  color: #b5bdc5;
+  margin-left: 28rpx;
+}
+.replyContent{
+  padding-left: 90rpx;
+  font-size: 30rpx;
+  color: #6e7b8c;
+  margin-top: 10rpx;
+}

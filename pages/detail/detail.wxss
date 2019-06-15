@@ -1,3 +1,6 @@
+
+@import './replyItem.wxss';
+
 page{
   width: 100%;
   height: 100%;
@@ -96,6 +99,7 @@ page{
   padding: 0 30rpx;
   box-sizing: border-box;
   background: #fff;
+  box-shadow: 0px 0px 30rpx 0px #eef1f5;
 }
 
 .commentInputWrapper button,.commentInputWrapper .button-hover{
@@ -119,50 +123,7 @@ page{
   height: 32rpx;
 
 }
-.replier{
-  display:flex;
-  align-items: center;
-  color: #ddd;
-}
-.replier image{
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-}
-.replier .iconxin {
-  color: #ff6666;
-}
-.replier .nickName{
-  margin-left: 24rpx;
-  font-size: 30rpx;
-  color: #6e7b8c;
-}
-.replier .time {
-  font-size: 26rpx;
-  color: #b5bdc5;
-  margin-left: 28rpx;
-}
-.replyContent{
-  padding-left: 90rpx;
-  font-size: 30rpx;
-  color: #6e7b8c;
-  margin-top: 10rpx;
-}
-.replyItem{
-  margin-top: 44rpx;
-}
 
-.replyItem .actions{
-  display: flex;
-  font-size: 28rpx;
-  color: #cccaca;
-  align-items: center;
-  justify-content: flex-end;
-}
-.replyItem .actions image{
-  width: 40rpx;
-  height: 40rpx;
-}
 .mask{
   position: fixed;
   top: 0;
@@ -210,6 +171,7 @@ page{
   color:#298DF8;
   font-size:28rpx;
   text-align:center;
+  margin-top: 24rpx;
 }
 .moreReplies text{
   display:inline-block;
