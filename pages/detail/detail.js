@@ -24,7 +24,8 @@ Page({
     repliedOpenId: "",
     expandedReply: null,//点击子回复后展示的回复列表
     thumbups: {},
-    mainReplyCount: 0
+    mainReplyCount: 0,
+    thumbedUpByMe: false
   },
 
   scan(id){//把问题的浏览数加1
@@ -79,6 +80,9 @@ Page({
     console.log(options.id);
     this.data.questionId = options.id;
     this.data.authorId = options.authorId;
+    this.setData({
+      thumbedUpByMe: options.thumbedUpByMe == 1
+    });
     const _t = this;
     wx.cloud.init();
     const db = wx.cloud.database({
@@ -188,6 +192,7 @@ Page({
           openIdSet.add(item.openid);
           replyMap[item._id] = item;
           item.createdTime = util.dateDiff(item.createdTime);
+          item.openid = item.openid || item._openid;
         });
         const mainReplies = _t.data.mainReplies.concat(data);
         _t.setData({mainReplies, replyMap});
@@ -208,8 +213,10 @@ Page({
     const { users } = this.data;
     this.setData({
       chosenMainReplyId: mainReplyId,
-      placeholder: `回复${users[authorId].nickName}:`,
       repliedOpenId: authorId
+    });
+    wx.navigateTo({
+      url: `/pages/subReplyList/subReplyList?mainReplyId=${mainReplyId}&questionId=${this.data.questionId}&authorId=${authorId}`,
     });
   },
   onExpandedMainReplyClick(evt) {
@@ -511,6 +518,14 @@ Page({
       placeholder: '说点什么...'
     })
   },
+
+  gotoReply() {
+    const questionId = this.data.questionId;
+    wx.navigateTo({
+      url: `/pages/reply/reply?questionId=${questionId}`,
+    })
+  },
+
   getMoreReplies() {
 
   },
@@ -525,7 +540,16 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    const _t = this;
+    const reply = globalData.reply; //从回复页面跳转回来
+    if (reply) {
+      if (!reply.subordinateTo) {//主回复
+        const mainReplies = _t.data.mainReplies.slice();
+        mainReplies.unshift(reply);
+        _t.setData({ mainReplies });
+      }
+      delete globalData.reply;
+    }
   },
 
   /**

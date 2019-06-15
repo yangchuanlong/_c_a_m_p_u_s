@@ -1,0 +1,12 @@
+
+<view class='container'>
+  <view class='replyAuthor'>
+    <view class='replier'>
+      <image src="{{author.avatar}}"></image>
+    </view>
+    <view class='content'></view>
+  </view>
+  <view class='subReplies'>
+
+  </view>
+</view>

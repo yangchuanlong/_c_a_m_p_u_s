@@ -129,9 +129,10 @@ Page({
         myThumbups
       });
       return;
-    }
+    }   
+    const thumbedUpByMe = this.data.myThumbups[questionId] ? 1 : 0;
     wx.navigateTo({
-      url: `/pages/detail/detail?id=${questionId}&authorId=${authorId}`,
+      url: `/pages/detail/detail?id=${questionId}&authorId=${authorId}&thumbedUpByMe=${thumbedUpByMe}`,
     })
   },
   putMessage({questionId, authorId}){

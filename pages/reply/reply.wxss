@@ -1,0 +1,28 @@
+
+.container{
+  display:block;
+  padding: 0 12rpx;
+}
+textarea{
+  width: 100%;
+  box-sizing: border-box;
+}
+.characterNum{
+  font-size:30rpx;
+  color:#8b95a3;
+  text-align:right;
+  width:100%;
+  padding-right:30rpx;
+  margin-top:24rpx;
+}
+.replyBtn{
+  width:420rpx;
+  margin:193rpx auto 0;
+  height:86rpx;
+  line-height:86rpx;
+  background:linear-gradient(90deg, #66a1ff 0%, #94c5ff 100%), linear-gradient(#e5bbbc, #e5bbbc);
+  box-shadow:0px 3rpx 15rpx rgba(73, 144, 226, 0.3);
+  border-radius:43rpx;
+  background-origin:border-box;
+  color:white;
+}

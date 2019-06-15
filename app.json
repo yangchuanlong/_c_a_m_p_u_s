@@ -13,7 +13,9 @@
     "pages/search/search",
     "pages/register/register",
     "pages/profile/profile",
-    "pages/aboutus/aboutus"
+    "pages/aboutus/aboutus",
+    "pages/reply/reply",
+    "pages/subReplyList/subReplyList"
   ],
   "window": {
     "backgroundTextStyle": "light",

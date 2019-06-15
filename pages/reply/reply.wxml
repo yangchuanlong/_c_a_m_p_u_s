@@ -1,0 +1,5 @@
+<view class='container'>
+  <textarea maxlength='1000' placeholder='{{placeholder}}' bindinput='onInput'></textarea>
+  <view class='characterNum'>{{trimedInput.length}}/1000</view>
+  <button class='replyBtn' bindtap='onSend' loading='{{sending}}' disabled='{{sending}}'>发送</button>
+</view>

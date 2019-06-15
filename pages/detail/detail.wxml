@@ -21,7 +21,7 @@
     </view>
     <view class='comments'>
         <view class='subTitle'>
-          <text>回答</text>
+          <text>评论</text>
           <text>{{mainReplyCount}}</text>
         </view>
         <view class='comment-list'>
@@ -78,7 +78,7 @@
             <view class='replyItem' bindtap="onExpandedMainReplyClick" data-reply-id="{{expandedReply._id}}" data-author="{{expandedReply.openid}}">
                 <view class='replier'>
                     <image src="{{users[expandedReply.openid].avatar}}"></image>
-                    <text class='nickName'>{{users[expandedReply.openid].nickName}}:</text>                    
+                    <text class='nickName'>{{users[expandedReply.openid].nickName}}:</text>
                     <text  class="time">{{expandedReply.createdTime}}</text>
                     <text style='flex:1'></text>
                     <view class="actions">
@@ -103,7 +103,7 @@
                     >
                         <view class='replier'>
                           <text class='nickName'>{{users[subItem.openid].nickName}} 回复 {{users[subItem.repliedOpenId].nickName}}:  </text>
-                            {{subItem.content}}                            
+                            {{subItem.content}}
                         </view>
                     </view>
                 </view>
@@ -111,7 +111,7 @@
         </view>
     </view>
 
-    <view class='commentInputWrapper'>
+    <view class='commentInputWrapper' style='display:none;'>
         <textarea
             cursor-spacing="12"
             placeholder='{{placeholder}}'
@@ -125,6 +125,13 @@
         <button size='mini' open-type="share">
             <image src="../images/share.png" class="shareIcon"/>
             分享
+        </button>
+    </view>
+    <view class='commentInputWrapper'>
+        <view class='iconfont {{thumbedUpByMe ? "iconxin" : "iconzan"}}'></view>
+        <view class='iconfont iconpinglun' bindtap='gotoReply'><text>回答</text></view>
+        <button size='mini' open-type="share">
+            <image src="../images/share.png" class="shareIcon"/>
         </button>
     </view>
 </view>
