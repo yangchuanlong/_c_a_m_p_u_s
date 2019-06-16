@@ -44,3 +44,7 @@
   color: #6e7b8c;
   margin-top: 10rpx;
 }
+.thumbupCount{
+  font-size: 32rpx;
+  margin-right: 16rpx;
+}

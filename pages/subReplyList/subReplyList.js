@@ -19,7 +19,8 @@ Page({
     mainReply: {},
     autofocus: false,
     sending: false,
-    myThumbups: {}
+    myThumbups: {},
+    thumbupCountMap: {}
   },
 
   onSend() {
@@ -98,11 +99,12 @@ Page({
       questionId,
       subordinateTo: _id
     }).get().then(resp => {
-      const openidSet = new Set();
+      const openidSet = new Set(), replyIds = [];
       const subReplies = resp.data.map(reply => {
         reply.createdTime = util.dateDiff(reply.createdTime);
         openidSet.add(reply._openid || reply.openid);
         openidSet.add(reply.repliedOpenId);
+        replyIds.push(reply._id);
         return reply;
       })
       _t.setData({
@@ -113,6 +115,47 @@ Page({
           users: usersObj
         })
       });
+      _t.getMyThumbupOfReplies(replyIds);
+      _t.getThumbupCountOfReplies(replyIds);
+    });
+  },
+
+  getThumbupCountOfReplies(replyIds) {
+    wx.cloud.init();
+    const _t = this;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const thumbupCollection = db.collection("thumbups");
+    replyIds.forEach(replyId => {
+      thumbupCollection.where({
+        type: 'reply',
+        questionOrReplyId: replyId,
+      }).count().then(resp => {
+        const thumbupCountMap = _t.data.thumbupCountMap;
+        thumbupCountMap[replyId] = (thumbupCountMap[replyId] || 0) + resp.total;
+        _t.setData({ thumbupCountMap });
+      })
+    })
+  },
+
+  getMyThumbupOfReplies(replyIds) {
+    wx.cloud.init();
+    const _t = this;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const _ = db.command;
+    const thumbupCollection = db.collection("thumbups");
+    thumbupCollection.where({
+      questionOrReplyId: _.in(replyIds),
+      openid: globalData.curUser.openid
+    }).get().then(resp => {
+      const myThumbups = {..._t.data.myThumbups};
+      resp.data.forEach(item => {
+        myThumbups[item.questionOrReplyId] = true;
+      });
+      _t.setData({ myThumbups });
     });
   },
 
@@ -140,6 +183,9 @@ Page({
   },
 
   onChooseReply(evt) {
+    if (evt.target.id === 'thumbupBtn') {
+      return;
+    }
     const openid = evt.currentTarget.dataset.openid;
     const id = evt.currentTarget.dataset.replyId;
     this.setData({
@@ -156,6 +202,55 @@ Page({
     this.setData({
       chosenReply: null
     });
+  },
+
+  onThumbup(evt) {
+    console.log(evt.currentTarget.dataset);
+    const _t = this;
+    const { actionType, id, openid} = evt.currentTarget.dataset;
+    wx.cloud.init();
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const thumbupCollection = db.collection('thumbups');
+    if ('add' === actionType) {
+      thumbupCollection.add({
+        data: {
+          type: 'reply',
+          questionOrReplyId: id,
+          openid: globalData.curUser.openid,
+          createdTime: new Date().toISOString()
+        }
+      }).then(resp => {
+        const myThumbups = { ..._t.data.myThumbups };
+        const thumbupCountMap = _t.data.thumbupCountMap;
+        myThumbups[id] = true;       
+        if (isNaN(thumbupCountMap[id])) {
+          thumbupCountMap[id] = 1;
+        } else {
+          thumbupCountMap[id] += 1;
+        }
+        _t.setData({ myThumbups, thumbupCountMap });
+      });
+    } else {
+      thumbupCollection.where({
+        type: 'reply',
+        questionOrReplyId: id,
+        openid: globalData.curUser.openid
+      }).field({_id: true}).get().then(resp => {
+        Promise.all(
+          resp.data.map(item => thumbupCollection.doc(item._id).remove())
+        ).then(() => {
+          const myThumbups = {..._t.data.myThumbups};
+          const thumbupCountMap = {..._t.data.thumbupCountMap};
+          delete myThumbups[id];
+          if (thumbupCountMap[id] >= 1) {
+            thumbupCountMap[id] -= 1;
+          }
+          _t.setData({ myThumbups, thumbupCountMap });
+        });
+      })
+    }
   },
   /**
    * 生命周期函数--监听页面加载

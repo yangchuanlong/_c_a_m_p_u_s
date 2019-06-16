@@ -21,12 +21,12 @@
         <text class='time'>{{item.createdTime}}</text>
         <text style='flex:1'></text>
         <view class="actions">
-            <view>{{thumbUpCount}} </view>            
+            <view class='thumbupCount'>{{thumbupCountMap[item._id] || 0}} </view>            
             <view
               class='iconfont {{myThumbups[item._id] ? "iconxin" : "iconzan"}}'
               id='thumbupBtn'
               data-id="{{item._id}}"
-              data-openid="{{item._id}}"
+              data-openid="{{item._openid}}"
               data-action-type="{{myThumbups[item._id] ? 'cancel' : 'add'}}"
               bindtap='onThumbup'
             ></view>
