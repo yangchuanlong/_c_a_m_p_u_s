@@ -26,7 +26,7 @@
               class='iconfont {{myThumbups[item._id] ? "iconxin" : "iconzan"}}'
               id='thumbupBtn'
               data-id="{{item._id}}"
-              data-openid="{{item._openid}}"
+              data-openid="{{item._openid || item.openid}}"
               data-action-type="{{myThumbups[item._id] ? 'cancel' : 'add'}}"
               bindtap='onThumbup'
             ></view>

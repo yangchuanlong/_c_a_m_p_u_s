@@ -20,10 +20,15 @@ Page({
     autofocus: false,
     sending: false,
     myThumbups: {},
-    thumbupCountMap: {}
+    thumbupCountMap: {},
+    timeLimit: new Date().toISOString(),
+    hasMoreReply: true
   },
 
   onSend() {
+    if (!this.data.mainReply.questionId) {
+      return;
+    }
     wx.cloud.init();
     const _t = this;
     const db = wx.cloud.database({
@@ -33,7 +38,7 @@ Page({
     const data = {
       content: _t.data.trimmedComment,
       questionId: _t.data.mainReply.questionId,
-      createdTime: new Date().toISOString(),  
+      createdTime: new Date().toISOString(),
       repliedOpenId: _t.data.chosenReply ? _t.data.chosenReply.openid : _t.data.mainReply.openid,
       subordinateTo: _t.data.mainReply._id
     };
@@ -51,15 +56,48 @@ Page({
       _t.setData({
         sending: false,
         comment: '',
-        trimmedComment: ''
+        trimmedComment: '',
+        subReplyTotal: _t.data.subReplyTotal + 1
       });
       globalData.reply = globalData.reply || [];
       globalData.reply.push(data);
       return data;
     }).then(function(reply) {
       const subReplies = _t.data.subReplies.slice();
-      subReplies.push(reply);
+      subReplies.unshift(reply);
       _t.setData({ subReplies });
+
+      const msgData = {
+        env: config.env,
+        actionType: 'add',
+        questionId: _t.data.mainReply.questionId,
+        abstract: data.content.substr(0, 40),
+        receiverId: data.repliedOpenId
+      };
+      if (!_t.data.chosenReply) {//回复问题
+        msgData.type = 2;
+      } else { //回复别人的回复
+        msgData.type = 4;
+      }
+      wx.cloud.callFunction({
+        name: 'message',
+        data: msgData
+      });
+
+      wx.cloud.callFunction({
+        name: 'addCount',
+        data: {
+          env: config.env,
+          ids: [_t.data.mainReply.questionId],
+          countType: 'replyCount'
+        },
+        // success(result) {
+        //     console.log(result)
+        // },
+        // fail(error) {
+        //     console.log(error)
+        // }
+      });
     }).catch(err => {
       _t.setData({
         sending: false
@@ -90,17 +128,21 @@ Page({
     wx.cloud.init();
     const _t = this;
     const {questionId, _id} = mainReply;
-    console.log(questionId, _id);
     const db = wx.cloud.database({
       env: config.env
     });
+    const _ = db.command;
     const replyCollection = db.collection("replies");
     replyCollection.where({
       questionId,
-      subordinateTo: _id
-    }).get().then(resp => {
+      subordinateTo: _id,
+      createdTime: _.lt(_t.data.timeLimit)
+    }).orderBy('createdTime', 'desc').get().then(resp => {
+      const data = resp.data;
+      const timeLimit = data.length ? data[data.length - 1].createdTime : _t.data.timeLimit;
+      const hasMoreReply = data.length >=20;
       const openidSet = new Set(), replyIds = [];
-      const subReplies = resp.data.map(reply => {
+      const subReplies = data.map(reply => {
         reply.createdTime = util.dateDiff(reply.createdTime);
         openidSet.add(reply._openid || reply.openid);
         openidSet.add(reply.repliedOpenId);
@@ -108,7 +150,9 @@ Page({
         return reply;
       })
       _t.setData({
-        subReplies
+        subReplies,
+        timeLimit,
+        hasMoreReply
       });
       util.getRegisteredUsers(Array.from(openidSet)).then(usersObj => {
         _t.setData({
@@ -178,7 +222,7 @@ Page({
 
   onBlur() {
     this.setData({
-      placeholder: '',      
+      placeholder: '',
     })
   },
 
@@ -191,11 +235,11 @@ Page({
     this.setData({
       chosenReply: {openid, id}
     });
-    const placeholder = '回复:' + this.data.users[openid].nickName;   
+    const placeholder = '回复:' + this.data.users[openid].nickName;
     this.setData({
       placeholder,
       autofocus: true
-    }); 
+    });
   },
   onContainerClick() {
     console.log('onContainerClick is invoked');
@@ -213,7 +257,7 @@ Page({
       env: config.env
     });
     const thumbupCollection = db.collection('thumbups');
-    if ('add' === actionType) {
+    if ('add' === actionType) {//点赞
       thumbupCollection.add({
         data: {
           type: 'reply',
@@ -224,15 +268,27 @@ Page({
       }).then(resp => {
         const myThumbups = { ..._t.data.myThumbups };
         const thumbupCountMap = _t.data.thumbupCountMap;
-        myThumbups[id] = true;       
+        myThumbups[id] = true;
         if (isNaN(thumbupCountMap[id])) {
           thumbupCountMap[id] = 1;
         } else {
           thumbupCountMap[id] += 1;
         }
         _t.setData({ myThumbups, thumbupCountMap });
+
+        const msgData = {
+          env: config.env,
+          actionType: 'add',
+          questionId: _t.data.mainReply.questionId,
+          receiverId: openid,
+          type: 3
+        };
+        wx.cloud.callFunction({
+          name: 'message',
+          data: msgData
+        })
       });
-    } else {
+    } else {//取消点赞
       thumbupCollection.where({
         type: 'reply',
         questionOrReplyId: id,
@@ -252,6 +308,47 @@ Page({
       })
     }
   },
+
+  getMoreSubReply() {
+    wx.cloud.init();
+    const _t = this;
+    const mainReply = _t.data.mainReply;
+    const {questionId, _id} = mainReply;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const _ = db.command;
+    const replyCollection = db.collection("replies");
+    replyCollection.where({
+      questionId,
+      subordinateTo: _id,
+      createdTime: _.lt(_t.data.timeLimit)
+    }).orderBy('createdTime', 'desc').get().then(resp => {
+      const data = resp.data;
+      const timeLimit = data.length ? data[data.length - 1].createdTime : _t.data.timeLimit;
+      const hasMoreReply = data.length >=20;
+      const openidSet = new Set(), replyIds = [];
+      const subReplies = data.map(reply => {
+        reply.createdTime = util.dateDiff(reply.createdTime);
+        openidSet.add(reply._openid || reply.openid);
+        openidSet.add(reply.repliedOpenId);
+        replyIds.push(reply._id);
+        return reply;
+      });
+      _t.setData({
+        subReplies: _t.data.subReplies.concat(subReplies),
+        timeLimit,
+        hasMoreReply
+      });
+      util.getRegisteredUsers(Array.from(openidSet)).then(usersObj => {
+        _t.setData({
+          users: usersObj
+        })
+      });
+      _t.getMyThumbupOfReplies(replyIds);
+      _t.getThumbupCountOfReplies(replyIds);
+    });
+  },
   /**
    * 生命周期函数--监听页面加载
    */
@@ -260,7 +357,7 @@ Page({
       const mainReply = JSON.parse(options.mainReply);
       mainReply.openid = mainReply.openid || mainReply._openid;
       const author = globalData.users[mainReply.openid];
-      mainReply.content = decodeURIComponent(mainReply.content);      
+      mainReply.content = decodeURIComponent(mainReply.content);
       this.setData({
         mainReply,
         author
@@ -312,7 +409,10 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    if(!this.data.hasMoreReply) {
+      return;
+    }
+    this.getMoreSubReply();
   },
 
   /**

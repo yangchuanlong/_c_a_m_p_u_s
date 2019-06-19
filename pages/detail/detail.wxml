@@ -53,10 +53,6 @@
                         wx:for="{{item.subReplies}}"
                         wx:for-item="subReply"
                         wx:for-index="subIndex"
-                        data-main-reply-id="{{item._id}}"
-                        data-reply-id="{{subReply._id}}"
-                        data-author="{{subReply.openid}}"
-                        catchtap="onSubReplyClick"
                     >
                         <view class='replier'>
                             <text class='nickName'>{{users[subReply.openid || subReply._openid].nickName}} 回复 {{users[subReply.repliedOpenId].nickName}}:  </text>
@@ -74,8 +70,8 @@
 
     <view class='mask' wx:if="{{expandedReply}}">
         <view class='chosenContent'>
-            <view class='closeBtn' bindtap='onCloseDlg'>x</view>
-            <view class='replyItem' bindtap="onExpandedMainReplyClick" data-reply-id="{{expandedReply._id}}" data-author="{{expandedReply.openid}}">
+            <view class='closeBtn'>x</view>
+            <view class='replyItem'  data-reply-id="{{expandedReply._id}}" data-author="{{expandedReply.openid}}">
                 <view class='replier'>
                     <image src="{{users[expandedReply.openid].avatar}}"></image>
                     <text class='nickName'>{{users[expandedReply.openid].nickName}}:</text>
@@ -96,10 +92,6 @@
                         wx:for="{{expandedReply.subReplies}}"
                         wx:for-item="subItem"
                         wx:key="{{subItem._id}}"
-                        data-reply-id="{{subItem._id}}"
-                        data-author="{{subItem.openid}}"
-                        data-main-reply-id="{{expandedReply._id}}"
-                        catchtap="onExpandedSubReplyClick"
                     >
                         <view class='replier'>
                           <text class='nickName'>{{users[subItem.openid].nickName}} 回复 {{users[subItem.repliedOpenId].nickName}}:  </text>
@@ -111,22 +103,6 @@
         </view>
     </view>
 
-    <view class='commentInputWrapper' style='display:none;'>
-        <textarea
-            cursor-spacing="12"
-            placeholder='{{placeholder}}'
-            bindinput='onInput'
-            value="{{inputedComment}}"
-            auto-height
-            fixed
-            show-confirm-bar="{{false}}"
-        />
-        <button size='mini' disabled="{{sendBtnDisabled}}" bindtap='onSend' loading="{{sendBtnLoading}}">发送</button>
-        <button size='mini' open-type="share">
-            <image src="../images/share.png" class="shareIcon"/>
-            分享
-        </button>
-    </view>
     <view class='commentInputWrapper'>
         <view class='iconfont {{thumbedUpByMe ? "iconxin" : "iconzan"}}'></view>
         <view class='iconfont iconpinglun' bindtap='gotoReply'><text>回答</text></view>

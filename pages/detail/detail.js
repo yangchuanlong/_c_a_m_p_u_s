@@ -227,71 +227,7 @@ Page({
       url: `/pages/subReplyList/subReplyList?mainReply=${mainReply}`,
     });
   },
-  onExpandedMainReplyClick(evt) {
-    this.onMainReplyClick(evt);
-  },
-  onSubReplyClick(evt) {
-    const _t = this;
-    const chosenSubReplyId = evt.currentTarget.dataset.replyId;
-    const authorId = evt.currentTarget.dataset.author;
-    const chosenMainReplyId = evt.currentTarget.dataset.mainReplyId;
-    const { users, mainReplies } = this.data;
-    this.setData({
-      chosenMainReplyId,
-      chosenSubReplyId,
-      placeholder: `回复${users[authorId].nickName}:`,
-      repliedOpenId: authorId
-    });
-    mainReplies.some(mainReply => {
-      if(mainReply._id === chosenMainReplyId) {
-        _t.setData({
-          expandedReply: mainReply
-        });
-        _t.getAllSubRepliesOfExpanded(chosenMainReplyId);
-        return true;
-      }
-    });
-  },
-  onExpandedSubReplyClick(evt) {
-    const authorId = evt.currentTarget.dataset.author;
-    const { users } = this.data;
-    this.setData({
-      placeholder: `回复${users[authorId].nickName}:`,
-      repliedOpenId: authorId
-    });
-  },
-  getAllSubRepliesOfExpanded(mainId) {
-    wx.cloud.init();
-    const _t = this;
-    const db = wx.cloud.database({
-      env: config.env
-    });
-    db.collection("replies")
-      .where({
-        questionId: _t.data.questionId,
-        subordinateTo: mainId
-      })
-      .get()
-      .then(resp => {
-        const expandedReply = _t.data.expandedReply || {}, ids = [];
-        const openIdSet = new Set();
-        expandedReply.subReplies = resp.data.map(item => {
-          openIdSet.add(item.openid);
-          ids.push(item._id);
-          return {
-            ...item,
-            createdTime: util.dateDiff(item.createdTime)
-          }
-        });
-        _t.setData({
-          expandedReply
-        });
-        util.getRegisteredUsers(Array.from(openIdSet)).then(usersObj => {
-          _t.setData({ users: usersObj });
-        });
-        _t.getMyThumbupsForReplies(ids);
-      })
-  },
+  
   getReplies(questionId) {
     this.getMainReplies(questionId);
   },
@@ -323,33 +259,7 @@ Page({
       });
     })
   },
-  getThumbupOfReplies(ids){
-      const _t = this;
-      wx.cloud.callFunction({
-          name: 'getThumbups',
-          data: {
-              env:config.env,
-              ids,
-              type: 'reply'
-          },
-          success: function ({result}) {
-              if(!result) {
-                  return;
-              }
-              const replyMap = _t.data.replyMap;
-              for(let _id in replyMap) {
-                  if(_id in result) {
-                      replyMap[_id].thumbupCount = result[_id];
-                  } else if(isNaN(replyMap[_id].thumbupCount)){
-                      replyMap[_id].thumbupCount = 0;
-                  }
-              }
-              _t.setData({
-                  replyMap
-              });
-          }
-      })
-  },
+
   thumbup: function(evt) {
     wx.cloud.init();
     const _t = this;
@@ -367,8 +277,7 @@ Page({
         type: 'reply'
       },
       success: function (resp) {
-        console.log(resp)
-          wx.cloud.callFunction({
+        wx.cloud.callFunction({
           name: 'message',
           data: {
               env: config.env,
@@ -377,7 +286,7 @@ Page({
               receiverId: replyAuthor,
               questionId: _t.data.questionId
           }
-        })
+        });        
       },
       fail(err) {
         console.log(err)
@@ -517,15 +426,7 @@ Page({
         })
     })
   },
-
-  onCloseDlg() {
-    this.setData({
-      chosenMainReplyId: '',
-      expandedReply: null,
-      repliedOpenId: '',
-      placeholder: '说点什么...'
-    })
-  },
+  
 
   gotoReply() {
     const questionId = this.data.questionId;
@@ -566,6 +467,7 @@ Page({
           });
           if (chosenMainReply) {
             chosenMainReply.subReplies = (chosenMainReply.subReplies || []).concat(item);
+            chosenMainReply.subReplies = chosenMainReply.subReplies.slice(0, 2);
           }
         }
       });
