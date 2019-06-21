@@ -329,109 +329,11 @@ Page({
     }
   },
 
-  onSend() {
-    console.log('send button is clicked:' ,this.data.questionId);
-    const _t = this;
-    wx.cloud.init();
-    this.setData({
-      sendBtnLoading: true
-    });
-    const { trimmedReply, questionId, chosenMainReplyId, repliedOpenId} = this.data;
-    const data = {
-      env:config.env,
-      content: trimmedReply,
-      questionId: questionId,
-      subordinateTo: chosenMainReplyId || undefined,
-      repliedOpenId: repliedOpenId || undefined,
-      createdTime: new Date().toISOString()
-    };
-    wx.cloud.callFunction({
-      name: 'reply',
-      data
-    }).then(function (resp) {
-        const {_id, openid } = resp.result;
-        _t.setData({
-          inputedComment: "",
-          sendBtnDisabled: true,
-          sendBtnLoading: false
-        });
-        data._id = _id; //添加到评论区
-        data.thumbupCount = 0;
-        data.questionId = questionId;
-        data.createdTime = util.dateDiff(data.createdTime);
-        data.openid = openid;
-        const {chosenMainReplyId} = _t.data;
-        const mainReplies = _t.data.mainReplies.slice();
-        if(!chosenMainReplyId) {//主回复
-          mainReplies.unshift(data);
-          _t.setData({ mainReplies });
-        } else { //子回复
-          mainReplies.some(reply => {
-            if(reply._id === chosenMainReplyId) {
-              const subReplies = reply.subReplies || [];
-              subReplies.push(data);
-              reply.subReplies = subReplies.slice(-2);
-              return;
-            }
-          });
-          _t.setData({
-            mainReplies
-          });
-        }
-        let expandedReply = _t.data.expandedReply;
-        if(expandedReply) {
-          expandedReply = {...expandedReply};
-          const subReplies = expandedReply.subReplies || [];
-          subReplies.push(data);
-          expandedReply.subReplies = subReplies.slice();
-          _t.setData({
-            expandedReply
-          });
-        }
-        wx.cloud.callFunction({
-            name: 'addCount',
-            data: {
-                env: config.env,
-                ids: [questionId],
-                countType: 'replyCount'
-            },
-            // success(result) {
-            //     console.log(result)
-            // },
-            // fail(error) {
-            //     console.log(error)
-            // }
-        });
-
-        const msgData = {
-            env: config.env,
-            actionType: 'add',
-            questionId,
-            abstract: trimmedReply.substr(0, 40)
-        };
-        if(!chosenMainReplyId) {//回复问题
-            msgData.type = 2;
-            msgData.receiverId = _t.data.authorId;
-        } else { //回复别人的回复
-            msgData.type = 4;
-            msgData.receiverId = _t.data.repliedOpenId
-        }
-        wx.cloud.callFunction({
-            name: 'message',
-            data: msgData
-        })
-    }, function (err) {
-        _t.setData({
-            sendBtnLoading: false
-        })
-    })
-  },
-  
-
   gotoReply() {
     const questionId = this.data.questionId;
+    const authorId = this.data.authorId;
     wx.navigateTo({
-      url: `/pages/reply/reply?questionId=${questionId}`,
+      url: `/pages/reply/reply?questionId=${questionId}&authorId=${authorId}`,
     })
   },
 

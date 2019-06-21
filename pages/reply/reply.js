@@ -9,7 +9,7 @@ Page({
    */
   data: {
     placeholder: "说点什么...",
-    replyType: 'mainReply', //回复类型， 主回复和子回复
+    replyType: 'mainReply', //回复类型， 主回复
     trimedInput: '',
     sending: false
   },
@@ -57,6 +57,26 @@ Page({
       data._openid = globalData.curUser.openid;
       data.createdTime = util.dateDiff(data.createdTime);
       globalData.reply = data;
+      wx.cloud.callFunction({
+        name: 'addCount',
+        data: {
+          env: config.env,
+          ids: [data.questionId],
+          countType: 'replyCount'
+        },       
+      });
+      const msgData = {
+        env: config.env,
+        actionType: 'add',
+        questionId: data.questionId,
+        abstract: data.content.substr(0, 40),
+        type: 2,   
+        receiverId: _t.data.authorId     
+      };     
+      wx.cloud.callFunction({
+        name: 'message',
+        data: msgData
+      })
       wx.navigateBack({
         delta: 1
       });
@@ -73,14 +93,9 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-    const questionId = options.questionId;
-    this.data.questionId = questionId;
-    if (options.replyType === "subReply") {
-      this.setData({
-        replyType: 'subReply'
-      })
-    }
+  onLoad: function (options) {    
+    this.data.questionId = options.questionId;    
+    this.data.authorId = options.authorId
   },
 
   /**

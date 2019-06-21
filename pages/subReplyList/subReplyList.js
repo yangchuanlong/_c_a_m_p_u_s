@@ -40,7 +40,8 @@ Page({
       questionId: _t.data.mainReply.questionId,
       createdTime: new Date().toISOString(),
       repliedOpenId: _t.data.chosenReply ? _t.data.chosenReply.openid : _t.data.mainReply.openid,
-      subordinateTo: _t.data.mainReply._id
+      subordinateTo: _t.data.mainReply._id,
+      openid: globalData.curUser.openid
     };
     this.setData({
       sending: true
@@ -50,7 +51,6 @@ Page({
     }).then(function (resp) {
       data._id = resp._id;
       data.thumbupCount = 0;
-      data.openid = globalData.curUser.openid;
       data._openid = globalData.curUser.openid;
       data.createdTime = util.dateDiff(data.createdTime);
       _t.setData({
@@ -232,8 +232,14 @@ Page({
     }
     const openid = evt.currentTarget.dataset.openid;
     const id = evt.currentTarget.dataset.replyId;
+    let comment = this.data.comment, trimmedComment = this.data.trimmedComment;
+    if (this.data.chosenReply && id !== this.data.chosenReply.id) {
+      comment = trimmedComment = '';
+    }
     this.setData({
-      chosenReply: {openid, id}
+      chosenReply: {openid, id},
+      comment,
+      trimmedComment
     });
     const placeholder = '回复:' + this.data.users[openid].nickName;
     this.setData({
