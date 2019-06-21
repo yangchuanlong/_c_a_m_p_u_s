@@ -104,7 +104,7 @@
     </view>
 
     <view class='commentInputWrapper'>
-        <view class='iconfont {{thumbedUpByMe ? "iconxin" : "iconzan"}}'></view>
+        <view class='iconfont {{thumbedUpByMe ? "iconxin" : "iconzan"}}' bindtap='onThumbup'></view>
         <view class='iconfont iconpinglun' bindtap='gotoReply'><text>回答</text></view>
         <button size='mini' open-type="share">
             <image src="../images/share.png" class="shareIcon"/>

@@ -365,7 +365,24 @@ Page({
   onShow(){
     const unreadNum = this.data.unreadNum - globalData.readMsgNum;
     globalData.readMsgNum = 0;
-    this.setData({unreadNum})
+    this.setData({unreadNum});
+
+    const thumbupCount = { ...this.data.thumbupCount };
+    const myThumbups = { ...this.data.myThumbups };
+    let qId;
+    if (globalData.thumbupedQid) {
+      qId = globalData.thumbupedQid;
+      myThumbups[qId] = true;
+      thumbupCount[qId] = isNaN(thumbupCount[qId]) ? 1 : thumbupCount[qId] + 1;
+      delete globalData.thumbupedQid;      
+    }
+    if (globalData.cancelThumbupQid) {
+      qId = globalData.cancelThumbupQid; 
+      thumbupCount[qId] = thumbupCount[qId] >= 1 ? thumbupCount[qId] - 1 : 0;
+      delete myThumbups[qId];      
+      delete globalData.cancelThumbupQid;
+    }
+    this.setData({ myThumbups, thumbupCount})
   },
   checkRegister: function() {
     wx.cloud.init();

@@ -73,6 +73,59 @@ Page({
       }
     });
   },
+  onThumbup(){
+    console.log('thumbup', this.data.thumbedUpByMe)
+    wx.cloud.init();
+    const _t = this;
+    const db = wx.cloud.database({
+      env: config.env
+    });
+    const collection = db.collection('thumbups'); 
+    if(_t.data.loading){
+      return;
+    }   
+    _t.data.loading = true;
+    if(!this.data.thumbedUpByMe) {
+      const data = {
+        questionOrReplyId: _t.data.questionId,
+        openid: globalData.curUser.openid,
+        type: 'question'
+      }
+      collection.add({
+        data: data
+      }).then(() => {
+          _t.setData({
+            thumbedUpByMe: true
+          });
+          globalData.thumbupedQid = _t.data.questionId;
+          delete globalData.cancelThumbupQid;
+          _t.data.loading = false;
+      }).catch(err => {
+        _t.data.loading = false;
+        console.log('thumbup quesiton error: ', err)
+      })
+    } else {
+      collection.where({
+        openid: globalData.curUser.openid,
+        questionOrReplyId: _t.data.questionId,
+        type: 'question'
+      }).field({_id: true}).get().then(resp => {
+        return Promise.all(
+          resp.data.map(item => collection.doc(item._id).remove())
+        ).then(function(){
+          _t.setData({
+            thumbedUpByMe: false
+          });
+          globalData.cancelThumbupQid = _t.data.questionId;
+          delete globalData.thumbupedQid;
+          _t.data.loading = false;
+        });
+      }).catch(err => {
+        _t.data.loading = false;
+        console.log('cancel thumbup error: ', err);
+      })
+    }
+  },
   /**
    * 生命周期函数--监听页面加载
    */
