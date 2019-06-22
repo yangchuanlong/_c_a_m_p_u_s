@@ -18,3 +18,7 @@ page{
   margin: 0 auto;
   display:block;
 }
+.no_questionAndReplyImg{
+  width: calc(100% - 24rpx);
+  margin: 306rpx auto auto;
+}

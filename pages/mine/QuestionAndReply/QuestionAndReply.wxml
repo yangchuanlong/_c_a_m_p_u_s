@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container" wx:if="{{myQuestions.length}}">
   <view class='questions'>
     <view class="item" bindtap="gotoQuestion" wx:for="{{myQuestions}}" data-question-id="{{item._id}}" data-author-id="{{item.openid}}">
     <view class="left">
@@ -11,9 +11,11 @@
       <view class="time">{{item.formattedTime}}</view>
     </view>
   </view>   
-  </view> 
-  <view wx:if="{{!myQuestions.length && !showLoading}}">暂无问答</view>
-  <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
+  </view>   
+  <view class='loading' style='display:{{showGetMoreLoading ? "" : "none"}}'>
     <image src='../../images/loading.gif'></image>
   </view>
+</view>
+<view wx:elif="{{!gettingData}}">
+  <image src='../../images/no_questionAndReply.png' mode='widthFix' class='no_questionAndReplyImg'></image>
 </view>

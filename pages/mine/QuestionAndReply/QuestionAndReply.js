@@ -8,18 +8,19 @@ Page({
         myReplies: [],    
         hasMoreQuestion: true,
         hasMoreReply: true,
-        showLoading: true,
+        showGetMoreLoading: false,
         qLatestTime: now,//question
         qOldestTime: now,
         rLatestTime: now,//rpley
-        rOldestTime: now
+        rOldestTime: now,
+        gettingData: true
     },  
     gotoQuestion(evt) {
       const dataset = evt.currentTarget.dataset;
       const {questionId, authorId} = dataset;
       wx.navigateTo({
         url: `/pages/detail/detail?id=${questionId}&authorId=${authorId}`,
-      })
+      });
     },
     onLoad() {
       const _t = this;
@@ -28,6 +29,9 @@ Page({
         env: config.env
       });
       const co = dbQ.collection("questions");
+      wx.showLoading({
+        title: 'loading...',
+      });
       dbQ.collection("questions").where({
         openid: globalData.curUser.openid
       })
@@ -36,10 +40,7 @@ Page({
           createdTime: true,
           title: true,
           abstract: true
-      }).get().then(resp => {
-        _t.setData({
-          showLoading: false
-        });
+      }).get().then(resp => {        
         if (resp.data && resp.data.length) {          
           const myQuestions = resp.data.map(item => {
             return {
@@ -57,9 +58,16 @@ Page({
              _t.setData({
                hasMoreQuestion: false,
              });
-             _t.getMyReplies();
+             return _t.getMyReplies();
            }
          }
+      }).then(function() {
+        _t.setData({gettingData: false});
+        wx.hideLoading();
+      }).catch(err => {
+        console.log("get question and reply error: ", err);
+        _t.setData({ gettingData: false });
+        wx.hideLoading();
       })
     },    
     getMyReplies(){
@@ -68,7 +76,7 @@ Page({
       const db = wx.cloud.database({
         env: config.env
       });
-      db.collection("replies").where({
+      return db.collection("replies").where({
         openid: globalData.curUser.openid
       })
       .field({
@@ -141,7 +149,7 @@ Page({
       const _ = dbQ.command;
       const co = dbQ.collection("questions");
       _t.setData({
-        showLoading: true
+        showGetMoreLoading: true
       })
       dbQ.collection("questions").where({
         openid: globalData.curUser.openid,
@@ -175,12 +183,12 @@ Page({
           })
         }
         _t.setData({
-          showLoading: false
+          showGetMoreLoading: false
         })
       }).catch(err => {
         console.log(err);
         _t.setData({
-          showLoading: false
+          showGetMoreLoading: false
         });
       })
     },
