@@ -1,5 +1,5 @@
 <!--index.wxml-->
-<view class="container"  style="visibility: {{finishChecking ? '' : 'hidden'}}">
+<view class="container"  style="display: {{finishChecking ? '' : 'none'}}">
     <view class="header">
         <view class='searchWrapper'>
             <input confirm-type='search'
@@ -17,7 +17,6 @@
             </view>
         </scroll-view>
     </view>
-
 
    <view class="sectionWrapper" bindtouchstart="onTouchStart" bindtouchend="onTouchEnd">
        <view class="section" wx:for="{{tabs}}" style="display: {{activeTab == index ? '' : 'none'}}" id="{{item.en_name}}" wx:key="tabContent-{{index}}">
@@ -63,8 +62,8 @@
     <image src="../images/logo.png" class="logo {{hideRightBottomIcons ? 'show' : 'hide'}}" bindtap='onClickLogo'></image>
     <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
       <image src='../images/loading.gif'></image>
-    </view>
-    <view class="overlay" style="display: {{showOverlay ? '' : 'none'}}">
-        <image src='../images/loading.gif'></image>
-    </view>
+    </view>    
+</view>
+<view class='container' wx:if="{{noNetwork}}">
+  <image src='../images/no_network.png' mode='widthFix' class='noNetworkImg' bindtap='onReconnect'></image>
 </view>

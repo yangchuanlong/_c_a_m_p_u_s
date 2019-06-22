@@ -27,8 +27,7 @@ Page({
     touchStartY: 0,
     tabs: defaultColumns,
     hotSearches: [],
-    finishChecking: false,//完成check用户是否注册
-    showOverlay: true,
+    finishChecking: false,//完成check用户是否注册   
     toColumn: 'all',
     tabIndex2ColId: {},
     colQuestions: {
@@ -46,7 +45,8 @@ Page({
     gradeEnum: enums.gradeEnum,
     colId2Col: {},
     isSuperAdmin: false,
-    hideRightBottomIcons: false
+    hideRightBottomIcons: false,
+    noNetwork: false
   },
   //事件处理函数
   bindViewTap: function() {
@@ -341,6 +341,9 @@ Page({
   },
   onLoad: function () {
     const _t = this;
+    wx.showLoading({
+      title: '',
+    });
     this.checkRegister().then(function (user) {
       if(user === false) {
         wx.redirectTo({
@@ -349,7 +352,6 @@ Page({
       } else if(user && user.collegeId){
         _t.setData({
           finishChecking: true,
-          showOverlay: false
         });
         _t.getColumnsOfCollege(user.collegeId); //send request to fetch columns by collegeId
         _t.getQuestions('all');//获取"全部"栏目的问题
@@ -357,8 +359,16 @@ Page({
         _t.setData({
             isSuperAdmin: util.isSuperAdmin(globalData.curUser.openid)
         })
-      } else {
-        //todo? error
+      }
+      _t.setData({ noNetwork: false });
+      wx.hideLoading();      
+    }).catch(err => {
+      console.log('check register error: ', err);    
+      wx.hideLoading();
+      if (err.errMsg.indexOf('ENOENT') !== -1) {
+        _t.setData({
+          noNetwork: true
+        });
       }
     });
   },
@@ -409,9 +419,7 @@ Page({
       } else {
         return false;
       }
-    }).catch(function (e) {
-      return "error";
-    })
+    });
   },
   getColumnsOfCollege(collegeId) {
     wx.cloud.init();
@@ -649,5 +657,8 @@ Page({
     this.setData({
       hideRightBottomIcons: false
     })
+  },
+  onReconnect() {
+    this.onLoad();
   }
 });
