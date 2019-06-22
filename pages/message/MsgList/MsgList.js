@@ -52,11 +52,13 @@ Page({
                     updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
                 }
             });
-            _t.getQuestionTitleAbstract(questionIds, result);
+            return _t.getQuestionTitleAbstract(questionIds, result);
         }
+      }).then(() => {
         wx.hideLoading();
         _t.setData({ gettingMsg: false });
-      }).catch(e => {
+      })
+      .catch(e => {
         wx.hideLoading();
         _t.setData({ gettingMsg: false });
       });
@@ -110,7 +112,7 @@ Page({
         env: config.env
     });
     const _ = db.command;
-    db.collection("questions").where({
+    return db.collection("questions").where({
       _id: _.in(questionIds)
     })
     .field({
