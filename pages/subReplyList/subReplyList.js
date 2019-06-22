@@ -51,7 +51,6 @@ Page({
     }).then(function (resp) {
       data._id = resp._id;
       data.thumbupCount = 0;
-      data._openid = globalData.curUser.openid;
       data.createdTime = util.dateDiff(data.createdTime);
       _t.setData({
         sending: false,
@@ -144,7 +143,7 @@ Page({
       const openidSet = new Set(), replyIds = [];
       const subReplies = data.map(reply => {
         reply.createdTime = util.dateDiff(reply.createdTime);
-        openidSet.add(reply._openid || reply.openid);
+        openidSet.add(reply.openid);
         openidSet.add(reply.repliedOpenId);
         replyIds.push(reply._id);
         return reply;
@@ -336,7 +335,7 @@ Page({
       const openidSet = new Set(), replyIds = [];
       const subReplies = data.map(reply => {
         reply.createdTime = util.dateDiff(reply.createdTime);
-        openidSet.add(reply._openid || reply.openid);
+        openidSet.add(reply.openid);
         openidSet.add(reply.repliedOpenId);
         replyIds.push(reply._id);
         return reply;
@@ -361,7 +360,7 @@ Page({
   onLoad: function (options) {
     try{
       const mainReply = JSON.parse(options.mainReply);
-      mainReply.openid = mainReply.openid || mainReply._openid;
+      mainReply.openid = mainReply.openid;
       const author = globalData.users[mainReply.openid];
       mainReply.content = decodeURIComponent(mainReply.content);
       this.setData({

@@ -245,7 +245,6 @@ Page({
           openIdSet.add(item.openid);
           replyMap[item._id] = item;
           item.createdTime = util.dateDiff(item.createdTime);
-          item.openid = item.openid || item._openid;
         });
         const mainReplies = _t.data.mainReplies.concat(data);
         _t.setData({mainReplies, replyMap});

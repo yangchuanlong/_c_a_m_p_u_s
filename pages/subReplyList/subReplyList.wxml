@@ -14,10 +14,10 @@
       评论 <text>{{subReplyTotal}}</text>
   </view>
   <view class='subReplies'>    
-    <view class='replyItem' wx:for="{{subReplies}}" data-openid="{{item.openid || item._openid}}" data-reply-id='{{item._id}}'  catchtap='onChooseReply'>
+    <view class='replyItem' wx:for="{{subReplies}}" data-openid="{{item.openid}}" data-reply-id='{{item._id}}'  catchtap='onChooseReply'>
       <view class='replier'>
-        <image src='{{users[item.openid || item._openid].avatar}}'></image>
-        <text class='nickName'>{{users[item.openid || item._openid].nickName}}</text>
+        <image src='{{users[item.openid].avatar}}'></image>
+        <text class='nickName'>{{users[item.openid].nickName}}</text>
         <text class='time'>{{item.createdTime}}</text>
         <text style='flex:1'></text>
         <view class="actions">
@@ -26,7 +26,7 @@
               class='iconfont {{myThumbups[item._id] ? "iconxin" : "iconzan"}}'
               id='thumbupBtn'
               data-id="{{item._id}}"
-              data-openid="{{item._openid || item.openid}}"
+              data-openid="{{item.openid}}"
               data-action-type="{{myThumbups[item._id] ? 'cancel' : 'add'}}"
               bindtap='onThumbup'
             ></view>

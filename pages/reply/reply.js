@@ -43,6 +43,7 @@ Page({
       content: trimedInput,
       questionId: _t.data.questionId,
       createdTime: new Date().toISOString(),
+      openid: globalData.curUser.openid
     };
     db.collection('replies').add({
       data
@@ -52,9 +53,7 @@ Page({
         sending: false
       });
       data._id = resp._id;
-      data.thumbupCount = 0;
-      data.openid = globalData.curUser.openid;
-      data._openid = globalData.curUser.openid;
+      data.thumbupCount = 0;      
       data.createdTime = util.dateDiff(data.createdTime);
       globalData.reply = data;
       wx.cloud.callFunction({

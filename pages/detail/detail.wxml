@@ -55,7 +55,7 @@
                         wx:for-index="subIndex"
                     >
                         <view class='replier'>
-                            <text class='nickName'>{{users[subReply.openid || subReply._openid].nickName}} 回复 {{users[subReply.repliedOpenId].nickName}}:  </text>
+                            <text class='nickName'>{{users[subReply.openid].nickName}} 回复 {{users[subReply.repliedOpenId].nickName}}:  </text>
                             {{subReply.content}}
                         </view>
                         <view class='moreReplies' wx:if="{{subIndex==1}}">
