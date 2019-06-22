@@ -1,17 +1,4 @@
-<view class='container'>
-  <view class="item" style="display:none">  <!-- this is mock ui -->
-    <view class="left">
-      <!-- <text class="iconfont iconwenti icon"></text> -->
-      <image src='../../images/wentiIcon.png' class='icon'></image>
-      <text class="unreadNum">20</text>
-    </view>
-    <view class="right">
-      <view class="title">有同学知道什么时候开学吗？</view>
-      <view class="abstract">各高校新生报到时间上是不一样的...</view>
-      <view class="time">2019.03.14 12:23</view>
-    </view>
-  </view>
-
+<view class='container' wx:if="{{messages.length}}">
   <view class="item" wx:for="{{messages}}" bindtap="gotoMsgDetail" data-question-id="{{item.questionId}}">
     <view class="left">
       <image src='../../images/wentiIcon.png' class='icon'></image>
@@ -23,7 +10,11 @@
       <view class="time">{{item.updatedTime}}</view>
     </view>
   </view>
-  <view class='loading' style='display:{{showLoading ? "" : "none"}}'>
+
+  <view class='loading' style='display:{{showGetMoreLoading ? "" : "none"}}'>
     <image src='../../images/loading.gif'></image>
   </view>
+</view>
+<view class='container' wx:elif="{{!gettingMsg}}">
+  <image src="../../images/no_msg.png" mode="widthFix" class='no_msg_img'></image>
 </view>

@@ -68,3 +68,7 @@
   margin: 0 auto;
   display:block;
 }
+.no_msg_img{
+  margin: 306rpx auto auto;
+  width: calc(100% - 24rpx);
+}

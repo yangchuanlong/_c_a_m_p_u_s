@@ -10,9 +10,10 @@ Page({
   data: {
     messages: [],
     hasMoreMsg: true,
-    showLoading: false,
+    showGetMoreLoading: false,
     latestTime: new Date().toISOString(),
     oldestTime: new Date().toISOString(),
+    gettingMsg: true,
   },
 
   /**
@@ -28,36 +29,43 @@ Page({
           env: config.env
       });
       const _ = db.command;
+      wx.showLoading({
+        title: 'loading...',
+      });      
       db.collection("messages").where({
           receiverId: globalData.curUser.openid
       })
       .orderBy("updatedTime", 'desc')
       .get()
       .then(resp => {
-          const data = resp.data;
-          if(data.length) {
-              _t.data.latestTime = data[0].updatedTime;
-              _t.data.oldestTime = data[data.length - 1].updatedTime;
-              const questionIds = [], result = {};
-              data.forEach(item => {
-                  const time = new Date(item.updatedTime);
-                  questionIds.push(item.questionId);
-                  result[item.questionId] = {
-                      questionId: item.questionId,
-                      unreadNum: item.unread.length,
-                      updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
-                  }
-              });
-              _t.getQuestionTitleAbstract(questionIds, result);
-          }
+        const data = resp.data;
+        if(data.length) {
+            _t.data.latestTime = data[0].updatedTime;
+            _t.data.oldestTime = data[data.length - 1].updatedTime;
+            const questionIds = [], result = {};
+            data.forEach(item => {
+                const time = new Date(item.updatedTime);
+                questionIds.push(item.questionId);
+                result[item.questionId] = {
+                    questionId: item.questionId,
+                    unreadNum: item.unread.length,
+                    updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+                }
+            });
+            _t.getQuestionTitleAbstract(questionIds, result);
+        }
+        wx.hideLoading();
+        _t.setData({ gettingMsg: false });
       }).catch(e => {
+        wx.hideLoading();
+        _t.setData({ gettingMsg: false });
       });
   },
   getMoreMsgs() {
     if(!this.data.hasMoreMsg){
       return;
     }
-    if(this.data.showLoading){
+    if (this.data.showGetMoreLoading){
       return;
     }
     const _t = this;
@@ -65,7 +73,7 @@ Page({
       env: config.env
     });
     const _ = db.command;
-    _t.setData({showLoading: true});
+    _t.setData({ showGetMoreLoading: true});
     db.collection("messages").where({
       receiverId: globalData.curUser.openid,
       updatedTime: _.lt(_t.data.oldestTime)
@@ -91,9 +99,9 @@ Page({
         } else {
           _t.data.hasMoreMsg = false;
         }
-        _t.setData({showLoading: false});
+        _t.setData({ showGetMoreLoading: false});
       }).catch(e => {
-        _t.setData({showLoading: false});
+        _t.setData({ showGetMoreLoading: false});
       });
   },
   getQuestionTitleAbstract(questionIds, result) {
@@ -142,8 +150,7 @@ Page({
 
   getLatestMsgs() {
       const _t = this;
-      if(_t.data.getLatestLoading){
-        wx.stopPullDownRefresh();
+      if(_t.data.getLatestLoading){        
         return;
       }
       _t.data.getLatestLoading = true;
@@ -152,34 +159,33 @@ Page({
       });
       const _ = db.command;
       db.collection("messages").where({
-          receiverId: globalData.curUser.openid,
-          updatedTime: _.gt(_t.data.latestTime)
+        receiverId: globalData.curUser.openid,
+        updatedTime: _.gt(_t.data.latestTime)
       })
       .orderBy("updatedTime", 'desc')
       .get()
-      .then(resp => {
-          _t.data.getLatestLoading = false;
+      .then(resp => {          
           const data = resp.data;
           if(data.length) {
-              _t.data.oldestTime = data[data.length - 1].updatedTime;
-              const questionIds = [], result = {};
-              data.forEach(item => {
-                  questionIds.push(item.questionId);
-                  const time = new Date(item.updatedTime);
-                  result[item.questionId] = {
-                      questionId: item.questionId,
-                      unreadNum: item.unread.length,
-                      updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
-                  }
-              });
-              _t.data.messages = _t.data.messages.filter(msg => questionIds.indexOf(msg.questionId) !== -1);//已经获取到的msg,可能又被回复， updatedTime被更新， 下拉刷新又被获取到
-              _t.getQuestionTitleAbstract(questionIds, result);
-          }
-          _t.setData({showLoading: false});
+            _t.data.oldestTime = data[data.length - 1].updatedTime;
+            const questionIds = [], result = {};
+            data.forEach(item => {
+                questionIds.push(item.questionId);
+                const time = new Date(item.updatedTime);
+                result[item.questionId] = {
+                    questionId: item.questionId,
+                    unreadNum: item.unread.length,
+                    updatedTime: `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+                }
+            });
+            _t.data.messages = _t.data.messages.filter(msg => questionIds.indexOf(msg.questionId) !== -1);//已经获取到的msg,可能又被回复， updatedTime被更新， 下拉刷新又被获取到
+            _t.getQuestionTitleAbstract(questionIds, result);
+          }          
           wx.stopPullDownRefresh();
-      }).catch(e => {
           _t.data.getLatestLoading = false;
-          wx.stopPullDownRefresh();
+      }).catch(e => {   
+        _t.data.getLatestLoading = false;       
+        wx.stopPullDownRefresh();
       });
   },
   /**
